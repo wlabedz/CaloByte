@@ -46,5 +46,6 @@ npm start                   # ng serve, http://localhost:4200
 - Sekrety (`DATABASE_URL*`, klucze LLM, tokeny Vercela) nigdy nie trafiają do repo ani na frontend. Lokalnie trzymamy je w `backend/.env.local`, który jest w `.gitignore`.
 - Migracje: zmiana modelu w `backend/models.py` wymaga migracji Alembic w tym samym PR. Migracje uruchamiają się w CD przed deployem nowego kodu, więc muszą być kompatybilne wstecz.
 - Wywołania LLM tylko z backendu, z odpowiedzią wymuszoną jako JSON.
+- Wiki aktualizujemy raz na PR, w tym samym PR co kod: przed `gh pr create` uruchom `/wiki ingest code` w trybie PR (sekcja „Tryb PR” w skillu `/wiki`). Niejasności wyjaśniaj z autorem zmian, a nierozstrzygnięte dodawaj jako pytania `Q-NNN`. Hook `.claude/hooks/wiki-before-pr.py` blokuje `gh pr create`, dopóki wiki nie jest aktualna. Nie obchodź go.
 - Zmiany w AI-asystowanym kodzie dokumentujemy w `AI.md` (wymóg projektu).
 - `docs/superpowers/` (specy i plany ze skilli) jest lokalne i nie trafia do repo.

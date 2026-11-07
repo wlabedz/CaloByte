@@ -41,6 +41,19 @@ Bez argumentu albo z nieznanym argumentem: wypisz tę listę i zakończ. Nie tw�
 
 Jeśli operacja nic nie zmieniła poza `log.md`, wpis w logu brzmi `bez zmian`.
 
+## Tryb PR
+
+Wiki aktualizujemy raz na PR, w tym samym PR co kod. Hook `.claude/hooks/wiki-before-pr.py` blokuje `gh pr create`, dopóki strony, których `sources` obejmują kod zmieniony na branchu, mają nieaktualny `code_sha` albo zmieniony plik kodu nie jest w `sources` żadnej strony. Wtedy uruchom `ingest code` w trybie PR, który różni się od zwykłego trybu tak:
+
+- **Zakres:** tylko pliki z `git diff --name-only $(git merge-base HEAD origin/main)..HEAD` w `backend/`, `frontend/src/`, `.github/workflows/`. Plik bez strony dopisz do `sources` strony z mapowania w kroku 5 `ingest prs` (np. nowy komponent → `architecture/frontend.md`).
+- **Brudne drzewo (krok 1):** nie pytaj. Jeśli są niezacommitowane zmiany w kodzie, poproś użytkownika, żeby najpierw je zacommitował albo odłożył, bo PR obejmuje tylko commity.
+- **Branch (krok 3):** zostań na bieżącym branchu z kodem. Nie twórz brancha `wiki/`.
+- **Niejasności:** zanim dodasz pytanie `Q-NNN`, zapytaj autora zmian przez `AskUserQuestion` (np. „po co jest nowe pole?”, „czy to zastępuje plan z Miro?”). Odpowiedź autora wpisz do strony z dopiskiem źródła `autor PR, <data>`. Pytanie do analityka dodaj tylko wtedy, gdy autor nie zna odpowiedzi albo dotyczy ona wymagań, a nie kodu. Deduplikacja i karteczka w Miro jak w `lint`.
+- **Commit (krok 7):** wyjątek od pytania o zgodę: zacommituj wiki na ten branch (`git add wiki raw && git commit -m "docs(wiki): ingest code <branch>"`), pokaż podsumowanie i ponów `gh pr create`. Push i inne commity nadal tylko na prośbę.
+- **Stan:** nie zmieniaj `last_code_sha` ani `last_pr`, bo kod nie jest jeszcze w `main`. Ustaw tylko `code_sha` stron na `git log -1 --format=%h -- <pliki kodu z sources>`. Wpis w `log.md`: `## [YYYY-MM-DD] ingest code (PR) | <branch>`.
+
+`ingest prs` po merge dalej robi changelog i `raw/github/prs/`; strony, których `code_sha` już jest aktualny, zostawia bez zmian.
+
 ## ingest prs
 
 1. `gh auth status`. Jeśli nie jesteś zalogowany, zatrzymaj się i podaj instrukcję `gh auth login`. Nic nie zapisuj.
