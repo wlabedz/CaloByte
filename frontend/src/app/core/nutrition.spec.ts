@@ -1,5 +1,6 @@
 import { buildMeal, daysAgo } from '../../testing/meal-fixtures';
-import { percentOf, sumMacros, summarizeByDay, toDayKey } from './nutrition';
+import { buildProduct } from '../../testing/recipe-fixtures';
+import { percentOf, recipePerServing, sumMacros, summarizeByDay, toDayKey } from './nutrition';
 
 describe('nutrition', () => {
   it('sums calories and macros of all meals', () => {
@@ -45,5 +46,27 @@ describe('nutrition', () => {
   it('calculates percent of a target and treats a missing target as 0%', () => {
     expect(percentOf(1171, 1900)).toBe(62);
     expect(percentOf(50, 0)).toBe(0);
+  });
+
+  it('computes recipe macros per serving like the backend', () => {
+    const bread = buildProduct({ id: 'b', kcal: 250, protein: 9, fat: 3, carbs: 49, fiber: 7 });
+    const butter = buildProduct({
+      id: 'u',
+      kcal: 717,
+      protein: 0.85,
+      fat: 81,
+      carbs: 0.06,
+      fiber: 0,
+    });
+
+    const result = recipePerServing(
+      [
+        { product: bread, weight_g: 100 },
+        { product: butter, weight_g: 10 },
+      ],
+      2,
+    );
+
+    expect(result).toEqual({ kcal: 161, protein: 4.54, fat: 5.55, carbs: 24.5, fiber: 3.5 });
   });
 });

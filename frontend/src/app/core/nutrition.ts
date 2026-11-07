@@ -1,4 +1,4 @@
-import { Meal } from './models';
+import { Meal, Product } from './models';
 
 export interface MacroTotals {
   kcal: number;
@@ -62,4 +62,42 @@ export function summarizeByDay(meals: readonly Meal[]): DaySummary[] {
 
 export function percentOf(value: number, target: number): number {
   return target > 0 ? Math.round((value / target) * 100) : 0;
+}
+
+/**
+ * Zaokrąglenie half-up (jak ROUND_HALF_UP w backendzie), nie half-to-even. Epsilon 1e-9
+ * koryguje błąd zmiennoprzecinkowy: np. 1.005 * 100 = 100.49999999999999.
+ */
+function roundHalfUp(value: number, decimals: number): number {
+  const factor = 10 ** decimals;
+  return Math.floor(value * factor + 0.5 + 1e-9) / factor;
+}
+
+/**
+ * Makra na porcję — lustro recipe_per_serving z backendu: makro składnika = na 100 g × waga / 100,
+ * suma składników ÷ porcje, dopiero wynik zaokrąglony (kcal do 0, reszta do 2 miejsc).
+ */
+export function recipePerServing(
+  items: readonly { product: Product; weight_g: number }[],
+  servings: number,
+): MacroTotals {
+  const total = items.reduce<MacroTotals>(
+    (sum, { product, weight_g }) => ({
+      kcal: sum.kcal + (product.kcal * weight_g) / 100,
+      protein: sum.protein + (product.protein * weight_g) / 100,
+      fat: sum.fat + (product.fat * weight_g) / 100,
+      carbs: sum.carbs + (product.carbs * weight_g) / 100,
+      fiber: sum.fiber + (product.fiber * weight_g) / 100,
+    }),
+    { kcal: 0, protein: 0, fat: 0, carbs: 0, fiber: 0 },
+  );
+  const perServing = (value: number, decimals: number) =>
+    roundHalfUp(servings > 0 ? value / servings : 0, decimals);
+  return {
+    kcal: perServing(total.kcal, 0),
+    protein: perServing(total.protein, 2),
+    fat: perServing(total.fat, 2),
+    carbs: perServing(total.carbs, 2),
+    fiber: perServing(total.fiber, 2),
+  };
 }
