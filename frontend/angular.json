@@ -75,11 +75,13 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true,
+              "sourceMap": true
+            },
+            "deployed-api": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/api-url.ts",
-                  "with": "src/environments/api-url.development.ts"
+                  "with": "src/environments/api-url.deployed.ts"
                 }
               ]
             }
@@ -94,6 +96,9 @@
             },
             "development": {
               "buildTarget": "frontend:build:development"
+            },
+            "deployed-api": {
+              "buildTarget": "frontend:build:development,deployed-api"
             }
           },
           "defaultConfiguration": "development"

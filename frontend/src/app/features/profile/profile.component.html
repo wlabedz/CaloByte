@@ -90,7 +90,13 @@
         [attr.aria-describedby]="isInvalid('email') ? 'email-error' : null"
       />
       @if (isInvalid('email')) {
-        <p id="email-error" class="field-error">Podaj poprawny adres e-mail.</p>
+        <p id="email-error" class="field-error">
+          @if (form.controls.email.hasError('server')) {
+            Serwer nie przyjął tego adresu e-mail. Sprawdź, czy jest poprawny.
+          } @else {
+            Podaj poprawny adres e-mail, np. jan@poczta.pl.
+          }
+        </p>
       }
     </div>
 
