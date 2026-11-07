@@ -9,7 +9,18 @@
       name="description"
       content="CaloByte — planer posiłków z bilansem kalorii i makroskładników."
     />
+    <meta name="color-scheme" content="light dark" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <script>
+      // Motyw zapisany przez ThemeService ustawiamy przed pierwszym renderem,
+      // żeby przy odświeżeniu nie mignęło tło w złym kolorze.
+      try {
+        const theme = localStorage.getItem('calobyte.theme');
+        if (theme === 'light' || theme === 'dark') {
+          document.documentElement.dataset.theme = theme;
+        }
+      } catch {}
+    </script>
   </head>
   <body>
     <app-root></app-root>

@@ -31,8 +31,12 @@ src/
     │   ├── models.ts         # Meal, MealItem, User, NewUser (pola jak w API), DailyTargets
     │   ├── nutrition.ts      # sumowanie makro, grupowanie posiłków po dniach
     │   ├── active-user.service.ts # wybrany profil, zapamiętany w localStorage
+    │   ├── theme.service.ts  # motyw jasny / ciemny
+    │   ├── toast.service.ts  # powiadomienia na dole ekranu (np. „Cofnij”)
     │   └── data/             # kontrakty MealRepository / UserRepository i ich implementacje
-    ├── shared/macro-progress/ # pasek realizacji celu (kalorie, makroskładniki)
+    ├── shared/
+    │   ├── macro-progress/   # pasek realizacji celu (kalorie, makroskładniki)
+    │   └── toast/            # ToastHostComponent — wyświetla powiadomienia
     └── features/
         ├── dashboard/        # DashboardComponent — bilans dnia i dzisiejsze posiłki
         ├── history/          # HistoryComponent — przegląd dni i średnia kalorii
@@ -77,6 +81,24 @@ Nie zmieniaj bez uzgodnienia z osobą od CI/CD:
 - skrypt `npm run lint` oraz `ng test --watch=false --coverage` z raportem
   `coverage/frontend/coverage-summary.json` (podsumowanie pokrycia w CI).
 
+## Motyw jasny i ciemny
+
+Domyślnie aplikacja wygląda tak jak system (`prefers-color-scheme`). Przełącznik w nagłówku
+(`ThemeService`) zapisuje wybór w `localStorage` i ustawia `data-theme="light|dark"` na `<html>`;
+skrypt w `src/index.html` robi to samo jeszcze przed startem Angulara, żeby tło nie migało.
+
+Każdy kolor w `src/styles.css` ma oba warianty w `light-dark(jasny, ciemny)`. Nowy kolor dodaj
+jako token w tym samym miejscu — komponenty używają tylko zmiennych (`var(--…)`).
+
+## Powiadomienia
+
+`ToastService.show({ message, action?, onClose?, duration? })` pokazuje krótkie powiadomienie
+na dole ekranu (`<app-toast-host>` jest osadzony raz, w `AppComponent`). Odliczanie stoi, dopóki
+kursor albo fokus jest na powiadomieniu. `onClose` dostaje powód: `action`, `dismiss` albo `timeout`.
+
+Przykład z Pulpitu: „Usuń” od razu ukrywa posiłek i pokazuje „Cofnij”, a `deleteMeal` leci
+dopiero wtedy, gdy powiadomienie zniknie bez cofnięcia. Zamiast `confirm()` używaj tego wzorca.
+
 ## Konwencje
 
 - `ng generate component nazwa` tworzy `nazwa.component.ts` z klasą `NazwaComponent`
@@ -84,4 +106,4 @@ Nie zmieniaj bez uzgodnienia z osobą od CI/CD:
 - Komponenty standalone z `ChangeDetectionStrategy.OnPush`, stan w sygnałach,
   w szablonach `@if` / `@for`.
 - Style w zwykłym CSS; kolory i promienie jako zmienne CSS w `src/styles.css`
-  (motyw jasny i ciemny).
+  (zob. „Motyw jasny i ciemny”).
