@@ -2,6 +2,12 @@
 
 Jeden wpis na każdy zmergowany PR, od najnowszych. Generowane przez `/wiki ingest prs`. Kamień milowy wynosi `?`, dopóki nie znamy dat spotkań (zob. [milestones.md](milestones.md)).
 
+## 2026-11-07 · #19 Add CLAUDE.md rules, ignore docs/superpowers, ingest PRs #17-#18 into wiki
+- Autor: pwjtd · Branch: chore/claude-rules · Kamień milowy: ? · Review: wlabedz APPROVED, knizinsky APPROVED
+- Co: Bez zmian w działaniu aplikacji. Dochodzi `CLAUDE.md` z zasadami pracy w repo (najpierw wiki, komendy backendu i frontu, chroniony `main`, migracja w tym samym PR co zmiana modelu, `AI.md`). `docs/superpowers/` jest odtąd lokalne (`.gitignore`), skill `/wiki` commituje dopiero na prośbę, a wiki dostała ingest #17–#18 i pytanie Q-009.
+- Pliki: CLAUDE.md, .gitignore, .claude/skills/wiki/SKILL.md, usunięte docs/superpowers/**, wiki/**, raw/** (20 plików)
+- Strony wiki: [changelog](changelog.md), [questions](questions.md), [architecture/frontend](architecture/frontend.md)
+
 ## 2026-11-07 · #18 Wiki/2026 11 07 bootstrap
 - Autor: pwjtd · Branch: wiki/2026-11-07-bootstrap · Kamień milowy: ? · Review: wlabedz APPROVED
 - Co: Bez zmian w działaniu aplikacji. Dochodzi wiki projektu (`wiki/`, `raw/`), skill `/wiki` i pytania do analityka Q-001…Q-008 zsynchronizowane z ramką w Miro.

@@ -9,6 +9,44 @@ export const MEAL_TYPE_LABELS: Record<MealType, string> = {
   dinner: 'Kolacja',
 };
 
+export type ActivityLevel = 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active';
+
+export type Sex = 'male' | 'female' | 'other';
+
+export const ACTIVITY_LABELS: Record<ActivityLevel, string> = {
+  sedentary: 'Siedzący tryb życia',
+  light: 'Niska aktywność',
+  moderate: 'Umiarkowana aktywność',
+  active: 'Wysoka aktywność',
+  very_active: 'Bardzo wysoka aktywność',
+};
+
+export const SEX_LABELS: Record<Sex, string> = {
+  male: 'Mężczyzna',
+  female: 'Kobieta',
+  other: 'Inna',
+};
+
+/** Treść POST /users (UserCreate w backend/schemas.py). */
+export interface NewUser {
+  name: string;
+  surname: string;
+  email: string;
+  /** Data w formacie YYYY-MM-DD. */
+  birth_date: string;
+  weight_kg: number;
+  height_cm: number;
+  activity: ActivityLevel;
+  sex: Sex;
+}
+
+/** Odpowiedź GET/POST /users (UserOut); BMI liczy baza. */
+export interface User extends NewUser {
+  id: string;
+  bmi: number;
+  created_at: string;
+}
+
 /** Dzienny cel użytkownika — backend może go trzymać w bazie albo liczyć z profilu. */
 export interface DailyTargets {
   kcal: number;
