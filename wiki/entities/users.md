@@ -1,7 +1,7 @@
 ---
 title: Encja users
 sources: [raw/miro/2026-11-07-board.md, backend/models.py, backend/schemas.py, backend/migrations/versions/, raw/github/prs/PR-0017.md, frontend/src/app/core/data/http-user-repository.ts, frontend/src/app/features/profile/profile.component.ts]
-code_sha: 2899898
+code_sha: 0099045
 updated: 2026-11-07
 ---
 

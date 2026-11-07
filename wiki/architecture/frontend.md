@@ -1,7 +1,7 @@
 ---
 title: Frontend (Angular)
 sources: [raw/miro/2026-11-07-board.md, raw/github/prs/PR-0017.md, frontend/src/app/, frontend/src/environments/, frontend/src/testing/, frontend/src/styles.css, frontend/angular.json, frontend/package.json]
-code_sha: 1bae832
+code_sha: 0099045
 updated: 2026-11-07
 ---
 
@@ -13,9 +13,11 @@ Angular standalone, TS, `@angular-eslint`, Vitest. SPA budowane `ng build` i pub
 
 ## Stan w kodzie
 
-Od [#17](../changelog.md) (2026-11-07), z widokiem Profil z #20:
+Od [#17](../changelog.md) (2026-11-07), z widokiem Profil z #20 oraz motywami (#23) i powiadomieniami (#24):
 
-- Angular 22 **bez SSR**: statyczne Pages nie potrzebują serwera. Style w zwykłym CSS (zmienne, motyw jasny i ciemny). Wymagany Node `^22.22.3`, `^24.15` lub `>=26`.
+- Angular 22 **bez SSR**: statyczne Pages nie potrzebują serwera. Style w zwykłym CSS. Wymagany Node `^22.22.3`, `^24.15` lub `>=26`.
+- **Motyw jasny i ciemny** (#23): każdy token koloru w `src/styles.css` ma oba warianty w `light-dark(jasny, ciemny)`. Domyślnie motyw jest jak w systemie (`color-scheme: light dark`). Przełącznik w nagłówku (`core/theme.service.ts`) zapisuje wybór w `localStorage` (`calobyte.theme`) i ustawia `data-theme="light|dark"` na `<html>`. Skrypt w `src/index.html` robi to samo przed startem Angulara, żeby tło nie migało.
+- **Powiadomienia** (#24): `core/toast.service.ts` + `shared/toast/` (`<app-toast-host>` w `AppComponent`), z opcjonalnym przyciskiem akcji. Odliczanie stoi, gdy kursor albo fokus jest na powiadomieniu. Kolory z tokenów `--inverse-*`.
 - `app.config.ts`: `provideRouter(routes, withHashLocation())`, `provideHttpClient(withFetch())`, `LOCALE_ID = 'pl'` oraz providery `MealRepository → InMemoryMealRepository` i `UserRepository → HttpUserRepository`.
 - Trasy (`app.routes.ts`, lazy): `/#/dashboard` (Pulpit · CaloByte), `/#/history` (Historia · CaloByte), `/#/profile` (Profil · CaloByte). `''` i `**` przekierowują na dashboard.
 - Struktura: `core/` (modele, logika, dane, `ActiveUserService`), `features/{dashboard,history,profile}/`, `shared/macro-progress/` (pasek postępu makro). Wspólne style (`.card`, `.field`, `.field-error`, `.button`, `.badge`) w `src/styles.css`.
@@ -25,9 +27,9 @@ Od [#17](../changelog.md) (2026-11-07), z widokiem Profil z #20:
 - **Profil**: lista profili (imię, e-mail, waga, wzrost, BMI, aktywność) z wyborem aktywnego (`aria-pressed`) oraz formularz nowego profilu z walidacją jak w `UserCreate`. E-mail musi mieć kropkę w domenie, bo `EmailStr` odrzuca np. `a@b`. Odpowiedź 422 dla `email` jest pokazywana przy polu, a 409 ma osobny komunikat o zajętym adresie. Nowy profil od razu staje się aktywny. Gdy wcześniej nie udało się wczytać listy, po zapisie jest pobierana od nowa.
 - **Adres API**: `npm start` korzysta z `http://localhost:8000` (lokalny backend). `npm run start:deployed-api` (konfiguracja `deployed-api` w `angular.json`) łączy lokalny front z wdrożonym `https://calo-byte.vercel.app`, więc zapisy trafiają do produkcyjnej bazy. W deployu adres pochodzi ze zmiennej repo `API_URL` ([ci-cd](ci-cd.md)).
 - **Logika** (`core/nutrition.ts`): `sumMacros` sumuje pola `total_*` posiłków. `toDayKey` liczy dzień w lokalnej strefie czasowej, celowo bez `toISOString()`, które działa w UTC. `summarizeByDay` grupuje dni od najnowszego. `percentOf` liczy procent realizacji celu.
-- **Pulpit**: dzisiejsze posiłki i sumy względem celu. Usuwanie wymaga potwierdzenia (`confirm`). Komunikaty błędów są po polsku.
+- **Pulpit**: dzisiejsze posiłki i sumy względem celu. „Usuń” od razu ukrywa posiłek i pokazuje powiadomienie z „Cofnij”; `deleteMeal` leci dopiero, gdy powiadomienie zniknie bez cofnięcia, a przy błędzie posiłek wraca z komunikatem. Komunikaty są po polsku.
 - **Historia**: dni z kaloriami względem celu, makro, rozwijane posiłki i średnia kcal z zakończonych dni.
-- Testy: 25 testów Vitest.
+- Testy: 36 testów Vitest.
 
 ## Rozbieżności
 
