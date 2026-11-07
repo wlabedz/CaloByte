@@ -1,6 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
@@ -15,6 +15,9 @@ import { UserRepository } from '../../core/data/user-repository';
 import { ACTIVITY_LABELS, ActivityLevel, NewUser, SEX_LABELS, Sex, User } from '../../core/models';
 import { toDayKey } from '../../core/nutrition';
 
+/** Jak `EmailStr` w backendzie: domena musi zawierać kropkę (`a@b` zostałby odrzucony z 422). */
+const EMAIL_WITH_DOMAIN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 @Component({
   selector: 'app-profile',
   imports: [DecimalPipe, ReactiveFormsModule],
@@ -24,6 +27,7 @@ import { toDayKey } from '../../core/nutrition';
 })
 export class ProfileComponent {
   private readonly users = inject(UserRepository);
+  private readonly destroyRef = inject(DestroyRef);
   protected readonly activeUser = inject(ActiveUserService);
 
   protected readonly today = toDayKey(new Date());
@@ -41,7 +45,15 @@ export class ProfileComponent {
   protected readonly form = inject(NonNullableFormBuilder).group({
     name: ['', [Validators.required, Validators.maxLength(100)]],
     surname: ['', [Validators.required, Validators.maxLength(100)]],
-    email: ['', [Validators.required, Validators.email, Validators.maxLength(255)]],
+    email: [
+      '',
+      [
+        Validators.required,
+        Validators.email,
+        Validators.pattern(EMAIL_WITH_DOMAIN),
+        Validators.maxLength(255),
+      ],
+    ],
     birth_date: ['', [Validators.required, notInFuture]],
     weight_kg: [
       null as number | null,
@@ -56,13 +68,7 @@ export class ProfileComponent {
   });
 
   constructor() {
-    this.users
-      .getUsers()
-      .pipe(takeUntilDestroyed())
-      .subscribe({
-        next: (users) => this.profiles.set(users),
-        error: () => this.loadFailed.set(true),
-      });
+    this.loadProfiles();
   }
 
   protected isInvalid(field: string): boolean {
@@ -80,21 +86,51 @@ export class ProfileComponent {
     // Po walidacji żadne pole nie jest puste, więc wartość ma już kształt NewUser.
     this.users.createUser(this.form.getRawValue() as NewUser).subscribe({
       next: (user) => {
-        this.profiles.update((profiles) => [...(profiles ?? []), user]);
         this.activeUser.select(user);
         this.form.reset();
         this.saving.set(false);
+        // Gdy lista wcześniej się nie wczytała, pobieramy ją od nowa — już z nowym profilem.
+        if (this.loadFailed()) {
+          this.loadProfiles();
+        } else {
+          this.profiles.update((profiles) => [...(profiles ?? []), user]);
+        }
       },
       error: (error: HttpErrorResponse) => {
+        this.saving.set(false);
+        if (error.status === 422 && rejectsField(error, 'email')) {
+          this.form.controls.email.setErrors({ server: true });
+          this.form.controls.email.markAsTouched();
+          return;
+        }
         this.saveError.set(
           error.status === 409
             ? 'Ten adres e-mail jest już zajęty.'
             : 'Nie udało się zapisać profilu. Spróbuj ponownie.',
         );
-        this.saving.set(false);
       },
     });
   }
+
+  private loadProfiles(): void {
+    this.loadFailed.set(false);
+    this.users
+      .getUsers()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (users) => this.profiles.set(users),
+        error: () => this.loadFailed.set(true),
+      });
+  }
+}
+
+/** Czy odpowiedź 422 z FastAPI dotyczy danego pola (`detail[].loc`, np. `['body', 'email']`). */
+function rejectsField(error: HttpErrorResponse, field: string): boolean {
+  const detail: unknown = error.error?.detail;
+  return (
+    Array.isArray(detail) &&
+    detail.some((issue) => Array.isArray(issue?.loc) && issue.loc.includes(field))
+  );
 }
 
 function notInFuture(control: AbstractControl<string>): ValidationErrors | null {
