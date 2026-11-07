@@ -2,16 +2,39 @@
   <div class="header-inner">
     <a class="brand" routerLink="/dashboard">
       <span class="brand-mark" aria-hidden="true">C</span>
-      <span>Calo<strong>Byte</strong></span>
+      <span class="brand-name">Calo<strong>Byte</strong></span>
     </a>
 
-    <nav aria-label="Główna nawigacja">
-      @for (link of navLinks; track link.path) {
-        <a [routerLink]="link.path" routerLinkActive="active" ariaCurrentWhenActive="page">
-          {{ link.label }}
-        </a>
-      }
-    </nav>
+    <div class="header-actions">
+      <nav aria-label="Główna nawigacja">
+        @for (link of navLinks; track link.path) {
+          <a [routerLink]="link.path" routerLinkActive="active" ariaCurrentWhenActive="page">
+            {{ link.label }}
+          </a>
+        }
+      </nav>
+
+      <button
+        type="button"
+        class="theme-toggle"
+        [attr.aria-label]="themeToggleLabel()"
+        [title]="themeToggleLabel()"
+        (click)="theme.toggle()"
+      >
+        @if (theme.theme() === 'dark') {
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+            />
+          </svg>
+        } @else {
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
+          </svg>
+        }
+      </button>
+    </div>
   </div>
 </header>
 
