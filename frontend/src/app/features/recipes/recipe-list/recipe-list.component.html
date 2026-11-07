@@ -1,0 +1,79 @@
+<header class="page-header header-row">
+  <div>
+    <p class="eyebrow">Kuchnia</p>
+    <h1 class="page-title">Przepisy</h1>
+  </div>
+  <a class="primary-link" routerLink="/recipes/new">Nowy przepis</a>
+</header>
+
+<form class="toolbar" role="search" (submit)="$event.preventDefault()">
+  <input
+    type="search"
+    class="field"
+    placeholder="Szukaj przepisu…"
+    aria-label="Szukaj przepisu"
+    (input)="onSearch($event)"
+  />
+  <select class="field" aria-label="Kategoria" (change)="onCategory($event)">
+    <option value="">Wszystkie kategorie</option>
+    @for (item of categories(); track item.category) {
+      <option [value]="item.category">{{ item.category }} ({{ item.count }})</option>
+    }
+  </select>
+  <div class="toggle" role="group" aria-label="Źródło przepisów">
+    <button
+      type="button"
+      [class.active]="filters().source === ''"
+      [attr.aria-pressed]="filters().source === ''"
+      (click)="setSource('')"
+    >
+      Wszystkie
+    </button>
+    <button
+      type="button"
+      [class.active]="filters().source === 'user'"
+      [attr.aria-pressed]="filters().source === 'user'"
+      (click)="setSource('user')"
+    >
+      Moje
+    </button>
+  </div>
+</form>
+
+@if (errorMessage(); as message) {
+  <p class="alert" role="alert">{{ message }}</p>
+}
+
+@if (result(); as page) {
+  @if (page.items.length > 0) {
+    <ul class="recipes">
+      @for (recipe of page.items; track recipe.id) {
+        <li class="card recipe-card">
+          <p class="recipe-category">{{ recipe.category ?? 'Bez kategorii' }}</p>
+          <h2 class="recipe-name">
+            <a [routerLink]="['/recipes', recipe.id]">{{ recipe.name }}</a>
+          </h2>
+          <p class="recipe-kcal">{{ recipe.kcal | number: '1.0-0' }} kcal / porcja</p>
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="empty-state">Nie znaleziono żadnych przepisów.</p>
+  }
+
+  <nav class="pager" aria-label="Paginacja">
+    <button type="button" [disabled]="filters().page <= 1" (click)="goToPage(filters().page - 1)">
+      Poprzednia
+    </button>
+    <span>Strona {{ filters().page }} z {{ totalPages() }}</span>
+    <button
+      type="button"
+      [disabled]="filters().page >= totalPages()"
+      (click)="goToPage(filters().page + 1)"
+    >
+      Następna
+    </button>
+  </nav>
+} @else if (!errorMessage()) {
+  <p class="status" role="status">Wczytywanie…</p>
+}

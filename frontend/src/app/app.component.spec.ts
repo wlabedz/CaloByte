@@ -21,7 +21,7 @@ describe('AppComponent', () => {
     const hrefs = Array.from(element.querySelectorAll('nav a'), (link) =>
       link.getAttribute('href'),
     );
-    expect(hrefs).toEqual(['#/dashboard', '#/history']);
+    expect(hrefs).toEqual(['#/dashboard', '#/history', '#/recipes']);
   });
 
   it('redirects unknown paths to the dashboard', async () => {

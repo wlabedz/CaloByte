@@ -14,5 +14,21 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/history/history.component').then((m) => m.HistoryComponent),
   },
+  {
+    path: 'recipes',
+    title: 'Przepisy · CaloByte',
+    loadComponent: () =>
+      import('./features/recipes/recipe-list/recipe-list.component').then(
+        (m) => m.RecipeListComponent,
+      ),
+  },
+  {
+    path: 'recipes/:id',
+    title: 'Przepis · CaloByte',
+    loadComponent: () =>
+      import('./features/recipes/recipe-detail/recipe-detail.component').then(
+        (m) => m.RecipeDetailComponent,
+      ),
+  },
   { path: '**', redirectTo: 'dashboard' },
 ];
