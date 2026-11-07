@@ -61,6 +61,11 @@ Wpisy operacji `/wiki` od najstarszych. Blok `ingest-state` na końcu czyta skil
 - Zmienione: architecture/frontend.md (motyw jasny/ciemny z #23, powiadomienia i „Cofnij” z #24, 36 testów), entities/users.md (tylko `code_sha`: w Profilu doszło powiadomienie po zapisie)
 - Uwagi: #23 i #24 zostały zmergowane do gałęzi pośrednich (`feat-profile-view`, `feat-theme-toggle`), a nie do `main`; ten PR przenosi ich kod do `main`. `last_code_sha` i `last_pr` bez zmian.
 
+## [2026-11-07] ingest | code (feat/recipes-products)
+- Nowe: entities/recipes.md, entities/products.md, entities/recipe_items.md
+- Zmienione: architecture/backend.md (routery, `catalog_service`, `nutrition`, seed, testy na prawdziwym Postgresie), architecture/frontend.md (Przepisy, repozytoria HTTP, `polish-plural`), architecture/database.md (3 tabele, migracja `e677c7db66b7`, seed), architecture/ci-cd.md (usługa Postgres, `--cov=.`, krok seed), overview.md (dataset użyty, USDA), index.md; `code_sha` ustawiony na 81d47cf także na stronach users, meals, meal_items i decisions/0001 (zmieniły się `models.py`, `core/models.ts` i `db.py`)
+- Uwagi: tryb PR, więc `last_code_sha` i `last_pr` bez zmian, bez nowych pytań. Spec feature'a nie jest w repo i nie jest cytowany w `sources`. `user_id` przepisów i produktów zawsze `NULL` zgłasza [Q-009](questions.md#q-009).
+
 <!-- ingest-state
 last_pr: 19
 last_miro_snapshot: 2026-11-07

@@ -13,6 +13,9 @@ Spis wszystkich stron. Zasady i sposób zadawania pytań są w [CLAUDE.md](CLAUD
 - [entities/users.md](entities/users.md) — użytkownik: plan z celami dziennymi kontra model antropometryczny w kodzie
 - [entities/meals.md](entities/meals.md) — posiłek z sumami makro (model we froncie, bez tabeli w bazie)
 - [entities/meal_items.md](entities/meal_items.md) — składnik posiłku z LLM (jeszcze bez tabeli)
+- [entities/recipes.md](entities/recipes.md) — przepisy: 1090 z Kaggle (tylko odczyt) i własne z CRUD-em; brak w Miro
+- [entities/products.md](entities/products.md) — produkty z makrami na 100 g: 108 z USDA i własne
+- [entities/recipe_items.md](entities/recipe_items.md) — składnik przepisu: produkt, waga i pozycja
 
 ## Architektura
 

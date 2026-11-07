@@ -1,7 +1,7 @@
 ---
 title: Encja meal_items
 sources: [raw/miro/2026-11-07-board.md, backend/models.py, frontend/src/app/core/models.ts]
-code_sha: 1ceb7d7
+code_sha: 81d47cf
 updated: 2026-11-07
 ---
 
