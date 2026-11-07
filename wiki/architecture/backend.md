@@ -25,6 +25,6 @@ Płaska struktura w `backend/`:
 
 ## Rozbieżności
 
-- Struktura katalogów: plan `backend/app/...` + `tests/`, a stan to pliki płasko w `backend/`.
+- Struktura katalogów: plan `backend/app/...` + `tests/`, a stan to pliki płasko w `backend/`. [Q-005](../questions.md#q-005--architektura--otwarte)
 - Testy: 2 z planowanych min. 8.
-- Wybór LLM (Gemini czy OpenAI) jest otwarty.
+- Wybór LLM (Gemini czy OpenAI) jest otwarty. [Q-002](../questions.md#q-002--ai--otwarte)

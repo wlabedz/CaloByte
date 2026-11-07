@@ -19,4 +19,5 @@ Endpointy z planu: `GET /meals` (z filtrami i paginacją w wariancie twistu: `?p
 
 ## Rozbieżności
 
-- `meal_type` ma w Miro trzy wartości (śniadanie/obiad/kolacja), bez przekąsek. Nie wiadomo, czy to celowe.
+- `meal_type` ma w Miro trzy wartości (śniadanie/obiad/kolacja), bez przekąsek. Nie wiadomo, czy to celowe. [Q-007](../questions.md#q-007--model-danych--otwarte)
+- Źródło prawdy dla sum `total_*`. [Q-008](../questions.md#q-008--model-danych--otwarte)

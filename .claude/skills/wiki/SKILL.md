@@ -61,7 +61,7 @@ Jeśli operacja nic nie zmieniła poza `log.md`, wpis w logu brzmi `bez zmian`, 
 
 ## ingest code
 
-1. `HEAD=$(git rev-parse --short HEAD)`. Znajdź strony z `code_sha` ≠ HEAD.
+1. `HEAD=$(git rev-parse --short HEAD)`. Strona jest nieaktualna, gdy `git diff --quiet <code_sha> HEAD -- <pliki z sources spoza raw/ i wiki/>` zwraca kod ≠ 0. Same commity wiki nie czynią strony nieaktualną. Strona, której `sources` po odfiltrowaniu nie zawierają plików kodu, nie powinna mieć `code_sha`; usuń go i zapisz w log.md.
 2. Dla każdej: `git diff <code_sha>..HEAD -- <pliki z sources, które nie są w raw/>`. Jeśli diff jest pusty, ustaw tylko `code_sha`. W przeciwnym razie przeczytaj zmienione pliki i zaktualizuj „Stan w kodzie” oraz „Rozbieżności”.
 3. Strony encji muszą odzwierciedlać `backend/models.py` i migracje w `backend/migrations/versions/`. Jeśli encja z Miro nie ma tabeli, napisz to wprost w „Stan w kodzie”.
 4. Stan: `last_code_sha` = HEAD.
@@ -72,7 +72,7 @@ Sprawdź i zgłoś w `log.md`:
 
 1. **Rozbieżności** Miro ↔ kod ↔ wiki: porównaj „Plan (Miro)” ze „Stanem w kodzie” na każdej stronie encji i architektury.
 2. **Sieroty**: strony bez linku przychodzącego i strony nieobecne w `index.md`. Napraw je, dodając wpisy do indeksu.
-3. **Nieaktualne SHA**: `code_sha` ≠ HEAD. Zaproponuj `ingest code`.
+3. **Nieaktualne SHA**: kod w `sources` zmienił się od `code_sha` (test jak w `ingest code`). Zaproponuj `ingest code`.
 4. **Niewpisane odpowiedzi**: pytania o statusie `odpowiedziane`. Wpisz odpowiedź do stron i zmień status na `zamknięte`.
 
 Każda niewiadoma z punktu 1, której nie rozstrzyga ani kod, ani wiki, staje się pytaniem:
@@ -103,6 +103,7 @@ Po utworzeniu zapisz w `wiki/CLAUDE.md` (sekcja „Miro”) `data-miro-id` ramki
 
 ### Karteczki
 
+- **Zagnieżdżenie:** karteczki twórz i przenoś w `<g data-miro-id="<ID ramki>" transform="translate(<x ramki>,<y ramki>)" data-frame="Pytania do analityka">` z dzieckiem `<rect data-type="frame" x="0" y="0" width="2400" height="1800" />`. Zwykły `<g data-miro-id>` bez `data-frame` jest ignorowany i karteczki lądują na współrzędnych bezwzględnych. Po zapisie sprawdź `canvas_search` (matches `re:Q-\d{3}`), czy każda ma `parent` = ID ramki.
 - **Treść:** `<b>Q-NNN · tag</b><br>pytanie skrócone do 1–2 zdań<br>Odp.:`. Kolory: `light_yellow` w kolumnie Otwarte, `light_green` w Odpowiedzianych, `gray` w Zamkniętych w wiki. Rozmiar 199x228; układ w kolumnie po 3 w rzędzie (x = kolumna + 32 + i·231, y = 280 + rząd·260, współrzędne względem ramki).
 - **Dopasowanie:** po regexie `^Q-\d{3}` na początku tekstu karteczki, nigdy po pozycji ani treści. ID karteczki zapisz w polu `Miro:` pytania.
 - **Karteczka bez ID w ramce:** nie zmieniaj jej, a w `log.md` zapisz ostrzeżenie `karteczka bez ID: <data-miro-id> „<pierwsze słowa>”`.

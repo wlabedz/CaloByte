@@ -5,7 +5,7 @@ Ta wiki jest utrzymywana przez Claude według wzorca LLM Wiki (Karpathy): surowe
 ## Query — jak odpowiadać na pytania o projekt
 
 1. Zacznij od [index.md](index.md) i przeczytaj pasujące strony.
-2. Jeśli strona ma `code_sha` różny od `git rev-parse --short HEAD`, sprawdź wskazane w `sources` pliki w kodzie, zanim na niej polegniesz.
+2. Jeśli `git diff --quiet <code_sha> HEAD -- <pliki z sources>` pokazuje zmiany, sprawdź wskazane w `sources` pliki w kodzie, zanim na niej polegniesz.
 3. Odpowiedź, która syntetyzuje kilka stron i warto ją zachować, zaproponuj jako nową stronę.
 4. Niewiadomą, której nie rozstrzygają ani wiki, ani kod, zgłoś jako pytanie do analityka (`/wiki lint`).
 

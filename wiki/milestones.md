@@ -1,13 +1,12 @@
 ---
 title: Kamienie milowe
 sources: [raw/miro/2026-11-07-board.md, wiki/changelog.md]
-code_sha: 933b1a7
 updated: 2026-11-07
 ---
 
 # Kamienie milowe
 
-Oś z Miro: Spotkanie 1: Start → Spotkanie 2: CI & Baza → Spotkanie 3: CD & Integracja → Spotkanie 4: Twist & AI → Spotkanie 5: Obrona. **Dat spotkań nie ma w Miro**, więc wpisy w changelogu mają kamień milowy `?`.
+Oś z Miro: Spotkanie 1: Start → Spotkanie 2: CI & Baza → Spotkanie 3: CD & Integracja → Spotkanie 4: Twist & AI → Spotkanie 5: Obrona. **Dat spotkań nie ma w Miro**, więc wpisy w changelogu mają kamień milowy `?`. [Q-006](questions.md#q-006--harmonogram--otwarte)
 
 ## Spotkanie 1: Start i szkielet
 - Plan: repo z ochroną `main` (PR + review), `/backend` z `GET /health`, `/frontend` z routingiem i base-href, „Hello World” na Pages i Vercelu.

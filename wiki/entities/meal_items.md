@@ -17,4 +17,4 @@ Pola: `id`, `meal_id` (FK → [meals](meals.md)), `ingredient_name`, `weight_g`,
 
 ## Rozbieżności
 
-- Nie wiadomo, czy `total_*` w `meals` mają być liczone z `meal_items` (w bazie albo w API), czy zapisywane osobno.
+- Nie wiadomo, czy `total_*` w `meals` mają być liczone z `meal_items` (w bazie albo w API), czy zapisywane osobno. [Q-008](../questions.md#q-008--model-danych--otwarte)

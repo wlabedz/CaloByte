@@ -18,9 +18,20 @@ Wpisy operacji `/wiki` od najstarszych. Blok `ingest-state` na końcu czyta skil
 ## [2026-11-07] ingest | miro (powtórka)
 - bez zmian w treści projektu; ramka pytań już istnieje (1 trafienie), zrzut uzupełniony o sekcję Ramka pytań
 
+## [2026-11-07] ingest | code
+- Wszystkie strony z `code_sha` zgodne z kodem (diff 933b1a7..7217418 w `sources` pusty), bez zmian w treści.
+- Reguła nieaktualności zmieniona z „`code_sha` ≠ HEAD” na „diff w `sources` niepusty” (commity samej wiki nie liczą się).
+- milestones.md: usunięty `code_sha`, bo `sources` nie zawierają plików kodu.
+
+## [2026-11-07] lint
+- Pytania: +Q-001…Q-008 (8 karteczek w ramce Miro, kolumna Otwarte)
+- Sieroty: brak (wszystkie strony w index.md).
+- Do zespołu (nie do analityka): `deploy-backend.yml` na Pythonie 3.12 przy 3.13 w CI i w Miro; zdublowane kroki checkout/setup-node; brak review w 13 PR-ach; SSR i hydracja przy statycznym hostingu; brak `withHashLocation()`; brak `AI.md`.
+- Uwaga: kotwice linków `#q-nnn--tag--status` zawierają status, więc po zmianie statusu trzeba je zaktualizować.
+
 <!-- ingest-state
 last_pr: 13
 last_miro_snapshot: 2026-11-07
-last_code_sha: 933b1a7
-next_question_id: 1
+last_code_sha: 7217418
+next_question_id: 9
 -->
