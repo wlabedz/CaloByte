@@ -1,0 +1,27 @@
+<div class="header">
+  <span class="label">{{ label() }}</span>
+  <span class="amount">
+    <strong>{{ value() | number: '1.0-0' }}</strong>
+    @if (target() !== undefined) {
+      <span class="target"> / {{ target() | number: '1.0-0' }}</span>
+    }
+    <span class="unit"> {{ unit() }}</span>
+  </span>
+</div>
+
+@if (target() !== undefined) {
+  <div class="meter">
+    <div
+      class="track"
+      role="progressbar"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      [attr.aria-valuenow]="barWidth()"
+      [attr.aria-valuetext]="percent() + '% celu'"
+      [attr.aria-label]="label()"
+    >
+      <div class="bar" [style.width.%]="barWidth()"></div>
+    </div>
+    <span class="percent">{{ percent() }}%</span>
+  </div>
+}

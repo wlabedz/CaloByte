@@ -1,13 +1,24 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { routes } from './app.routes';
-import { provideClientHydration } from '@angular/platform-browser';
+import { registerLocaleData } from '@angular/common';
 import { provideHttpClient, withFetch } from '@angular/common/http';
+import localePl from '@angular/common/locales/pl';
+import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { provideRouter, withHashLocation } from '@angular/router';
+
+import { routes } from './app.routes';
+import { InMemoryMealRepository } from './core/data/in-memory-meal-repository';
+import { MealRepository } from './core/data/meal-repository';
+
+registerLocaleData(localePl);
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes), provideClientHydration(),
+    // Adresy w postaci /#/history: GitHub Pages zna tylko index.html,
+    // więc odświeżenie podstrony bez hasha kończyłoby się błędem 404.
+    provideRouter(routes, withHashLocation()),
     provideHttpClient(withFetch()),
-  ]
+    { provide: LOCALE_ID, useValue: 'pl' },
+    // Dane przykładowe do czasu podpięcia API — klient HTTP podmienia tylko ten provider.
+    { provide: MealRepository, useClass: InMemoryMealRepository },
+  ],
 };

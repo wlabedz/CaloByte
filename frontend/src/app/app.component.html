@@ -1,0 +1,20 @@
+<header class="app-header">
+  <div class="header-inner">
+    <a class="brand" routerLink="/dashboard">
+      <span class="brand-mark" aria-hidden="true">C</span>
+      <span>Calo<strong>Byte</strong></span>
+    </a>
+
+    <nav aria-label="Główna nawigacja">
+      @for (link of navLinks; track link.path) {
+        <a [routerLink]="link.path" routerLinkActive="active" ariaCurrentWhenActive="page">
+          {{ link.label }}
+        </a>
+      }
+    </nav>
+  </div>
+</header>
+
+<main>
+  <router-outlet />
+</main>

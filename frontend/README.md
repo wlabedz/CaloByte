@@ -1,59 +1,69 @@
-# Frontend
+# CaloByte — frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.4.
+Angular 22 (standalone components, sygnały, zoneless, tryb strict), publikowany jako statyczne SPA
+na GitHub Pages — bez SSR, bo Pages serwuje wyłącznie pliki statyczne.
 
-## Development server
+## Uruchomienie
 
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Wymagany Node.js `^22.22.3`, `^24.15` lub `>=26` (wymóg Angular CLI 22).
 
 ```bash
-ng generate component component-name
+npm ci
+npm start        # http://localhost:4200
+npm test         # Vitest; poza terminalem (np. w CI) uruchamia się jednorazowo
+npm run lint     # angular-eslint
+npm run build    # build produkcyjny do dist/frontend/browser z base href /CaloByte/
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Struktura
 
-```bash
-ng generate --help
+```
+src/
+├── environments/api-url.ts   # adres API; w deployu nadpisywany zmienną API_URL z repozytorium
+├── testing/                  # dane testowe współdzielone przez specy
+└── app/
+    ├── app.config.ts         # providery: router z withHashLocation(), HttpClient, locale pl, źródło danych
+    ├── app.routes.ts         # trasy, widoki ładowane leniwie
+    ├── core/
+    │   ├── models.ts         # Meal, MealItem (pola jak w bazie), DailyTargets
+    │   ├── nutrition.ts      # sumowanie makro, grupowanie posiłków po dniach
+    │   └── data/             # MealRepository (kontrakt) + implementacja z danymi przykładowymi
+    ├── shared/macro-progress/ # pasek realizacji celu (kalorie, makroskładniki)
+    └── features/
+        ├── dashboard/        # DashboardComponent — bilans dnia i dzisiejsze posiłki
+        └── history/          # HistoryComponent — przegląd dni i średnia kalorii
 ```
 
-## Building
+## Routing a GitHub Pages
 
-To build the project run:
+Router działa z `withHashLocation()`, więc adresy mają postać `…/CaloByte/#/history`.
+GitHub Pages serwuje tylko `index.html`, a dzięki hashowi odświeżenie dowolnej podstrony
+nie kończy się błędem 404.
 
-```bash
-ng build
-```
+## Dane i integracja z API
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Widoki pobierają dane wyłącznie przez `MealRepository`. Do czasu podpięcia backendu
+w `app.config.ts` zarejestrowane jest `InMemoryMealRepository` z tygodniem przykładowych
+posiłków (usuwanie działa w pamięci, do odświeżenia strony). Klient HTTP dziedziczy po
+`MealRepository`, korzysta z `API_URL` i podmienia ten jeden provider — widoki zostają bez zmian.
 
-## Running unit tests
+Cele dzienne (`DailyTargets`) są osobnym typem, bo tabela `users` ich nie przechowuje —
+backend może je dodać jako kolumny albo wyliczać z wagi, wzrostu, wieku i aktywności.
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Na czym polegają workflowy CI/CD
 
-```bash
-ng test
-```
+Nie zmieniaj bez uzgodnienia z osobą od CI/CD:
 
-## Running end-to-end tests
+- nazwa projektu `frontend` → wynik builda w `dist/frontend/browser` (deploy na Pages),
+- plik `src/environments/api-url.ts` z eksportem `API_URL` (deploy go nadpisuje),
+- skrypt `npm run lint` oraz `ng test --watch=false --coverage` z raportem
+  `coverage/frontend/coverage-summary.json` (podsumowanie pokrycia w CI).
 
-For end-to-end (e2e) testing, run:
+## Konwencje
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- `ng generate component nazwa` tworzy `nazwa.component.ts` z klasą `NazwaComponent`
+  (ustawione w `angular.json`, zgodnie z nazwami z planu projektu).
+- Komponenty standalone z `ChangeDetectionStrategy.OnPush`, stan w sygnałach,
+  w szablonach `@if` / `@for`.
+- Style w zwykłym CSS; kolory i promienie jako zmienne CSS w `src/styles.css`
+  (motyw jasny i ciemny).
