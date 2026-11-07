@@ -19,7 +19,15 @@
     @if (r.source === 'user') {
       <div class="actions">
         <a class="edit-link" [routerLink]="['/recipes', r.id, 'edit']">Edytuj</a>
-        <button type="button" class="delete-button" (click)="deleteRecipe(r)">Usuń</button>
+        <button
+          type="button"
+          class="delete-button"
+          [disabled]="deleting()"
+          [attr.aria-label]="'Usuń przepis ' + r.name"
+          (click)="deleteRecipe(r)"
+        >
+          Usuń
+        </button>
       </div>
     }
   </header>
