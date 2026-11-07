@@ -93,6 +93,12 @@ def prepare_recipes(kaggle_path: Path, out_path: Path) -> int:
 def prepare_products(usda_dir: Path, selection_path: Path, out_path: Path) -> int:
     with open(selection_path, newline="", encoding="utf-8") as f:
         selection = list(csv.DictReader(f))
+    for r in selection:
+        if None in r or r.get("name_pl") is None:
+            raise ValueError(
+                f"malformed row in {selection_path.name} for fdc_id "
+                f"{r.get('fdc_id')}: unquoted comma or missing field"
+            )
     wanted = {r["fdc_id"] for r in selection}
 
     descriptions: dict[str, str] = {}

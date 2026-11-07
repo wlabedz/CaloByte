@@ -6,7 +6,7 @@ external_id,name,name_en,kcal,protein,fat,carbs,fiber
 172796,Bułka do hamburgera,"Rolls, hamburger or hotdog, plain",279,9.77,3.91,50.12,1.8
 174916,Pita pełnoziarnista,"Bread, pita, whole-wheat",262,9.8,1.71,55.89,6.1
 171267,Mleko 2%,"Milk, reduced fat, fluid, 2% milkfat, with added vitamin A and vitamin D",50,3.3,1.98,4.8,0
-171265,Mleko 3,"Milk, whole, 3.25% milkfat, with added vitamin D",61,3.15,3.25,4.8,0
+171265,"Mleko 3,25%","Milk, whole, 3.25% milkfat, with added vitamin D",61,3.15,3.25,4.8,0
 171269,Mleko odtłuszczone,"Milk, nonfat, fluid, with added vitamin A and vitamin D (fat free or skim)",34,3.37,0.08,4.96,0
 170874,Maślanka,"Milk, buttermilk, fluid, cultured, lowfat",40,3.31,1.07,4.79,0
 170886,Jogurt naturalny niskotłuszczowy,"Yogurt, plain, low fat",63,5.25,1.55,7.04,0

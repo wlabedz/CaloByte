@@ -95,3 +95,11 @@ def test_missing_fdc_id(tmp_path):
     _write(sel, ["fdc_id", "name_pl"], [["999", "Nic"]])
     with pytest.raises(ValueError, match="999"):
         prepare_products(d, sel, tmp_path / "p.csv")
+
+
+def test_malformed_selection_row(tmp_path):
+    d = _usda(tmp_path)
+    sel = tmp_path / "sel.csv"
+    sel.write_text("fdc_id,name_pl\n100,Mleko 3,25%\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="100"):
+        prepare_products(d, sel, tmp_path / "p.csv")
