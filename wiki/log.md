@@ -36,6 +36,12 @@ Wpisy operacji `/wiki` od najstarszych. Blok `ingest-state` na końcu czyta skil
 - Skill: idempotentny ingest code, rekoncyliacja pytań i karteczek, ingest all przy niedostępnym Miro, dopasowanie ID po usunięciu HTML, porównanie zrzutów po (ID, treść), kotwice pytań bez statusu.
 - Strony: changelog #10/#13 (NullPool), ci-cd, database, milestones, decyzja 0001 (uzasadnienie oznaczone jako wniosek), zrzut Miro (sekcja ramki z 8 karteczkami).
 
+## [2026-11-07] ingest | miro (test pętli odpowiedzi)
+- Rekoncyliacja: 8 karteczek z ID = 8 pytań.
+- Pytania: Q-004 otwarte → odpowiedziane → zamknięte (odpowiedź testowa z karteczki: „wlabedz/CaloByte jest główne”), wpisane do overview.md (Zasoby); karteczka przeniesiona do kolumny Zamknięte w wiki, kolor gray.
+- Ostrzeżenia: karteczka bez ID: 3458764689733277794 „test bez id” (karteczka testowa, usunięta po teście).
+- Do zrobienia na tablicy: karteczka GitHub nadal linkuje pwjtd/CaloByte.
+
 <!-- ingest-state
 last_pr: 13
 last_miro_snapshot: 2026-11-07

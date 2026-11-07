@@ -30,13 +30,13 @@ Karteczka „UI” na tablicy jest pusta. Czy są makiety lub wytyczne dla trzec
 - Odpowiedź: —
 
 <a id="q-004"></a>
-## Q-004 · repo · otwarte
+## Q-004 · repo · zamknięte
 Które repozytorium jest główne: `pwjtd/CaloByte` (link na tablicy) czy `wlabedz/CaloByte` (tam są PR-y i CORS w backendzie)?
 - Kontekst: karteczka GitHub w Miro linkuje `pwjtd/CaloByte`. Wszystkie 13 PR-ów jest w `wlabedz/CaloByte`, a `backend/app.py` dopuszcza origin `https://wlabedz.github.io`.
 - Źródła: raw/miro/2026-11-07-board.md, raw/github/prs/, backend/app.py
 - Dotyczy: [overview](overview.md)
 - Miro: 3458764689732163745
-- Odpowiedź: —
+- Odpowiedź: Główne repo to `wlabedz/CaloByte` (karteczka w Miro, 2026-11-07; **odpowiedź testowa** wpisana w ramach testu pętli wiki). Wpisane do [overview](overview.md#zasoby).
 
 <a id="q-005"></a>
 ## Q-005 · architektura · otwarte

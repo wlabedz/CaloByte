@@ -31,7 +31,7 @@ Wylosowany twist to **Statystyki z wykresem**: wykres w Angularze (chart.js / ng
 ## Zasoby
 
 - Tablica: https://miro.com/app/board/uXjVEWYP5RY=/
-- Repo (PR-y): https://github.com/wlabedz/CaloByte · link w Miro wskazuje https://github.com/pwjtd/CaloByte ([Q-004](questions.md#q-004))
+- Repo główne: https://github.com/wlabedz/CaloByte ([Q-004](questions.md#q-004)). Karteczka „GitHub” w Miro nadal linkuje https://github.com/pwjtd/CaloByte, więc link na tablicy trzeba poprawić.
 - Dataset posiłków: https://www.kaggle.com/datasets/thedevastator/better-recipes-for-a-better-life
 - API z posiłkami: https://calorieapi.com
 - Wymagane pliki repo wg Miro: `AI.md` (jak korzystano z AI), `README.md` (architektura, setup, linki prod). `AI.md` jeszcze nie istnieje.
