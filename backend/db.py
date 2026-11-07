@@ -6,7 +6,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 from sqlalchemy.pool import NullPool
 
-load_dotenv(".env.local")
+if not os.environ.get("CALOBYTE_TESTING"):
+    load_dotenv(".env.local")
 
 
 def database_url(unpooled: bool = False) -> str:
