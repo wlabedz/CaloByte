@@ -48,8 +48,13 @@ Wpisy operacji `/wiki` od najstarszych. Blok `ingest-state` na końcu czyta skil
 - Pytania: +Q-009 (użytkownik bez logowania; karteczka 3458764689734052356); kontekst Q-001, Q-007, Q-008 uzupełniony o #17
 - Uwagi: #14–#16 nie są zmergowanymi PR-ami. Ingest zrobiony na branchu chore/claude-rules (bez commita, zgodnie z zasadą „commit tylko na prośbę”). Q-003 nadal otwarte: widoki powstały bez makiet.
 
+## [2026-11-07] ingest | prs #19
+- Nowe: raw/github/prs/PR-0019.md; changelog +1 (razem 16)
+- Zmienione: brak stron — #19 nie zmienia `backend/`, `frontend/` ani `.github/`
+- Uwagi: dane PR pobrane z publicznego REST API GitHuba (`gh` niezainstalowany u wykonującego; te same pola co `gh pr list`). Ingest dołączony do PR #20 (widok Profil); sam #20 trafi do changelogu przy następnym ingeście, po merge'u.
+
 <!-- ingest-state
-last_pr: 18
+last_pr: 19
 last_miro_snapshot: 2026-11-07
 last_code_sha: aa41ac7
 next_question_id: 10
