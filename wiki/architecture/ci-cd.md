@@ -1,7 +1,7 @@
 ---
 title: CI/CD (GitHub Actions)
 sources: [raw/miro/2026-11-07-board.md, .github/workflows/ci.yml, .github/workflows/deploy-backend.yml, .github/workflows/deploy-frontend.yml, raw/github/prs/PR-0004.md, raw/github/prs/PR-0006.md, raw/github/prs/PR-0011.md, scripts/wiki_check.py, .claude/hooks/wiki-before-pr.py]
-code_sha: 81d47cf
+code_sha: 3f3aa87
 updated: 2026-11-07
 ---
 

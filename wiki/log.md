@@ -71,6 +71,11 @@ Wpisy operacji `/wiki` od najstarszych. Blok `ingest-state` na końcu czyta skil
 - Zmienione: architecture/backend.md (routery, `catalog_service`, `nutrition`, seed, testy na prawdziwym Postgresie), architecture/frontend.md (Przepisy, repozytoria HTTP, `polish-plural`), architecture/database.md (3 tabele, migracja `e677c7db66b7`, seed), architecture/ci-cd.md (usługa Postgres, `--cov=.`, krok seed), overview.md (dataset użyty, USDA), index.md; `code_sha` ustawiony na 81d47cf także na stronach users, meals, meal_items i decisions/0001 (zmieniły się `models.py`, `core/models.ts` i `db.py`)
 - Uwagi: tryb PR, więc `last_code_sha` i `last_pr` bez zmian, bez nowych pytań. Spec feature'a nie jest w repo i nie jest cytowany w `sources`. `user_id` przepisów i produktów zawsze `NULL` zgłasza [Q-009](questions.md#q-009).
 
+## [2026-11-07] ingest | code (feat/recipes-products, po merge'u z czatem)
+- Zmienione: architecture/backend.md, frontend.md i ci-cd.md (połączone opisy czatu z #35 i przepisów: routery, seed, testy na Postgresie, trasy i menu Pulpit/Historia/Przepisy/Czat/Profil), entities/users.md, entities/recipes.md (`code_sha` 3f3aa87).
+- Przepisy: usuwanie z „Cofnij” w powiadomieniu, jak na Pulpicie (#24).
+- Uwagi: tryb PR, `last_code_sha` i `last_pr` bez zmian, bez nowych pytań.
+
 <!-- ingest-state
 last_pr: 19
 last_miro_snapshot: 2026-11-07

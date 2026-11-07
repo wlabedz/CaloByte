@@ -1,7 +1,7 @@
 ---
 title: Encja recipes
 sources: [raw/miro/2026-11-07-board.md, backend/models.py, backend/schemas_catalog.py, backend/routers/recipes.py, backend/catalog_service.py, backend/nutrition.py, backend/migrations/versions/, backend/seed/, frontend/src/app/core/models.ts, frontend/src/app/core/data/, frontend/src/app/features/recipes/]
-code_sha: 81d47cf
+code_sha: 3f3aa87
 updated: 2026-11-07
 ---
 

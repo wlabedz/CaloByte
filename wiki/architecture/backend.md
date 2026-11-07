@@ -1,7 +1,7 @@
 ---
 title: Backend (FastAPI)
 sources: [raw/miro/2026-11-07-board.md, backend/app.py, backend/db.py, backend/schemas.py, backend/schemas_catalog.py, backend/catalog_service.py, backend/nutrition.py, backend/routers/, backend/seed/, backend/conftest.py, backend/test_app.py, backend/test_db.py, backend/test_models.py, backend/test_nutrition.py, backend/test_parsing.py, backend/test_prepare.py, backend/test_products_api.py, backend/test_recipes_api.py, backend/test_seed.py, backend/requirements.txt, backend/vercel.json, backend/chat.py, backend/spoonacular.py, backend/test_chat.py]
-code_sha: 81d47cf
+code_sha: 3f3aa87
 updated: 2026-11-07
 ---
 
@@ -33,7 +33,7 @@ Płaska struktura w `backend/`:
 ## Rozbieżności
 
 - Struktura katalogów: plan `backend/app/...` + `tests/`, a stan to pliki płasko w `backend/`. [Q-005](../questions.md#q-005)
-- Testy: plan mówi o mockowanej bazie, a testy są na prawdziwym Postgresie (lokalnym lub usłudze w CI). Testów jest ponad 8 planowanych (liczba `def test_` w `backend/test_*.py`: 46).
+- Testy: plan mówi o mockowanej bazie, a testy są na prawdziwym Postgresie (lokalnym lub usłudze w CI). Testów jest ponad 8 planowanych (55 testów w `backend/test_*.py`, w tym 9 czatu).
 - Plan zakłada `POST /meals/parse-ai` i encję `meals`; nowe endpointy dotyczą przepisów i produktów, których Miro nie przewiduje ([entities/recipes](../entities/recipes.md)).
 - Czatu z przepisami nie ma w planie z Miro: to dodatek ponad plan (autor PR, 2026-11-07). Spoonacular nie występuje w Miro; jego darmowy plan to 50 punktów dziennie, czyli kilka–kilkanaście rozmów, a po wyczerpaniu czat odpowiada, że nie może pobrać przepisów.
 - Plan zakłada `response_format={"type": "json_object"}`; czat wymusza JSON przez `response_format` ze schematem w Interactions API Gemini.
