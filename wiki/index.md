@@ -8,6 +8,9 @@ Spis wszystkich stron. Zasady i sposób zadawania pytań są w [CLAUDE.md](CLAUD
 
 ## Architektura
 
+- [architecture/ci-cd.md](architecture/ci-cd.md) — trzy workflow GitHub Actions: CI, deploy backendu na Vercel, deploy frontu na Pages
+- [architecture/database.md](architecture/database.md) — Postgres, SQLAlchemy + psycopg, NullPool, migracje Alembic
+
 ## Decyzje
 
 ## Rejestry

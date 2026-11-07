@@ -43,7 +43,7 @@ Jeśli operacja nic nie zmieniła poza `log.md`, wpis w logu brzmi `bez zmian`, 
 ## ingest prs
 
 1. `gh auth status`. Jeśli nie jesteś zalogowany, zatrzymaj się i podaj instrukcję `gh auth login`. Nic nie zapisuj.
-2. `gh pr list --repo wlabedz/CaloByte --state merged --limit 200 --json number,title,author,mergedAt,body,headRefName,files,commits,reviews`. Weź PR-y z `number > last_pr`, rosnąco.
+2. `gh pr list --repo wlabedz/CaloByte --state merged --limit 30 --json number,title,author,mergedAt,body,headRefName,files,commits,reviews`. Weź PR-y z `number > last_pr`, rosnąco.
 3. Każdy PR zapisz do `raw/github/prs/PR-NNNN.md` (numer dopełniony do 4 cyfr): nagłówek z tytułem, potem autor, `mergedAt`, branch, opis (body), lista commitów (`oid` 7 znaków + nagłówek), lista plików z `+/-`, review (autor, stan, treść).
 4. W `wiki/changelog.md` dodaj wpis na górze, według wzorca. Pole „Co” opisuje zmianę w działaniu aplikacji, nie listę plików. Kamień milowy przypisz według `wiki/milestones.md`; jeśli brak dat, wpisz `?`. Jeśli wpis z tym numerem `#N` już istnieje, nie dodawaj go ponownie.
 5. Zaktualizuj albo utwórz strony, których dotyczą zmienione pliki: `backend/*` → `architecture/backend.md`, `backend/migrations/*`, `db.py`, `models.py` → `architecture/database.md` i `entities/*`, `frontend/*` → `architecture/frontend.md`, `.github/workflows/*` → `architecture/ci-cd.md`. Ustaw `code_sha` na merge commit najnowszego PR-a (`git rev-parse --short` dla `mergeCommit`, a gdy go brak, `git rev-parse --short HEAD`).
