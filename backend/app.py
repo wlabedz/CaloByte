@@ -8,13 +8,14 @@ from sqlalchemy.orm import Session
 
 from db import get_db
 from models import User
-from routers import products
+from routers import products, recipes
 from schemas import UserCreate, UserOut
 
 DbSession = Annotated[Session, Depends(get_db)]
 
 app = FastAPI()
 app.include_router(products.router)
+app.include_router(recipes.router)
 
 app.add_middleware(
     CORSMiddleware,

@@ -54,6 +54,7 @@ def test_get_product_and_404(client, db_session):
 def test_create_product(client):
     r = client.post("/products", json=BODY)
     assert r.status_code == 201
+    assert isinstance(r.json()["kcal"], (int, float))
     assert r.json()["source"] == "user"
 
 
