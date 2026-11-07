@@ -15,6 +15,9 @@ Wpisy operacji `/wiki` od najstarszych. Blok `ingest-state` na końcu czyta skil
 - Miro: utworzona ramka „Pytania do analityka” (3458764689732114821)
 - Ostrzeżenia: overview tablicy liczy 1 element typu document, którego `canvas_read_as_svg` nie zwrócił; obraz 3458764688290762075 bez opisu tekstowego.
 
+## [2026-11-07] ingest | miro (powtórka)
+- bez zmian w treści projektu; ramka pytań już istnieje (1 trafienie), zrzut uzupełniony o sekcję Ramka pytań
+
 <!-- ingest-state
 last_pr: 13
 last_miro_snapshot: 2026-11-07
