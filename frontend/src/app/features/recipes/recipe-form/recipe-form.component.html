@@ -112,9 +112,6 @@
       <button type="button" class="link-button" (click)="dialogOpen.set(true)">
         Dodaj własny produkt
       </button>
-      @if (dialogOpen()) {
-        <app-product-dialog (created)="onProductCreated($event)" (closed)="dialogOpen.set(false)" />
-      }
     </section>
 
     <section class="card preview" aria-labelledby="preview-heading">
@@ -158,4 +155,8 @@
       <button type="submit" class="primary" [disabled]="saving()">Zapisz</button>
     </div>
   </form>
+}
+
+@if (dialogOpen()) {
+  <app-product-dialog (created)="onProductCreated($event)" (closed)="dialogOpen.set(false)" />
 }

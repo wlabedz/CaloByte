@@ -6,7 +6,7 @@
     <p class="alert" role="alert">{{ message }}</p>
   }
 
-  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <form [formGroup]="form" (ngSubmit)="submit(); $event.stopPropagation()" novalidate>
     <label class="label">
       Nazwa
       <input class="field" type="text" formControlName="name" maxlength="200" />

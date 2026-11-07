@@ -33,6 +33,7 @@ import { ProductDialogComponent } from '../product-dialog/product-dialog.compone
 const SEARCH_DEBOUNCE_MS = 300;
 const MIN_QUERY_LENGTH = 2;
 const DEFAULT_WEIGHT_G = 100;
+const MAX_ITEMS = 50;
 const MAX_WEIGHT_G = 10000;
 
 function notBlank(control: AbstractControl): ValidationErrors | null {
@@ -74,7 +75,10 @@ export class RecipeFormComponent {
   protected readonly searchResults = signal<Product[]>([]);
   protected readonly dialogOpen = signal(false);
 
-  protected readonly items = new FormArray<ItemGroup>([], [Validators.required]);
+  protected readonly items = new FormArray<ItemGroup>(
+    [],
+    [Validators.required, Validators.maxLength(MAX_ITEMS)],
+  );
   protected readonly form = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(200), notBlank]],
     servings: [1 as number | null, [Validators.required, Validators.min(1), Validators.max(100)]],

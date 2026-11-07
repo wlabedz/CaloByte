@@ -319,4 +319,46 @@ describe('RecipeFormComponent', () => {
     expect(element.querySelectorAll('.item-row').length).toBe(1);
     expect(element.querySelector('.item-row')!.textContent).toContain('Mój jogurt');
   });
+
+  it('does not save the recipe when saving a product in the dialog', async () => {
+    createProduct.mockReturnValue(
+      of(buildProduct({ id: 'p9', name: 'Mój jogurt', source: 'user' })),
+    );
+    await setup();
+    await fillValid();
+    button('Dodaj własny produkt').click();
+    await fixture.whenStable();
+    const dialog = element.querySelector('app-product-dialog')!;
+    const set = (name: string, value: string) => {
+      const el = dialog.querySelector<HTMLInputElement>(`[formControlName="${name}"]`)!;
+      el.value = value;
+      el.dispatchEvent(new Event('input'));
+    };
+    set('name', 'Mój jogurt');
+    set('kcal', '60');
+    set('protein', '5');
+    set('fat', '3');
+    set('carbs', '4');
+    dialog.querySelector<HTMLButtonElement>('button[type="submit"]')!.click();
+    await fixture.whenStable();
+
+    expect(createProduct).toHaveBeenCalledTimes(1);
+    expect(create).not.toHaveBeenCalled();
+    expect(update).not.toHaveBeenCalled();
+  });
+
+  it('rejects more than 50 ingredients', async () => {
+    await setup();
+    type('[formControlName="name"]', 'Omlet');
+    const component = fixture.componentInstance as unknown as { pick(product: typeof egg): void };
+    for (let i = 0; i < 51; i++) {
+      component.pick(egg);
+    }
+    await fixture.whenStable();
+    button('Zapisz').click();
+    await fixture.whenStable();
+
+    expect(create).not.toHaveBeenCalled();
+    expect(text()).toContain('Przepis może mieć maksymalnie 50 składników');
+  });
 });
