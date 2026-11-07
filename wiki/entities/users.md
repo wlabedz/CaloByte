@@ -1,7 +1,7 @@
 ---
 title: Encja users
-sources: [raw/miro/2026-11-07-board.md, backend/models.py, backend/schemas.py, backend/migrations/versions/, raw/github/prs/PR-0017.md]
-code_sha: 933b1a7
+sources: [raw/miro/2026-11-07-board.md, backend/models.py, backend/schemas.py, backend/migrations/versions/, raw/github/prs/PR-0017.md, frontend/src/app/core/data/http-user-repository.ts, frontend/src/app/features/profile/profile.component.ts]
+code_sha: 0099045
 updated: 2026-11-07
 ---
 
@@ -28,10 +28,10 @@ Model `User` (`backend/models.py:35`), tabela `users` z migracji `61ac7f2698e4` 
 | `bmi` | numeric(4,1) | kolumna wyliczana w bazie: `weight_kg / (height_cm/100)^2` |
 | `created_at`, `updated_at` | timestamptz | `now()` |
 
-API: `GET /users`, `POST /users` (409 przy zajętym emailu), schematy `UserCreate`/`UserOut` w `backend/schemas.py`. Front od #17 nie korzysta z tych endpointów: formularz i `UsersService` zostały usunięte, a cele dzienne idą z `MealRepository.getTargets()`.
+API: `GET /users`, `POST /users` (409 przy zajętym emailu), schematy `UserCreate`/`UserOut` w `backend/schemas.py`. Front korzysta z nich od #20: `HttpUserRepository` i widok Profil (lista profili, wybór aktywnego, zakładanie nowego). Walidacja formularza odwzorowuje `UserCreate`, w tym e-mail z kropką w domenie jak `EmailStr`. Cele dzienne front bierze nadal z `MealRepository.getTargets()`, zob. [architecture/frontend](../architecture/frontend.md).
 
 ## Rozbieżności
 
 - Miro: cele dzienne (`daily_*_target`). Kod: dane antropometryczne, bez celów. [Q-001](../questions.md#q-001)
 - Brak `username`. Jest `name` + `surname`.
-- Nie ma logowania, więc nie wiadomo, kto jest „bieżącym” użytkownikiem. [Q-009](../questions.md#q-009)
+- Nie ma logowania. Front wybiera „bieżącego” użytkownika na stronie Profil i zapamiętuje go w przeglądarce, a `GET /users` pokazuje wszystkim pełne dane profili. [Q-009](../questions.md#q-009)

@@ -46,5 +46,11 @@ export const routes: Routes = [
         (m) => m.RecipeDetailComponent,
       ),
   },
+  {
+    path: 'profile',
+    title: 'Profil · CaloByte',
+    loadComponent: () =>
+      import('./features/profile/profile.component').then((m) => m.ProfileComponent),
+  },
   { path: '**', redirectTo: 'dashboard' },
 ];

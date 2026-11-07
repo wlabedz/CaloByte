@@ -13,6 +13,11 @@ describe('AppComponent', () => {
     }).compileComponents();
   });
 
+  afterEach(() => {
+    localStorage.clear();
+    document.documentElement.removeAttribute('data-theme');
+  });
+
   it('links to the main views with hash URLs (GitHub Pages)', async () => {
     const fixture = TestBed.createComponent(AppComponent);
     await fixture.whenStable();
@@ -21,7 +26,21 @@ describe('AppComponent', () => {
     const hrefs = Array.from(element.querySelectorAll('nav a'), (link) =>
       link.getAttribute('href'),
     );
-    expect(hrefs).toEqual(['#/dashboard', '#/history', '#/recipes']);
+    expect(hrefs).toEqual(['#/dashboard', '#/history', '#/recipes', '#/profile']);
+  });
+
+  it('switches the theme from the header', async () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    await fixture.whenStable();
+    const toggle = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>(
+      '.theme-toggle',
+    );
+
+    toggle?.click();
+    await fixture.whenStable();
+
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+    expect(toggle?.getAttribute('aria-label')).toBe('Włącz jasny motyw');
   });
 
   it('redirects unknown paths to the dashboard', async () => {
