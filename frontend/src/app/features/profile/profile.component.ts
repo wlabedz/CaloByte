@@ -14,6 +14,7 @@ import { ActiveUserService } from '../../core/active-user.service';
 import { UserRepository } from '../../core/data/user-repository';
 import { ACTIVITY_LABELS, ActivityLevel, NewUser, SEX_LABELS, Sex, User } from '../../core/models';
 import { toDayKey } from '../../core/nutrition';
+import { ToastService } from '../../core/toast.service';
 
 /** Jak `EmailStr` w backendzie: domena musi zawierać kropkę (`a@b` zostałby odrzucony z 422). */
 const EMAIL_WITH_DOMAIN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -27,6 +28,7 @@ const EMAIL_WITH_DOMAIN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 })
 export class ProfileComponent {
   private readonly users = inject(UserRepository);
+  private readonly toasts = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
   protected readonly activeUser = inject(ActiveUserService);
 
@@ -95,6 +97,9 @@ export class ProfileComponent {
         } else {
           this.profiles.update((profiles) => [...(profiles ?? []), user]);
         }
+        this.toasts.show({
+          message: `Zapisano profil ${user.name} ${user.surname} — jest teraz aktywny.`,
+        });
       },
       error: (error: HttpErrorResponse) => {
         this.saving.set(false);

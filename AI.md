@@ -21,6 +21,19 @@ Wymóg projektu: opis narzędzi AI, poleceń (promptów) i tego, co poprawialiś
 - Poprawki po review (Piotr): walidacja e-maila jak `EmailStr` i błąd 422 przy polu, ponowne wczytanie listy po zapisie, wdrożone API lokalnie tylko z wyboru (`npm run start:deployed-api`), aktualizacja wiki.
 - Przy testach w przeglądarce zapisy (`POST /users`) były przechwytywane, żeby nie tworzyć profili w produkcyjnej bazie.
 
+### #23 — motyw jasny i ciemny
+
+- Polecenie (skrót): „zrób motywy ciemny/jasny”.
+- Wygenerowane: tokeny kolorów w `light-dark()`, `ThemeService` z zapamiętaniem wyboru, skrypt w `index.html` przeciw miganiu tła, przełącznik w nagłówku, testy.
+- Sprawdzone w przeglądarce: przełączanie przy jasnym i ciemnym systemie, wybór po odświeżeniu, motyw ustawiony także bez JS aplikacji, nagłówek na telefonie.
+
+### #24 — „Cofnij” i powiadomienia
+
+- Polecenie (skrót): „zrób kolejny PR z czymś fajnym tego typu jak motywy”.
+- Wygenerowane: `ToastService` i `ToastHostComponent`, „Cofnij” przy usuwaniu posiłku zamiast `confirm()`, potwierdzenie zapisu profilu, testy.
+- Poprawka po sprawdzeniu: zrzut z szarym powiadomieniem okazał się klatką z animacji wejścia, kolory zweryfikowane po jej zakończeniu.
+- #23 i #24 zostały zmergowane do gałęzi pośrednich zamiast do `main`; kod trafił do `main` osobnym PR.
+
 ## Backend
 
 _Do uzupełnienia (#33)._

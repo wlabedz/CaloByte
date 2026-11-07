@@ -5,6 +5,7 @@ import { of, throwError } from 'rxjs';
 import { buildUser } from '../../../testing/user-fixtures';
 import { ActiveUserService } from '../../core/active-user.service';
 import { UserRepository } from '../../core/data/user-repository';
+import { ToastService } from '../../core/toast.service';
 import { ProfileComponent } from './profile.component';
 
 describe('ProfileComponent', () => {
@@ -100,6 +101,9 @@ describe('ProfileComponent', () => {
       sex: 'female',
     });
     expect(profileButton('Ola Wiśniewska')?.getAttribute('aria-pressed')).toBe('true');
+    expect(TestBed.inject(ToastService).toasts()[0]?.message).toContain(
+      'Zapisano profil Ola Wiśniewska',
+    );
   });
 
   it('explains when the e-mail is already taken', async () => {

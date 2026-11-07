@@ -57,6 +57,10 @@ Wpisy operacji `/wiki` od najstarszych. Blok `ingest-state` na końcu czyta skil
 - Zmienione: architecture/frontend.md (widok Profil, `UserRepository`/`HttpUserRepository`, `ActiveUserService`, tryby adresu API; `sources` na katalogi `frontend/src/…`, żeby obejmowały każdy zmieniony plik frontu), entities/users.md (front korzysta z `GET/POST /users`), entities/meals.md i entities/meal_items.md (tylko `code_sha`: w `core/models.ts` doszły typy użytkownika, `Meal`/`MealItem` bez zmian)
 - Uwagi: ustalenie z review #20 (weryfikacja wybranego profilu przez 404 dla nieznanego `user_id`) wpisane z dopiskiem źródła. `last_code_sha` i `last_pr` bez zmian, bo kod nie jest jeszcze w `main`.
 
+## [2026-11-07] ingest code (PR) | fix-theme-toasts-on-main
+- Zmienione: architecture/frontend.md (motyw jasny/ciemny z #23, powiadomienia i „Cofnij” z #24, 36 testów), entities/users.md (tylko `code_sha`: w Profilu doszło powiadomienie po zapisie)
+- Uwagi: #23 i #24 zostały zmergowane do gałęzi pośrednich (`feat-profile-view`, `feat-theme-toggle`), a nie do `main`; ten PR przenosi ich kod do `main`. `last_code_sha` i `last_pr` bez zmian.
+
 <!-- ingest-state
 last_pr: 19
 last_miro_snapshot: 2026-11-07

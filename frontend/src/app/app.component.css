@@ -42,6 +42,12 @@
   font-weight: 700;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 nav {
   display: flex;
   gap: 0.25rem;
@@ -63,6 +69,46 @@ nav a:hover {
 nav a.active {
   background: var(--primary-soft);
   color: var(--primary-strong);
+}
+
+.theme-toggle {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  background: var(--surface-muted);
+  color: var(--text);
+}
+
+.theme-toggle svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+/* Na telefonie nazwa zostaje tylko dla czytników ekranu, żeby nagłówek mieścił się w linii. */
+@media (max-width: 480px) {
+  .brand-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 }
 
 main {

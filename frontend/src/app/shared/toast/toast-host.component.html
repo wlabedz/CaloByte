@@ -1,0 +1,28 @@
+<div class="toasts" role="status">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div
+      class="toast"
+      (mouseenter)="toastService.pause(toast.id)"
+      (mouseleave)="toastService.resume(toast.id)"
+      (focusin)="toastService.pause(toast.id)"
+      (focusout)="toastService.resume(toast.id)"
+    >
+      <p class="message">{{ toast.message }}</p>
+      @if (toast.actionLabel; as label) {
+        <button type="button" class="action" (click)="toastService.runAction(toast.id)">
+          {{ label }}
+        </button>
+      }
+      <button
+        type="button"
+        class="close"
+        aria-label="Zamknij powiadomienie"
+        (click)="toastService.dismiss(toast.id)"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M6 6l12 12M18 6 6 18" />
+        </svg>
+      </button>
+    </div>
+  }
+</div>
