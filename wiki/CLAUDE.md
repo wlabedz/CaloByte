@@ -1,6 +1,6 @@
 # Schemat wiki CaloByte
 
-Ta wiki jest utrzymywana przez Claude według wzorca LLM Wiki (Karpathy): surowe źródła w `raw/` → strony w `wiki/` → zasady w tym pliku. Czytają ją zespół i Claude. Operacje uruchamia skill `/wiki` (`.claude/skills/wiki/SKILL.md`). Projekt: `docs/superpowers/specs/2026-11-07-llm-wiki-design.md`.
+Ta wiki jest utrzymywana przez Claude według wzorca LLM Wiki (Karpathy): surowe źródła w `raw/` → strony w `wiki/` → zasady w tym pliku. Czytają ją zespół i Claude. Operacje uruchamia skill `/wiki` (`.claude/skills/wiki/SKILL.md`).
 
 ## Query — jak odpowiadać na pytania o projekt
 

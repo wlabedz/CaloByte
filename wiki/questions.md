@@ -5,7 +5,7 @@ Niewiadome w projekcie, zsynchronizowane z ramką „Pytania do analityka” na 
 <a id="q-001"></a>
 ## Q-001 · model danych · otwarte
 Czy użytkownik ma mieć cele dzienne (kcal, białko, tłuszcze, węglowodany) jak w Miro, czy liczymy je z wagi, wzrostu i aktywności? Jeśli liczymy, to którym wzorem?
-- Kontekst: Miro opisuje `daily_kcal_target`, `daily_protein_target`, `daily_fat_target`, `daily_carb_target`. `backend/models.py` ma `weight_kg`, `height_cm`, `activity`, `sex`, `bmi` i nie ma celów. Dashboard ma pokazywać progress bary celów.
+- Kontekst: Miro opisuje `daily_kcal_target`, `daily_protein_target`, `daily_fat_target`, `daily_carb_target`. `backend/models.py` ma `weight_kg`, `height_cm`, `activity`, `sex`, `bmi` i nie ma celów. Dashboard ma pokazywać progress bary celów. Od #17 front oczekuje `DailyTargets = { kcal, protein, fat, carbs }` (bez błonnika) i na razie pokazuje cele przykładowe. Autor #17 zgłasza to samo pytanie w sekcji „Do ustalenia”.
 - Źródła: raw/miro/2026-11-07-board.md, backend/models.py
 - Dotyczy: [entities/users](entities/users.md)
 - Miro: 3458764689732163742
@@ -59,7 +59,7 @@ Jakie są daty Spotkań 1–5 i co jest wymagane na Spotkaniach 4 i 5?
 <a id="q-007"></a>
 ## Q-007 · model danych · otwarte
 Czy `meal_type` ma tylko trzy wartości (śniadanie, obiad, kolacja), czy także przekąski albo inne posiłki?
-- Kontekst: Miro wymienia trzy typy. To decyduje o enumie w bazie i o filtrach w twiście z wyszukiwarką.
+- Kontekst: Miro wymienia trzy typy. To decyduje o enumie w bazie i o filtrach w twiście z wyszukiwarką. Front od #17 używa angielskich wartości `breakfast | lunch | dinner` z polskimi etykietami.
 - Źródła: raw/miro/2026-11-07-board.md
 - Dotyczy: [entities/meals](entities/meals.md)
 - Miro: 3458764689732163748
@@ -68,8 +68,17 @@ Czy `meal_type` ma tylko trzy wartości (śniadanie, obiad, kolacja), czy także
 <a id="q-008"></a>
 ## Q-008 · model danych · otwarte
 Czy sumy `total_*` w `meals` liczymy z `meal_items` (w bazie lub w API), czy zapisujemy je osobno, np. gdy posiłek nie ma rozbicia na składniki?
-- Kontekst: Miro ma oba poziomy (sumy w `meals`, wartości w `meal_items`), ale nie mówi, które jest źródłem prawdy. Ręczna korekta gramatur w AddMeal musi przeliczać sumy.
+- Kontekst: Miro ma oba poziomy (sumy w `meals`, wartości w `meal_items`), ale nie mówi, które jest źródłem prawdy. Ręczna korekta gramatur w AddMeal musi przeliczać sumy. Front od #17 sumuje dzień z `total_*`, a nie z `items`.
 - Źródła: raw/miro/2026-11-07-board.md
 - Dotyczy: [entities/meals](entities/meals.md), [entities/meal_items](entities/meal_items.md)
 - Miro: 3458764689732163749
+- Odpowiedź: —
+
+<a id="q-009"></a>
+## Q-009 · użytkownik · otwarte
+Czyje posiłki pokazuje aplikacja, skoro nie ma logowania? Czy uwierzytelnianie jest w zakresie projektu, czy wystarczy jeden użytkownik demo albo wybór użytkownika?
+- Kontekst: Miro wymaga danych „powiązanych z konkretnym użytkownikiem” (`meals.user_id`), ale nie wspomina o logowaniu. #17 zgłasza to w sekcji „Do ustalenia”. Backend ma tylko `GET/POST /users` bez auth.
+- Źródła: raw/miro/2026-11-07-board.md, raw/github/prs/PR-0017.md, backend/app.py
+- Dotyczy: [entities/users](entities/users.md), [architecture/frontend](architecture/frontend.md)
+- Miro: 3458764689734052356
 - Odpowiedź: —

@@ -1,7 +1,7 @@
 ---
 title: Encja meal_items
-sources: [raw/miro/2026-11-07-board.md, backend/models.py]
-code_sha: 933b1a7
+sources: [raw/miro/2026-11-07-board.md, backend/models.py, frontend/src/app/core/models.ts]
+code_sha: aa41ac7
 updated: 2026-11-07
 ---
 
@@ -13,7 +13,9 @@ Pola: `id`, `meal_id` (FK → [meals](meals.md)), `ingredient_name`, `weight_g`,
 
 ## Stan w kodzie
 
-**Tabeli jeszcze nie ma.**
+**Backend:** tabeli jeszcze nie ma.
+
+**Frontend** (od #17): interfejs `MealItem` w `frontend/src/app/core/models.ts` ma pola zgodne z planem. Zagnieżdża się go w `Meal.items`.
 
 ## Rozbieżności
 
