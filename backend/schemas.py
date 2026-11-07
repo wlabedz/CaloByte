@@ -23,3 +23,30 @@ class UserOut(UserCreate):
     id: UUID
     bmi: float
     created_at: datetime
+
+
+class ChatRequest(BaseModel):
+    message: str = Field(min_length=1, max_length=4000)
+    # Id of the previous Gemini interaction; None starts a new conversation.
+    interaction_id: str | None = Field(default=None, max_length=200)
+
+
+class RecipeOut(BaseModel):
+    id: int
+    meal: str
+    title: str
+    original_title: str
+    image: str | None
+    url: str | None
+    ready_in_minutes: int | None
+    servings: int | None
+    calories: int | None
+    protein_g: int | None
+    carbs_g: int | None
+    fat_g: int | None
+
+
+class ChatResponse(BaseModel):
+    message: str
+    recipes: list[RecipeOut]
+    interaction_id: str
