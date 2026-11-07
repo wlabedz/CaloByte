@@ -2,6 +2,18 @@
 
 Jeden wpis na każdy zmergowany PR, od najnowszych. Generowane przez `/wiki ingest prs`. Kamień milowy wynosi `?`, dopóki nie znamy dat spotkań (zob. [milestones.md](milestones.md)).
 
+## 2026-11-07 · #18 Wiki/2026 11 07 bootstrap
+- Autor: pwjtd · Branch: wiki/2026-11-07-bootstrap · Kamień milowy: ? · Review: wlabedz APPROVED
+- Co: Bez zmian w działaniu aplikacji. Dochodzi wiki projektu (`wiki/`, `raw/`), skill `/wiki` i pytania do analityka Q-001…Q-008 zsynchronizowane z ramką w Miro.
+- Pliki: .claude/skills/wiki/SKILL.md, wiki/**, raw/**, docs/superpowers/** (35 plików)
+- Strony wiki: [index](index.md), [questions](questions.md)
+
+## 2026-11-07 · #17 feat(frontend): nowa baza Angulara 22 + Pulpit i Historia
+- Autor: knizinsky · Branch: feat-frontend-rebuild · Kamień milowy: ? · Review: wlabedz APPROVED
+- Co: Front zbudowany od nowa, bez SSR, z routingiem `withHashLocation()`. Dochodzą widoki Pulpit (bilans dnia względem celów, dzisiejsze posiłki z usuwaniem) i Historia (dni, makro, średnia kcal), na razie na danych przykładowych w pamięci za abstrakcją `MealRepository`. Znika formularz użytkowników, a z nim `users.service.ts`.
+- Pliki: frontend/src/app/{app.config.ts, app.routes.ts, core/**, features/dashboard/**, features/history/**, shared/macro-progress/**}, usunięte `app.ts`, `users.service.ts`, `server.ts`, `main.server.ts` (46 plików)
+- Strony wiki: [architecture/frontend](architecture/frontend.md), [entities/meals](entities/meals.md), [entities/meal_items](entities/meal_items.md)
+
 ## 2026-10-28 · #13 Add simple form to test db connection
 - Autor: wlabedz · Branch: feat/enable-form · Kamień milowy: ?
 - Co: Pierwsze endpointy na danych: `GET /users` i `POST /users` (409 przy powtórzonym emailu) oraz formularz w Angularze, który tworzy użytkownika i wyświetla listę. Doszła zależność sesji `get_db()` i cache silnika (`@cache`). `NullPool` był już od #10.

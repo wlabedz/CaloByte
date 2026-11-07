@@ -14,11 +14,11 @@ Oś z Miro: Spotkanie 1: Start → Spotkanie 2: CI & Baza → Spotkanie 3: CD & 
 
 ## Spotkanie 2: CI i model danych
 - Plan: `ci.yml` (ruff, pytest, lint, testy frontu), baza Neon + `DATABASE_URL`, CRUD `meals` z walidacją (400/404/422), pierwsze testy backendu i min. 2 testy komponentów.
-- Stan: częściowo. CI w #6/#9 i baza + Alembic w #10–#12 są. **Brak tabeli i CRUD `meals`**. Jest tylko `users` (GET/POST). Backend ma 2 testy, front 2 testy w 1 pliku spec (`app.spec.ts`).
+- Stan: częściowo. CI w #6/#9 i baza + Alembic w #10–#12 są. **Brak tabeli i CRUD `meals`**. Jest tylko `users` (GET/POST). Backend ma 2 testy. Front miał 2 testy, a od #17 ma 14.
 
 ## Spotkanie 3: CD i integracja
 - Plan: `deploy-frontend.yml` (base-href, deploy-pages), `deploy-backend.yml` (Vercel CLI + smoke `/health`); dalsze punkty w Miro są puste.
-- Stan: oba workflow istnieją (#4–#8, #11). Integracja front–back na przykładzie formularza `users` (#13).
+- Stan: oba workflow istnieją (#4–#8, #11). Integracja front–back była na przykładzie formularza `users` (#13), ale #17 ją usunął. Front ma Pulpit i Historię na danych przykładowych za `MealRepository`. Brak klienta HTTP do `meals`, bo backend jeszcze go nie ma.
 
 ## Spotkanie 4: Twist i AI
 - Plan: brak szczegółów w Miro. Z ról wynika integracja LLM, AddMealComponent i twist „Statystyki z wykresem”.

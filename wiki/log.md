@@ -42,9 +42,15 @@ Wpisy operacji `/wiki` od najstarszych. Blok `ingest-state` na końcu czyta skil
 - Ostrzeżenia: karteczka bez ID: 3458764689733277794 „test bez id” (karteczka testowa, usunięta po teście).
 - Do zrobienia na tablicy: karteczka GitHub nadal linkuje pwjtd/CaloByte.
 
+## [2026-11-07] ingest | prs #17–#18
+- Nowe: raw/github/prs/PR-0017.md, PR-0018.md; changelog +2 (razem 15)
+- Zmienione: architecture/frontend.md (przepisana pod #17), entities/meals.md, entities/meal_items.md, entities/users.md, team.md, milestones.md, architecture/ci-cd.md, index.md
+- Pytania: +Q-009 (użytkownik bez logowania; karteczka 3458764689734052356); kontekst Q-001, Q-007, Q-008 uzupełniony o #17
+- Uwagi: #14–#16 nie są zmergowanymi PR-ami. Ingest zrobiony na branchu chore/claude-rules (bez commita, zgodnie z zasadą „commit tylko na prośbę”). Q-003 nadal otwarte: widoki powstały bez makiet.
+
 <!-- ingest-state
-last_pr: 13
+last_pr: 18
 last_miro_snapshot: 2026-11-07
-last_code_sha: 7217418
-next_question_id: 9
+last_code_sha: aa41ac7
+next_question_id: 10
 -->

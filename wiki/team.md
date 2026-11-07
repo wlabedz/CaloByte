@@ -15,4 +15,4 @@ Zasady z Miro: każdy koduje i ma min. **1 własny PR i 1 review na spotkanie**.
 | Piotr Walczak | Full Stack Integrator & API Lead | CRUD `meals` z walidacją Pydantic (400/404/422), serwis Angular + CORS, testy pytest z mockowaną bazą (min. 8), integracja front–back (Spotkanie 3) |
 | Adam Kwiatkowski | AI Feature Engineer & Product Logic | LLM (Gemini/OpenAI) ze structured output, AddMealComponent, `AI.md`, logika twistu (Spotkanie 4) |
 
-Stan na 2026-11-07: wszystkie 13 PR-ów pochodzi z konta `wlabedz` i żaden nie ma review ([changelog](changelog.md)).
+Stan na 2026-11-07 ([changelog](changelog.md)): PR-y #1–#13 pochodzą z konta `wlabedz` i nie mają review. #17 (knizinsky, front) i #18 (pwjtd, wiki) mają review i approve od `wlabedz`.

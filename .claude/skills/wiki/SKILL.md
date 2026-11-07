@@ -5,7 +5,7 @@ description: Utrzymanie wiki projektu CaloByte (wiki/ + raw/) — ingest tablicy
 
 # /wiki — wiki CaloByte
 
-Schemat i konwencje stron są w `wiki/CLAUDE.md`. Przeczytaj go przed każdą operacją, bo tam są wzorce wpisów `changelog.md`, `log.md` i `questions.md`. Projekt: `docs/superpowers/specs/2026-11-07-llm-wiki-design.md`.
+Schemat i konwencje stron są w `wiki/CLAUDE.md`. Przeczytaj go przed każdą operacją, bo tam są wzorce wpisów `changelog.md`, `log.md` i `questions.md`.
 
 ## Użycie
 
@@ -36,10 +36,10 @@ Bez argumentu albo z nieznanym argumentem: wypisz tę listę i zakończ. Nie tw�
 
 5. Dopisz wpis do `wiki/log.md` nad blokiem stanu (format `## [YYYY-MM-DD] <operacja> | <zakres>` + listy Nowe/Zmienione/Pytania/Ostrzeżenia) i zaktualizuj blok stanu.
 6. Każdą nową stronę dopisz do `wiki/index.md` we właściwej sekcji, jako link z jednym zdaniem opisu.
-7. `git add wiki raw && git commit -m "docs(wiki): <operacja> <zakres>"`.
-8. Zapytaj użytkownika, czy zrobić push i otworzyć PR. Bez zgody nie rób ani jednego, ani drugiego.
+7. Pokaż podsumowanie zmian (`git status`, lista stron) i zapytaj, czy zacommitować. Commituj (`git add wiki raw && git commit -m "docs(wiki): <operacja> <zakres>"`) dopiero po wyraźnej prośbie.
+8. Push i PR tylko na wyraźną prośbę użytkownika.
 
-Jeśli operacja nic nie zmieniła poza `log.md`, wpis w logu brzmi `bez zmian`, a commit i tak powstaje.
+Jeśli operacja nic nie zmieniła poza `log.md`, wpis w logu brzmi `bez zmian`.
 
 ## ingest prs
 
