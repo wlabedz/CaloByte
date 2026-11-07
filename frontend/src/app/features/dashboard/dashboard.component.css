@@ -42,14 +42,6 @@
   font-size: 0.8125rem;
 }
 
-.badge {
-  padding: 0.125rem 0.5rem;
-  border-radius: 999px;
-  background: var(--primary-soft);
-  color: var(--primary-strong);
-  font-weight: 600;
-}
-
 .meal-name {
   margin-top: 0.25rem;
   font-size: 1rem;

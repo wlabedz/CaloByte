@@ -5,8 +5,10 @@ import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from
 import { provideRouter, withHashLocation } from '@angular/router';
 
 import { routes } from './app.routes';
+import { HttpUserRepository } from './core/data/http-user-repository';
 import { InMemoryMealRepository } from './core/data/in-memory-meal-repository';
 import { MealRepository } from './core/data/meal-repository';
+import { UserRepository } from './core/data/user-repository';
 
 registerLocaleData(localePl);
 
@@ -20,5 +22,6 @@ export const appConfig: ApplicationConfig = {
     { provide: LOCALE_ID, useValue: 'pl' },
     // Dane przykładowe do czasu podpięcia API — klient HTTP podmienia tylko ten provider.
     { provide: MealRepository, useClass: InMemoryMealRepository },
+    { provide: UserRepository, useClass: HttpUserRepository },
   ],
 };

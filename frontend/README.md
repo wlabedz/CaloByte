@@ -19,20 +19,26 @@ npm run build    # build produkcyjny do dist/frontend/browser z base href /CaloB
 
 ```
 src/
-├── environments/api-url.ts   # adres API; w deployu nadpisywany zmienną API_URL z repozytorium
+├── environments/
+│   ├── api-url.ts            # adres API; w deployu nadpisywany zmienną API_URL z repozytorium
+│   └── api-url.development.ts # adres dla `ng serve` (wdrożone API)
 ├── testing/                  # dane testowe współdzielone przez specy
 └── app/
-    ├── app.config.ts         # providery: router z withHashLocation(), HttpClient, locale pl, źródło danych
+    ├── app.config.ts         # providery: router z withHashLocation(), HttpClient, locale pl, źródła danych
     ├── app.routes.ts         # trasy, widoki ładowane leniwie
     ├── core/
-    │   ├── models.ts         # Meal, MealItem (pola jak w bazie), DailyTargets
+    │   ├── models.ts         # Meal, MealItem, User, NewUser (pola jak w API), DailyTargets
     │   ├── nutrition.ts      # sumowanie makro, grupowanie posiłków po dniach
-    │   └── data/             # MealRepository (kontrakt) + implementacja z danymi przykładowymi
+    │   ├── active-user.service.ts # wybrany profil, zapamiętany w localStorage
+    │   └── data/             # kontrakty MealRepository / UserRepository i ich implementacje
     ├── shared/macro-progress/ # pasek realizacji celu (kalorie, makroskładniki)
     └── features/
         ├── dashboard/        # DashboardComponent — bilans dnia i dzisiejsze posiłki
-        └── history/          # HistoryComponent — przegląd dni i średnia kalorii
+        ├── history/          # HistoryComponent — przegląd dni i średnia kalorii
+        └── profile/          # ProfileComponent — wybór i zakładanie profilu (GET/POST /users)
 ```
+
+Wspólne style (karty, formularze `.field`, przycisk `.button`, `.badge`) są w `src/styles.css`.
 
 ## Routing a GitHub Pages
 
@@ -42,10 +48,19 @@ nie kończy się błędem 404.
 
 ## Dane i integracja z API
 
-Widoki pobierają dane wyłącznie przez `MealRepository`. Do czasu podpięcia backendu
-w `app.config.ts` zarejestrowane jest `InMemoryMealRepository` z tygodniem przykładowych
-posiłków (usuwanie działa w pamięci, do odświeżenia strony). Klient HTTP dziedziczy po
-`MealRepository`, korzysta z `API_URL` i podmienia ten jeden provider — widoki zostają bez zmian.
+Widoki pobierają dane wyłącznie przez repozytoria z `core/data/`; implementacje wybierają
+providery w `app.config.ts`.
+
+- **Profile** idą już z API: `HttpUserRepository` woła `GET /users` i `POST /users`.
+  Wybrany profil trzyma `ActiveUserService` — do czasu logowania to on określa, czyje dane widać.
+- **Posiłki** to na razie `InMemoryMealRepository` z tygodniem przykładowych posiłków
+  (usuwanie działa w pamięci, do odświeżenia strony). Klient HTTP dla posiłków powstaje
+  tak samo jak `HttpUserRepository` (dziedziczy po `MealRepository`, używa `API_URL`)
+  i podmienia jeden provider — widoki zostają bez zmian.
+
+`npm start` łączy się z wdrożonym API (`api-url.development.ts`, CORS wpuszcza
+`localhost:4200`), więc lokalnie nie trzeba stawiać backendu ani bazy. **Zapisy trafiają do tej
+samej bazy co produkcja.** Do pracy z lokalnym backendem zmień adres na `http://localhost:8000`.
 
 Cele dzienne (`DailyTargets`) są osobnym typem, bo tabela `users` ich nie przechowuje —
 backend może je dodać jako kolumny albo wyliczać z wagi, wzrostu, wieku i aktywności.

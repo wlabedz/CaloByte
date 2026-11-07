@@ -75,7 +75,13 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/api-url.ts",
+                  "with": "src/environments/api-url.development.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
