@@ -25,10 +25,16 @@ Backend (w `backend/`):
 ```bash
 pip install -r requirements-dev.txt
 ruff check .
-pytest --cov=app
+pytest --cov=.
 alembic upgrade head        # wymaga DATABASE_URL_UNPOOLED w backend/.env.local
 uvicorn app:app --reload
+python -m seed              # ładuje backend/seed/*.csv do bazy
+python -m seed.prepare --kaggle <plik> --usda-dir <katalog> --out seed   # regeneruje CSV
 ```
+
+Testy backendu wymagają lokalnego Postgresa, np. `docker run -d --name calobyte-pg -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=calobyte_test postgres:17`. Domyślny adres to `postgresql://postgres:postgres@localhost:5432/calobyte_test`; nadpisują go `DATABASE_URL` i `DATABASE_URL_UNPOOLED`. `conftest.py` odmawia uruchomienia testów na bazie spoza hosta lokalnego.
+
+Uwaga: `python -m seed` bez `CALOBYTE_TESTING=1` pisze do bazy z `backend/.env.local`, czyli potencjalnie produkcyjnej.
 
 Frontend (w `frontend/`):
 
