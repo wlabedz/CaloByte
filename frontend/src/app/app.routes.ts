@@ -20,5 +20,10 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/profile/profile.component').then((m) => m.ProfileComponent),
   },
+  {
+    path: 'chat',
+    title: 'Czat · CaloByte',
+    loadComponent: () => import('./features/chat/chat.component').then((m) => m.ChatComponent),
+  },
   { path: '**', redirectTo: 'dashboard' },
 ];

@@ -3,3 +3,5 @@ psycopg[binary]
 sqlalchemy
 python-dotenv
 email-validator
+google-genai
+httpx

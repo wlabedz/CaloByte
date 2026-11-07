@@ -1,7 +1,7 @@
 ---
 title: Frontend (Angular)
 sources: [raw/miro/2026-11-07-board.md, raw/github/prs/PR-0017.md, frontend/src/app/, frontend/src/environments/, frontend/src/testing/, frontend/src/styles.css, frontend/angular.json, frontend/package.json]
-code_sha: 0099045
+code_sha: 04d0c3f
 updated: 2026-11-07
 ---
 
@@ -19,8 +19,8 @@ Od [#17](../changelog.md) (2026-11-07), z widokiem Profil z #20 oraz motywami (#
 - **Motyw jasny i ciemny** (#23): każdy token koloru w `src/styles.css` ma oba warianty w `light-dark(jasny, ciemny)`. Domyślnie motyw jest jak w systemie (`color-scheme: light dark`). Przełącznik w nagłówku (`core/theme.service.ts`) zapisuje wybór w `localStorage` (`calobyte.theme`) i ustawia `data-theme="light|dark"` na `<html>`. Skrypt w `src/index.html` robi to samo przed startem Angulara, żeby tło nie migało.
 - **Powiadomienia** (#24): `core/toast.service.ts` + `shared/toast/` (`<app-toast-host>` w `AppComponent`), z opcjonalnym przyciskiem akcji. Odliczanie stoi, gdy kursor albo fokus jest na powiadomieniu. Kolory z tokenów `--inverse-*`.
 - `app.config.ts`: `provideRouter(routes, withHashLocation())`, `provideHttpClient(withFetch())`, `LOCALE_ID = 'pl'` oraz providery `MealRepository → InMemoryMealRepository` i `UserRepository → HttpUserRepository`.
-- Trasy (`app.routes.ts`, lazy): `/#/dashboard` (Pulpit · CaloByte), `/#/history` (Historia · CaloByte), `/#/profile` (Profil · CaloByte). `''` i `**` przekierowują na dashboard.
-- Struktura: `core/` (modele, logika, dane, `ActiveUserService`), `features/{dashboard,history,profile}/`, `shared/macro-progress/` (pasek postępu makro). Wspólne style (`.card`, `.field`, `.field-error`, `.button`, `.badge`) w `src/styles.css`.
+- Trasy (`app.routes.ts`, lazy): `/#/dashboard` (Pulpit · CaloByte), `/#/history` (Historia · CaloByte), `/#/chat` (Czat · CaloByte), `/#/profile` (Profil · CaloByte). `''` i `**` przekierowują na dashboard. W menu w tej samej kolejności.
+- Struktura: `core/` (modele, logika, dane, `ActiveUserService`, `ChatService`), `features/{dashboard,history,chat,profile}/`, `shared/macro-progress/` (pasek postępu makro). Wspólne style (`.card`, `.field`, `.field-error`, `.button`, `.badge`) w `src/styles.css`.
 - **Modele** (`core/models.ts`) mają pola w snake_case, jak kolumny w bazie, a ID to UUID string. `Meal` zawiera pola z planu Miro i do tego `items: MealItem[]`. `MealType = 'breakfast' | 'lunch' | 'dinner'`. `DailyTargets = { kcal, protein, fat, carbs }`. `NewUser` i `User` odwzorowują `UserCreate` i `UserOut` z backendu, z polskimi etykietami `activity` i `sex`.
 - **Dane**: widoki korzystają wyłącznie z abstrakcji w `core/data/`. Posiłki to `MealRepository` (`getTargets`, `getMeals`, `deleteMeal`) z implementacją `InMemoryMealRepository` i danymi przykładowymi (`core/data/sample-data.ts`). Profile idą z API: `UserRepository` → `HttpUserRepository` (`GET /users`, `POST /users`). Klient HTTP dla posiłków ma powstać tym samym wzorcem i podmienić jeden provider.
 - **Aktywny profil** (`core/active-user.service.ts`): wybór `{ id, name }` w sygnale, zapamiętany w `localStorage` (`calobyte.activeUser`). Zastępuje logowanie, dopóki go nie ma. Serwis nie sprawdza, czy zapamiętany profil nadal istnieje. Ustalenie z review #20 (autor PR, 2026-11-07): przy endpointach posiłków nieznany `user_id` ma dawać `404`, a wybór czyści wtedy interceptor albo guard.
@@ -29,11 +29,13 @@ Od [#17](../changelog.md) (2026-11-07), z widokiem Profil z #20 oraz motywami (#
 - **Logika** (`core/nutrition.ts`): `sumMacros` sumuje pola `total_*` posiłków. `toDayKey` liczy dzień w lokalnej strefie czasowej, celowo bez `toISOString()`, które działa w UTC. `summarizeByDay` grupuje dni od najnowszego. `percentOf` liczy procent realizacji celu.
 - **Pulpit**: dzisiejsze posiłki i sumy względem celu. „Usuń” od razu ukrywa posiłek i pokazuje powiadomienie z „Cofnij”; `deleteMeal` leci dopiero, gdy powiadomienie zniknie bez cofnięcia, a przy błędzie posiłek wraca z komunikatem. Komunikaty są po polsku.
 - **Historia**: dni z kaloriami względem celu, makro, rozwijane posiłki i średnia kcal z zakończonych dni.
-- Testy: 36 testów Vitest.
+- **Czat** (`features/chat/`, `core/chat.service.ts`): rozmowa z asystentem dietetycznym przez `POST /chat` ([backend](backend.md)). Na start trzy przykładowe pytania; odpowiedź to tekst i karty przepisów (zdjęcie, posiłek, tytuł po polsku i oryginalny, kcal i makro na porcję, czas, link), a przy kilku przepisach suma kalorii i białka. Front pamięta tylko `interaction_id` i odsyła go z kolejną wiadomością; „Nowa rozmowa” go czyści. Błąd odpowiedzi daje komunikat w `.alert`. Pod polem wiadomości informacja, że porady nie zastępują lekarza ani dietetyka. Czat nie korzysta z aktywnego profilu.
+- Testy: 43 testy Vitest (w tym 7 czatu).
 
 ## Rozbieżności
 
-- Brak widoku **AddMeal** (wejście w języku naturalnym, parsowanie przez AI). Są Pulpit, Historia i Profil, a Historia bez planowania.
+- Brak widoku **AddMeal** (wejście w języku naturalnym, parsowanie przez AI). Są Pulpit, Historia, Czat i Profil, a Historia bez planowania.
+- Widoku **Czat** nie ma w planie z Miro: to dodatek ponad plan, a nie realizacja planowania z History/Planner (autor PR, 2026-11-07). Przepisy z czatu nie trafiają do posiłków użytkownika.
 - Pulpit nie ma **edycji** posiłku, tylko usuwanie.
 - Posiłki są przykładowe, bo backend nie ma `meals` ([entities/meals](../entities/meals.md)), więc wybrany profil nie wpływa jeszcze na Pulpit ani Historię. Cele dzienne front bierze z `DailyTargets`, którego backend nie ma. [Q-001](../questions.md#q-001)
 - Zamiast logowania jest wybór profilu. Każdy, kto otworzy stronę, widzi wszystkie profile z e-mailem i wagą (`GET /users` bez uwierzytelniania). [Q-009](../questions.md#q-009)

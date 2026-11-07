@@ -4,6 +4,16 @@ on:
     branches: [main]
 
 jobs:
+  wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Wiki up to date with code
+        run: python3 scripts/wiki_check.py --base "origin/${{ github.base_ref }}" --github
+
   backend:
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: backend } }
@@ -20,7 +30,7 @@ jobs:
         run: ruff check .
       - name: Tests with coverage (pytest)
         run: |
-          pytest --cov=app --cov-report=term-missing
+          pytest --cov=. --cov-report=term-missing
           echo "## Backend coverage" >> $GITHUB_STEP_SUMMARY
           coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
 

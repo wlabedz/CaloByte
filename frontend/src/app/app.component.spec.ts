@@ -26,7 +26,7 @@ describe('AppComponent', () => {
     const hrefs = Array.from(element.querySelectorAll('nav a'), (link) =>
       link.getAttribute('href'),
     );
-    expect(hrefs).toEqual(['#/dashboard', '#/history', '#/profile']);
+    expect(hrefs).toEqual(['#/dashboard', '#/history', '#/chat', '#/profile']);
   });
 
   it('switches the theme from the header', async () => {

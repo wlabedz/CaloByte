@@ -15,6 +15,7 @@ export class AppComponent {
   protected readonly navLinks = [
     { path: '/dashboard', label: 'Pulpit' },
     { path: '/history', label: 'Historia' },
+    { path: '/chat', label: 'Czat' },
     { path: '/profile', label: 'Profil' },
   ];
 
