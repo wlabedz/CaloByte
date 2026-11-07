@@ -1,6 +1,6 @@
 ---
 title: Baza danych
-sources: [backend/db.py, backend/models.py, backend/migrations/env.py, backend/migrations/versions/, raw/github/prs/PR-0010.md, raw/github/prs/PR-0011.md, raw/github/prs/PR-0012.md]
+sources: [raw/miro/2026-11-07-board.md, backend/db.py, backend/models.py, backend/migrations/env.py, backend/migrations/versions/, raw/github/prs/PR-0010.md, raw/github/prs/PR-0011.md, raw/github/prs/PR-0012.md]
 code_sha: 933b1a7
 updated: 2026-11-07
 ---
@@ -9,7 +9,7 @@ updated: 2026-11-07
 
 ## Plan (Miro)
 
-_(uzupełnia `ingest miro`)_
+Neon Postgres w Vercel Storage (Free: 1 GB, auto-suspend 5 min), połączenie przez `DATABASE_URL` ze zmiennych Vercela. Tabele `users`, `meals`, `meal_items` z migracjami (odpowiada Wojtek Łabędź). Decyzja: [0001](../decisions/0001-neon-postgres.md).
 
 ## Stan w kodzie
 

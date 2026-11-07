@@ -1,6 +1,6 @@
 ---
 title: CI/CD (GitHub Actions)
-sources: [.github/workflows/ci.yml, .github/workflows/deploy-backend.yml, .github/workflows/deploy-frontend.yml, raw/github/prs/PR-0004.md, raw/github/prs/PR-0006.md, raw/github/prs/PR-0011.md]
+sources: [raw/miro/2026-11-07-board.md, .github/workflows/ci.yml, .github/workflows/deploy-backend.yml, .github/workflows/deploy-frontend.yml, raw/github/prs/PR-0004.md, raw/github/prs/PR-0006.md, raw/github/prs/PR-0011.md]
 code_sha: 933b1a7
 updated: 2026-11-07
 ---
@@ -9,7 +9,7 @@ updated: 2026-11-07
 
 ## Plan (Miro)
 
-_(uzupełnia `ingest miro`)_
+`ci.yml`: ruff + pytest oraz `npm ci` + lint + testy frontu na każdym PR, w równoległych jobach. `deploy-frontend.yml`: `ng build --base-href /<repo>/` + `actions/deploy-pages`. `deploy-backend.yml`: Vercel CLI + smoke test `GET /health`. Deploy automatycznie po merge do `main`. Ochrona `main`: blokada bezpośrednich pushy, obowiązkowy PR + review.
 
 ## Stan w kodzie
 

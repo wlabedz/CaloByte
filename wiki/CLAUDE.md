@@ -95,7 +95,7 @@ Statusy: `otwarte` → `odpowiedziane` (jest odpowiedź, jeszcze nie wpisana do 
 ## Miro
 
 - Tablica: https://miro.com/app/board/uXjVEWYP5RY=/
-- Ramka pytań: „Pytania do analityka”, kolumny „Otwarte” (żółte), „Odpowiedziane” (zielone), „Zamknięte w wiki” (szare). ID ramki: _(uzupełnia pierwszy `ingest miro`)_
+- Ramka pytań: „Pytania do analityka”, kolumny „Otwarte” (żółte), „Odpowiedziane” (zielone), „Zamknięte w wiki” (szare). ID ramki: `3458764689732114821` (x 7600, y −65, 2400×1800); kolumny: Otwarte `3458764689732114849` (x 64), Odpowiedziane `3458764689732114851` (x 832), Zamknięte w wiki `3458764689732114852` (x 1600), wszystkie y 200, 736×1536 (współrzędne względem ramki); instrukcja `3458764689732114848`.
 - Karteczka zaczyna się od `Q-NNN · <tag>`, odpowiedź analityka jest po linii `Odp.:` albo w komentarzu.
 
 ## Operacje
