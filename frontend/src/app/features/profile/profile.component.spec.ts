@@ -11,6 +11,7 @@ describe('ProfileComponent', () => {
   const anna = buildUser({ id: 'u1', name: 'Anna', surname: 'Nowak' });
   const jan = buildUser({ id: 'u2', name: 'Jan', surname: 'Kowalski', email: 'jan@example.com' });
   const createUser = vi.fn();
+  const getUsers = vi.fn();
   let fixture: ComponentFixture<ProfileComponent>;
   let element: HTMLElement;
 
@@ -46,18 +47,22 @@ describe('ProfileComponent', () => {
   beforeEach(async () => {
     localStorage.clear();
     createUser.mockReset();
+    getUsers.mockReset();
+    getUsers.mockReturnValue(of([anna, jan]));
 
     await TestBed.configureTestingModule({
       imports: [ProfileComponent],
-      providers: [
-        { provide: UserRepository, useValue: { getUsers: () => of([anna, jan]), createUser } },
-      ],
+      providers: [{ provide: UserRepository, useValue: { getUsers, createUser } }],
     }).compileComponents();
 
+    await render();
+  });
+
+  async function render(): Promise<void> {
     fixture = TestBed.createComponent(ProfileComponent);
     element = fixture.nativeElement;
     await fixture.whenStable();
-  });
+  }
 
   afterEach(() => localStorage.clear());
 
@@ -106,5 +111,51 @@ describe('ProfileComponent', () => {
     expect(element.querySelector('[role="alert"]')?.textContent).toContain(
       'e-mail jest już zajęty',
     );
+  });
+
+  it('rejects an e-mail without a dot in the domain, like the backend does', async () => {
+    fillValidForm();
+    fill('email', 'a@b');
+    await submit();
+
+    expect(createUser).not.toHaveBeenCalled();
+    expect(element.querySelector('#email-error')?.textContent).toContain('Podaj poprawny adres');
+  });
+
+  it('shows a 422 for the e-mail next to the field', async () => {
+    createUser.mockReturnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 422,
+            error: { detail: [{ loc: ['body', 'email'], msg: 'value is not a valid email' }] },
+          }),
+      ),
+    );
+
+    fillValidForm();
+    await submit();
+
+    expect(element.querySelector('#email-error')?.textContent).toContain(
+      'Serwer nie przyjął tego adresu',
+    );
+    expect(element.querySelector('[role="alert"]')).toBeNull();
+  });
+
+  it('loads the list again after saving when it failed to load before', async () => {
+    const ola = buildUser({ id: 'u3', name: 'Ola', surname: 'Wiśniewska' });
+    getUsers
+      .mockReturnValueOnce(throwError(() => new HttpErrorResponse({ status: 500 })))
+      .mockReturnValueOnce(of([anna, jan, ola]));
+    createUser.mockReturnValue(of(ola));
+    await render();
+    expect(element.querySelector('[role="alert"]')?.textContent).toContain('Nie udało się wczytać');
+
+    fillValidForm();
+    await submit();
+
+    expect(element.querySelector('[role="alert"]')).toBeNull();
+    expect(profileButton('Ola Wiśniewska')?.getAttribute('aria-pressed')).toBe('true');
+    expect(profileButton('Anna Nowak')).toBeDefined();
   });
 });
