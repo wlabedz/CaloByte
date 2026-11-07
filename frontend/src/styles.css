@@ -1,0 +1,146 @@
+:root {
+  --bg: #f4f6f1;
+  --surface: #ffffff;
+  --surface-muted: #edf1e9;
+  --border: #dde3d7;
+  --text: #18221b;
+  --text-muted: #5a685d;
+  --primary: #2e8b4f;
+  --primary-strong: #1f6a3a;
+  --primary-soft: #e1f1e5;
+  --on-primary: #ffffff;
+  --danger: #c62828;
+  --danger-soft: #fdecec;
+
+  --macro-protein: #2563eb;
+  --macro-fat: #d97706;
+  --macro-carbs: #9333ea;
+  --macro-fiber: #0f766e;
+
+  --radius: 14px;
+  --shadow: 0 1px 2px rgb(24 34 27 / 6%), 0 6px 20px rgb(24 34 27 / 5%);
+  --content-width: 960px;
+
+  color-scheme: light;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1411;
+    --surface: #171e19;
+    --surface-muted: #232c25;
+    --border: #2c372f;
+    --text: #e5ece6;
+    --text-muted: #9aaa9d;
+    --primary: #4cbb6f;
+    --primary-strong: #86d9a0;
+    --primary-soft: #1c3324;
+    --on-primary: #0c1510;
+    --danger: #f87171;
+    --danger-soft: #3b1d1d;
+
+    --macro-protein: #60a5fa;
+    --macro-fat: #fbbf24;
+    --macro-carbs: #c084fc;
+    --macro-fiber: #2dd4bf;
+
+    --shadow: none;
+
+    color-scheme: dark;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Elementy wspólne dla widoków */
+
+.card {
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.page-header {
+  display: grid;
+  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow {
+  color: var(--primary-strong);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.page-title {
+  font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2rem);
+  line-height: 1.2;
+}
+
+.page-title::first-letter {
+  text-transform: uppercase;
+}
+
+.section-title {
+  margin-bottom: 0.75rem;
+  font-size: 1.125rem;
+}
+
+.alert {
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.status {
+  color: var(--text-muted);
+}
+
+.empty-state {
+  padding: 2rem 1rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  text-align: center;
+}

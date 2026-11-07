@@ -1,0 +1,100 @@
+:host {
+  container-type: inline-size;
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+}
+
+.label {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.amount {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.amount strong {
+  font-size: 1.125rem;
+}
+
+.target,
+.unit {
+  color: var(--text-muted);
+}
+
+.meter {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.track {
+  flex: 1;
+  height: 0.5rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface-muted);
+}
+
+.bar {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+.percent {
+  min-width: 4ch;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+:host(.over) .bar {
+  background: var(--danger);
+}
+
+:host(.over) .percent {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+:host(.large) .header {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* W wąskim kafelku etykieta zawsze nad wartością, żeby wszystkie kafelki wyglądały tak samo */
+@container (max-width: 15rem) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+:host(.large) .amount strong {
+  font-size: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem);
+  line-height: 1.1;
+}
+
+:host(.large) .track {
+  height: 0.875rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    transition: none;
+  }
+}
