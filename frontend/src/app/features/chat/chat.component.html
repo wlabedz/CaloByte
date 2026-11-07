@@ -1,0 +1,106 @@
+<header class="page-header">
+  <p class="eyebrow">Asystent</p>
+  <h1 class="page-title">Czat z dietetykiem</h1>
+</header>
+
+@if (entries().length === 0) {
+  <section class="card intro" aria-labelledby="intro-heading">
+    <h2 id="intro-heading" class="section-title">Opisz, czego szukasz</h2>
+    <p class="status">
+      Podaj kalorie, preferencje albo produkty, których unikasz. Asystent znajdzie prawdziwe
+      przepisy z wartościami odżywczymi.
+    </p>
+    <ul class="suggestions">
+      @for (suggestion of suggestions; track suggestion) {
+        <li>
+          <button type="button" class="suggestion" [disabled]="loading()" (click)="send(suggestion)">
+            {{ suggestion }}
+          </button>
+        </li>
+      }
+    </ul>
+  </section>
+} @else {
+  <ol class="conversation" aria-label="Rozmowa">
+    @for (entry of entries(); track $index) {
+      @if (entry.role === 'user') {
+        <li class="bubble user">{{ entry.text }}</li>
+      } @else {
+        <li class="assistant">
+          <p class="bubble">{{ entry.text }}</p>
+
+          @if (entry.recipes.length > 0) {
+            <ul class="recipes" aria-label="Polecane przepisy">
+              @for (recipe of entry.recipes; track recipe.id) {
+                <li class="card recipe">
+                  @if (recipe.image) {
+                    <img class="recipe-image" [src]="recipe.image" alt="" loading="lazy" />
+                  }
+                  <div class="recipe-body">
+                    <span class="badge">{{ recipe.meal }}</span>
+                    <h3 class="recipe-title">{{ recipe.title }}</h3>
+                    <p class="recipe-original">{{ recipe.original_title }}</p>
+                    <p class="recipe-kcal">{{ recipe.calories ?? '–' }} kcal</p>
+                    <p class="recipe-macros">
+                      <abbr title="Białko">B</abbr> {{ recipe.protein_g ?? '–' }} g ·
+                      <abbr title="Tłuszcze">T</abbr> {{ recipe.fat_g ?? '–' }} g ·
+                      <abbr title="Węglowodany">W</abbr> {{ recipe.carbs_g ?? '–' }} g
+                    </p>
+                    <p class="recipe-meta">
+                      @if (recipe.ready_in_minutes) {
+                        <span>{{ recipe.ready_in_minutes }} min</span>
+                      }
+                      @if (recipe.url) {
+                        <a [href]="recipe.url" target="_blank" rel="noopener noreferrer">
+                          Przepis <span class="sr-only">{{ recipe.title }}</span> ↗
+                        </a>
+                      }
+                    </p>
+                  </div>
+                </li>
+              }
+            </ul>
+
+            @if (entry.recipes.length > 1) {
+              <p class="totals">
+                Razem: <strong>{{ entry.totals.calories | number: '1.0-0' }} kcal</strong>,
+                białko <strong>{{ entry.totals.protein | number: '1.0-0' }} g</strong>
+                (na porcję)
+              </p>
+            }
+          }
+        </li>
+      }
+    }
+
+    @if (loading()) {
+      <li class="status" role="status">Szukam przepisów…</li>
+    }
+  </ol>
+}
+
+@if (errorMessage(); as message) {
+  <p class="alert" role="alert">{{ message }}</p>
+}
+
+<form class="composer" [formGroup]="form" (ngSubmit)="send()">
+  <label class="sr-only" for="chat-input">Wiadomość</label>
+  <input
+    id="chat-input"
+    class="composer-input"
+    formControlName="message"
+    maxlength="4000"
+    autocomplete="off"
+    placeholder="Np. obiad do 600 kcal bez glutenu"
+  />
+  <button type="submit" class="primary-button" [disabled]="loading()">Wyślij</button>
+  @if (entries().length > 0) {
+    <button type="button" class="secondary-button" (click)="newConversation()">
+      Nowa rozmowa
+    </button>
+  }
+</form>
+
+<p class="disclaimer">
+  Porady mają charakter informacyjny i nie zastępują konsultacji z lekarzem ani dietetykiem.
+</p>

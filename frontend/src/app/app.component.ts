@@ -16,6 +16,7 @@ export class AppComponent {
     { path: '/dashboard', label: 'Pulpit' },
     { path: '/history', label: 'Historia' },
     { path: '/recipes', label: 'Przepisy' },
+    { path: '/chat', label: 'Czat' },
     { path: '/profile', label: 'Profil' },
   ];
 

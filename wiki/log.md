@@ -61,6 +61,11 @@ Wpisy operacji `/wiki` od najstarszych. Blok `ingest-state` na końcu czyta skil
 - Zmienione: architecture/frontend.md (motyw jasny/ciemny z #23, powiadomienia i „Cofnij” z #24, 36 testów), entities/users.md (tylko `code_sha`: w Profilu doszło powiadomienie po zapisie)
 - Uwagi: #23 i #24 zostały zmergowane do gałęzi pośrednich (`feat-profile-view`, `feat-theme-toggle`), a nie do `main`; ten PR przenosi ich kod do `main`. `last_code_sha` i `last_pr` bez zmian.
 
+## [2026-11-07] ingest code (PR) | feat/recipe-chat
+- Zmienione: architecture/backend.md (czat `POST /chat`: Gemini + Spoonacular, schematy, 11 testów; `sources` + `chat.py`, `spoonacular.py`, `test_chat.py`), architecture/frontend.md (widok Czat, `ChatService`, 43 testy), architecture/ci-cd.md (job `wiki` i `scripts/wiki_check.py`, `pytest --cov=.`, Python 3.13 i porządki w `deploy-backend.yml`; dwie rozbieżności rozwiązane; `sources` + skrypt i hook), entities/users.md (tylko `code_sha`: w `schemas.py` doszły schematy czatu)
+- Pytania: Q-002 bez zmiany statusu, kontekst uzupełniony o czat (autor PR: Gemini tylko w czacie, wybór dla AddMeal otwarty)
+- Uwagi: autor PR: czat to dodatek ponad plan z Miro, nie realizacja Plannera. Wykonane ręcznie według SKILL.md (skill `/wiki` niedostępny w tej sesji), bez dostępu do Miro, więc karteczka Q-002 nie została zaktualizowana. `last_code_sha` i `last_pr` bez zmian.
+
 ## [2026-11-07] ingest | code (feat/recipes-products)
 - Nowe: entities/recipes.md, entities/products.md, entities/recipe_items.md
 - Zmienione: architecture/backend.md (routery, `catalog_service`, `nutrition`, seed, testy na prawdziwym Postgresie), architecture/frontend.md (Przepisy, repozytoria HTTP, `polish-plural`), architecture/database.md (3 tabele, migracja `e677c7db66b7`, seed), architecture/ci-cd.md (usługa Postgres, `--cov=.`, krok seed), overview.md (dataset użyty, USDA), index.md; `code_sha` ustawiony na 81d47cf także na stronach users, meals, meal_items i decisions/0001 (zmieniły się `models.py`, `core/models.ts` i `db.py`)
