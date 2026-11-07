@@ -14,6 +14,7 @@ import { ActiveUserService } from '../../core/active-user.service';
 import { UserRepository } from '../../core/data/user-repository';
 import { ACTIVITY_LABELS, ActivityLevel, NewUser, SEX_LABELS, Sex, User } from '../../core/models';
 import { toDayKey } from '../../core/nutrition';
+import { ToastService } from '../../core/toast.service';
 
 @Component({
   selector: 'app-profile',
@@ -24,6 +25,7 @@ import { toDayKey } from '../../core/nutrition';
 })
 export class ProfileComponent {
   private readonly users = inject(UserRepository);
+  private readonly toasts = inject(ToastService);
   protected readonly activeUser = inject(ActiveUserService);
 
   protected readonly today = toDayKey(new Date());
@@ -84,6 +86,9 @@ export class ProfileComponent {
         this.activeUser.select(user);
         this.form.reset();
         this.saving.set(false);
+        this.toasts.show({
+          message: `Zapisano profil ${user.name} ${user.surname} — jest teraz aktywny.`,
+        });
       },
       error: (error: HttpErrorResponse) => {
         this.saveError.set(
