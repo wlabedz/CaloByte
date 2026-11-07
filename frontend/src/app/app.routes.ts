@@ -23,6 +23,22 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'recipes/new',
+    title: 'Nowy przepis · CaloByte',
+    loadComponent: () =>
+      import('./features/recipes/recipe-form/recipe-form.component').then(
+        (m) => m.RecipeFormComponent,
+      ),
+  },
+  {
+    path: 'recipes/:id/edit',
+    title: 'Edycja przepisu · CaloByte',
+    loadComponent: () =>
+      import('./features/recipes/recipe-form/recipe-form.component').then(
+        (m) => m.RecipeFormComponent,
+      ),
+  },
+  {
     path: 'recipes/:id',
     title: 'Przepis · CaloByte',
     loadComponent: () =>
