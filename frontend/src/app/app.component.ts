@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+
+import { ThemeService } from './core/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -14,4 +16,9 @@ export class AppComponent {
     { path: '/history', label: 'Historia' },
     { path: '/profile', label: 'Profil' },
   ];
+
+  protected readonly theme = inject(ThemeService);
+  protected readonly themeToggleLabel = computed(() =>
+    this.theme.theme() === 'dark' ? 'Włącz jasny motyw' : 'Włącz ciemny motyw',
+  );
 }

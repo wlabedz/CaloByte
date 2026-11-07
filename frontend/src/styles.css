@@ -1,27 +1,33 @@
+/*
+ * Każdy kolor ma wariant jasny i ciemny w light-dark(); który wygrywa, decyduje color-scheme.
+ * Domyślnie jak w systemie, a wybór z przełącznika (ThemeService) ustawia data-theme na <html>.
+ */
 :root {
-  --bg: #f4f6f1;
-  --surface: #ffffff;
-  --surface-muted: #edf1e9;
-  --border: #dde3d7;
-  --text: #18221b;
-  --text-muted: #5a685d;
-  --primary: #2e8b4f;
-  --primary-strong: #1f6a3a;
-  --primary-soft: #e1f1e5;
-  --on-primary: #ffffff;
-  --danger: #c62828;
-  --danger-soft: #fdecec;
+  --bg: light-dark(#f4f6f1, #0f1411);
+  --surface: light-dark(#ffffff, #171e19);
+  --surface-muted: light-dark(#edf1e9, #232c25);
+  --border: light-dark(#dde3d7, #2c372f);
+  --text: light-dark(#18221b, #e5ece6);
+  --text-muted: light-dark(#5a685d, #9aaa9d);
+  --primary: light-dark(#2e8b4f, #4cbb6f);
+  --primary-strong: light-dark(#1f6a3a, #86d9a0);
+  --primary-soft: light-dark(#e1f1e5, #1c3324);
+  --on-primary: light-dark(#ffffff, #0c1510);
+  --danger: light-dark(#c62828, #f87171);
+  --danger-soft: light-dark(#fdecec, #3b1d1d);
 
-  --macro-protein: #2563eb;
-  --macro-fat: #d97706;
-  --macro-carbs: #9333ea;
-  --macro-fiber: #0f766e;
+  --macro-protein: light-dark(#2563eb, #60a5fa);
+  --macro-fat: light-dark(#d97706, #fbbf24);
+  --macro-carbs: light-dark(#9333ea, #c084fc);
+  --macro-fiber: light-dark(#0f766e, #2dd4bf);
 
   --radius: 14px;
-  --shadow: 0 1px 2px rgb(24 34 27 / 6%), 0 6px 20px rgb(24 34 27 / 5%);
+  --shadow:
+    0 1px 2px light-dark(rgb(24 34 27 / 6%), transparent),
+    0 6px 20px light-dark(rgb(24 34 27 / 5%), transparent);
   --content-width: 960px;
 
-  color-scheme: light;
+  color-scheme: light dark;
   font-family:
     system-ui,
     -apple-system,
@@ -35,30 +41,12 @@
   background: var(--bg);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f1411;
-    --surface: #171e19;
-    --surface-muted: #232c25;
-    --border: #2c372f;
-    --text: #e5ece6;
-    --text-muted: #9aaa9d;
-    --primary: #4cbb6f;
-    --primary-strong: #86d9a0;
-    --primary-soft: #1c3324;
-    --on-primary: #0c1510;
-    --danger: #f87171;
-    --danger-soft: #3b1d1d;
+:root[data-theme='light'] {
+  color-scheme: light;
+}
 
-    --macro-protein: #60a5fa;
-    --macro-fat: #fbbf24;
-    --macro-carbs: #c084fc;
-    --macro-fiber: #2dd4bf;
-
-    --shadow: none;
-
-    color-scheme: dark;
-  }
+:root[data-theme='dark'] {
+  color-scheme: dark;
 }
 
 *,

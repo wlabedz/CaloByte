@@ -77,6 +77,15 @@ Nie zmieniaj bez uzgodnienia z osobą od CI/CD:
 - skrypt `npm run lint` oraz `ng test --watch=false --coverage` z raportem
   `coverage/frontend/coverage-summary.json` (podsumowanie pokrycia w CI).
 
+## Motyw jasny i ciemny
+
+Domyślnie aplikacja wygląda tak jak system (`prefers-color-scheme`). Przełącznik w nagłówku
+(`ThemeService`) zapisuje wybór w `localStorage` i ustawia `data-theme="light|dark"` na `<html>`;
+skrypt w `src/index.html` robi to samo jeszcze przed startem Angulara, żeby tło nie migało.
+
+Każdy kolor w `src/styles.css` ma oba warianty w `light-dark(jasny, ciemny)`. Nowy kolor dodaj
+jako token w tym samym miejscu — komponenty używają tylko zmiennych (`var(--…)`).
+
 ## Konwencje
 
 - `ng generate component nazwa` tworzy `nazwa.component.ts` z klasą `NazwaComponent`
@@ -84,4 +93,4 @@ Nie zmieniaj bez uzgodnienia z osobą od CI/CD:
 - Komponenty standalone z `ChangeDetectionStrategy.OnPush`, stan w sygnałach,
   w szablonach `@if` / `@for`.
 - Style w zwykłym CSS; kolory i promienie jako zmienne CSS w `src/styles.css`
-  (motyw jasny i ciemny).
+  (zob. „Motyw jasny i ciemny”).
