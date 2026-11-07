@@ -9,7 +9,8 @@ Wymagany Node.js `^22.22.3`, `^24.15` lub `>=26` (wymóg Angular CLI 22).
 
 ```bash
 npm ci
-npm start        # http://localhost:4200
+npm start        # http://localhost:4200, API z http://localhost:8000 (lokalny backend)
+npm run start:deployed-api  # front lokalnie, API wdrożone na Vercelu — zapisy idą do produkcji!
 npm test         # Vitest; poza terminalem (np. w CI) uruchamia się jednorazowo
 npm run lint     # angular-eslint
 npm run build    # build produkcyjny do dist/frontend/browser z base href /CaloByte/
@@ -21,7 +22,7 @@ npm run build    # build produkcyjny do dist/frontend/browser z base href /CaloB
 src/
 ├── environments/
 │   ├── api-url.ts            # adres API; w deployu nadpisywany zmienną API_URL z repozytorium
-│   └── api-url.development.ts # adres dla `ng serve` (wdrożone API)
+│   └── api-url.deployed.ts   # wdrożone API, tylko dla `npm run start:deployed-api`
 ├── testing/                  # dane testowe współdzielone przez specy
 └── app/
     ├── app.config.ts         # providery: router z withHashLocation(), HttpClient, locale pl, źródła danych
@@ -58,9 +59,11 @@ providery w `app.config.ts`.
   tak samo jak `HttpUserRepository` (dziedziczy po `MealRepository`, używa `API_URL`)
   i podmienia jeden provider — widoki zostają bez zmian.
 
-`npm start` łączy się z wdrożonym API (`api-url.development.ts`, CORS wpuszcza
-`localhost:4200`), więc lokalnie nie trzeba stawiać backendu ani bazy. **Zapisy trafiają do tej
-samej bazy co produkcja.** Do pracy z lokalnym backendem zmień adres na `http://localhost:8000`.
+`npm start` łączy się z lokalnym backendem (`http://localhost:8000`, zob. `CLAUDE.md`:
+`uvicorn app:app --reload`). Bez lokalnej bazy można użyć wdrożonego API:
+`npm run start:deployed-api` (konfiguracja `deployed-api` w `angular.json`, CORS wpuszcza
+`localhost:4200`). **Wtedy zapisy — np. nowe profile — trafiają do produkcyjnej bazy**, więc to
+świadomy wybór, a nie domyślne zachowanie. Osobna baza deweloperska to decyzja dla zespołu.
 
 Cele dzienne (`DailyTargets`) są osobnym typem, bo tabela `users` ich nie przechowuje —
 backend może je dodać jako kolumny albo wyliczać z wagi, wzrostu, wieku i aktywności.
