@@ -21,10 +21,16 @@
   --macro-carbs: light-dark(#9333ea, #c084fc);
   --macro-fiber: light-dark(#0f766e, #2dd4bf);
 
+  /* Elementy „odwrócone” względem strony, np. powiadomienia */
+  --inverse-bg: light-dark(#18221b, #e5ece6);
+  --inverse-text: light-dark(#f4f6f1, #0f1411);
+  --inverse-accent: light-dark(#86d9a0, #1f6a3a);
+
   --radius: 14px;
   --shadow:
     0 1px 2px light-dark(rgb(24 34 27 / 6%), transparent),
     0 6px 20px light-dark(rgb(24 34 27 / 5%), transparent);
+  --shadow-raised: 0 8px 24px light-dark(rgb(24 34 27 / 25%), rgb(0 0 0 / 50%));
   --content-width: 960px;
 
   color-scheme: light dark;
