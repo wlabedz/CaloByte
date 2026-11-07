@@ -35,6 +35,7 @@ const MIN_QUERY_LENGTH = 2;
 const DEFAULT_WEIGHT_G = 100;
 const MAX_ITEMS = 50;
 const MAX_WEIGHT_G = 10000;
+const MAX_MINUTES = 10000;
 
 function notBlank(control: AbstractControl): ValidationErrors | null {
   return typeof control.value === 'string' && control.value.trim() === ''
@@ -83,8 +84,8 @@ export class RecipeFormComponent {
     name: ['', [Validators.required, Validators.maxLength(200), notBlank]],
     servings: [1 as number | null, [Validators.required, Validators.min(1), Validators.max(100)]],
     category: [''],
-    prep_min: [null as number | null, [Validators.min(0)]],
-    cook_min: [null as number | null, [Validators.min(0)]],
+    prep_min: [null as number | null, [Validators.min(0), Validators.max(MAX_MINUTES)]],
+    cook_min: [null as number | null, [Validators.min(0), Validators.max(MAX_MINUTES)]],
     directions: ['', [Validators.maxLength(10000)]],
     items: this.items,
   });

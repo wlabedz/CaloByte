@@ -39,18 +39,18 @@
         </label>
         <label class="label">
           Przygotowanie (min)
-          <input class="field" type="number" formControlName="prep_min" min="0" />
+          <input class="field" type="number" formControlName="prep_min" min="0" max="10000" />
         </label>
         <label class="label">
           Gotowanie (min)
-          <input class="field" type="number" formControlName="cook_min" min="0" />
+          <input class="field" type="number" formControlName="cook_min" min="0" max="10000" />
         </label>
       </div>
       @if (invalid('servings')) {
         <p class="error">Liczba porcji musi być z zakresu 1–100.</p>
       }
       @if (invalid('prep_min') || invalid('cook_min')) {
-        <p class="error">Czas musi być liczbą nie mniejszą niż 0.</p>
+        <p class="error">Czas musi być liczbą z zakresu 0–10000 minut.</p>
       }
     </section>
 
@@ -64,6 +64,7 @@
           placeholder="Szukaj produktu…"
           aria-label="Szukaj produktu"
           (input)="onSearch($event)"
+          (keydown.enter)="$event.preventDefault()"
         />
         @if (searchResults().length > 0) {
           <ul class="search-results">

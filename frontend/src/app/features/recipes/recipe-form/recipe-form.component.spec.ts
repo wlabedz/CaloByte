@@ -361,4 +361,50 @@ describe('RecipeFormComponent', () => {
     expect(create).not.toHaveBeenCalled();
     expect(text()).toContain('Przepis może mieć maksymalnie 50 składników');
   });
+
+  /**
+   * Naciska Enter w polu. jsdom nie wykonuje niejawnego wysłania formularza, więc
+   * odtwarzamy domyślną akcję przeglądarki: jeśli nikt nie wywołał preventDefault(),
+   * formularz zostaje wysłany.
+   */
+  const pressEnter = (el: HTMLInputElement) => {
+    const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+    el.dispatchEvent(event);
+    if (!event.defaultPrevented) {
+      el.form?.requestSubmit();
+    }
+  };
+
+  it('does not save the recipe on Enter in the product search', async () => {
+    create.mockReturnValue(of(buildRecipeDetail({ id: 'new1' })));
+    await setup();
+    await fillValid();
+    const search = input('input[type="search"]');
+    search.value = 'mle';
+    pressEnter(search);
+    await fixture.whenStable();
+
+    expect(create).not.toHaveBeenCalled();
+    expect(update).not.toHaveBeenCalled();
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('rejects preparation or cooking time above 10000 minutes', async () => {
+    await setup();
+    await fillValid();
+    type('[formControlName="prep_min"]', '10001');
+    button('Zapisz').click();
+    await fixture.whenStable();
+
+    expect(create).not.toHaveBeenCalled();
+    expect(text()).toContain('Czas musi być liczbą z zakresu 0–10000 minut.');
+
+    type('[formControlName="prep_min"]', '10000');
+    type('[formControlName="cook_min"]', '10001');
+    button('Zapisz').click();
+    await fixture.whenStable();
+
+    expect(create).not.toHaveBeenCalled();
+    expect(text()).toContain('Czas musi być liczbą z zakresu 0–10000 minut.');
+  });
 });
