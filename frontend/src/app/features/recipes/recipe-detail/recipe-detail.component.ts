@@ -6,6 +6,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { RecipeRepository } from '../../../core/data/recipe-repository';
 import { RecipeDetail } from '../../../core/models';
+import { servingsLabel } from '../../../core/polish-plural';
 
 @Component({
   selector: 'app-recipe-detail',
@@ -18,6 +19,7 @@ export class RecipeDetailComponent {
   private readonly repository = inject(RecipeRepository);
   private readonly router = inject(Router);
 
+  protected readonly servingsLabel = servingsLabel;
   protected readonly recipe = signal<RecipeDetail | undefined>(undefined);
   protected readonly errorMessage = signal<string | null>(null);
 

@@ -10,7 +10,7 @@
       <p class="eyebrow">{{ r.category ?? 'Bez kategorii' }}</p>
       <h1 class="page-title">{{ r.name }}</h1>
       <p class="meta">
-        {{ r.servings }} {{ r.servings === 1 ? 'porcja' : 'porcji' }}
+        {{ servingsLabel(r.servings) }}
         @if (r.total_min !== null) {
           · {{ r.total_min }} min
         }

@@ -110,4 +110,10 @@ describe('RecipeDetailComponent', () => {
       'Nie udało się wczytać przepisu. Spróbuj odświeżyć stronę.',
     );
   });
+
+  it('shows the servings count with the Polish plural form', async () => {
+    await setup(buildRecipeDetail({ id: 'r1', servings: 2 }));
+
+    expect(element.querySelector('.meta')!.textContent?.replace(/\s+/g, ' ')).toContain('2 porcje');
+  });
 });
