@@ -63,6 +63,11 @@ def test_create_product_validation(client):
     assert client.post("/products", json={**BODY, "kcal": 901}).status_code == 422
 
 
+def test_create_product_fiber_capped_at_100(client):
+    assert client.post("/products", json={**BODY, "fiber": 101}).status_code == 422
+    assert client.post("/products", json={**BODY, "fiber": 100}).status_code == 201
+
+
 def test_usda_is_read_only(client, db_session):
     p = make_product(db_session, "Mleko", source=ProductSource.usda)
     r = client.put(f"/products/{p.id}", json=BODY)

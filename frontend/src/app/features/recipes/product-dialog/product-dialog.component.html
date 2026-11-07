@@ -34,14 +34,17 @@
       </label>
       <label class="label">
         Błonnik (g)
-        <input class="field" type="number" formControlName="fiber" min="0" step="any" />
+        <input class="field" type="number" formControlName="fiber" min="0" max="100" step="any" />
       </label>
     </div>
     @if (invalid('kcal')) {
       <p class="error">Kalorie: od 0 do 900 kcal.</p>
     }
-    @if (invalid('protein') || invalid('fat') || invalid('carbs') || invalid('fiber')) {
+    @if (invalid('protein') || invalid('fat') || invalid('carbs')) {
       <p class="error">Wartości odżywcze muszą być liczbami nie mniejszymi niż 0.</p>
+    }
+    @if (invalid('fiber')) {
+      <p class="error">Błonnik: od 0 do 100 g.</p>
     }
     @if (submitted() && form.hasError('macroSum')) {
       <p class="error">Białko, tłuszcze i węglowodany nie mogą razem przekraczać 100 g.</p>

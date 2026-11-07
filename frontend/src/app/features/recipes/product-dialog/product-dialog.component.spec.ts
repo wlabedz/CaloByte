@@ -58,6 +58,14 @@ describe('ProductDialogComponent', () => {
     expect(element.textContent).toContain('Kalorie: od 0 do 900 kcal');
   });
 
+  it('rejects fiber over 100 g', async () => {
+    fill({ ...valid, fiber: '101' });
+    await save();
+
+    expect(create).not.toHaveBeenCalled();
+    expect(element.textContent).toContain('Błonnik: od 0 do 100 g');
+  });
+
   it('creates the product and emits it', async () => {
     const product = buildProduct({ id: 'p9', source: 'user', name: 'Mój jogurt' });
     create.mockReturnValue(of(product));

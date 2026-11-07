@@ -43,7 +43,7 @@ export class ProductDialogComponent {
       protein: [null as number | null, [Validators.required, Validators.min(0)]],
       fat: [null as number | null, [Validators.required, Validators.min(0)]],
       carbs: [null as number | null, [Validators.required, Validators.min(0)]],
-      fiber: [0 as number | null, [Validators.required, Validators.min(0)]],
+      fiber: [0 as number | null, [Validators.required, Validators.min(0), Validators.max(100)]],
     },
     { validators: macroSum },
   );

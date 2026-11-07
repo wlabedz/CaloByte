@@ -17,7 +17,7 @@ class ProductIn(BaseModel):
     protein: Decimal = Field(ge=0)
     fat: Decimal = Field(ge=0)
     carbs: Decimal = Field(ge=0)
-    fiber: Decimal = Field(ge=0)
+    fiber: Decimal = Field(ge=0, le=100)
 
     @model_validator(mode="after")
     def macros_within_100g(self):
