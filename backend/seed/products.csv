@@ -1,0 +1,109 @@
+external_id,name,name_en,kcal,protein,fat,carbs,fiber
+172688,Chleb pełnoziarnisty,"Bread, whole-wheat, commercially prepared",252,12.45,3.5,42.71,6
+174924,Chleb pszenny biały,"Bread, white, commercially prepared (includes soft bread crumbs)",266,8.85,3.33,49.42,2.7
+172684,Chleb żytni,"Bread, rye",259,8.5,3.3,48.3,5.8
+168013,Chleb wieloziarnisty,"Bread, multi-grain (includes whole-grain)",265,13.36,4.23,43.34,7.4
+172796,Bułka do hamburgera,"Rolls, hamburger or hotdog, plain",279,9.77,3.91,50.12,1.8
+174916,Pita pełnoziarnista,"Bread, pita, whole-wheat",262,9.8,1.71,55.89,6.1
+171267,Mleko 2%,"Milk, reduced fat, fluid, 2% milkfat, with added vitamin A and vitamin D",50,3.3,1.98,4.8,0
+171265,Mleko 3,"Milk, whole, 3.25% milkfat, with added vitamin D",61,3.15,3.25,4.8,0
+171269,Mleko odtłuszczone,"Milk, nonfat, fluid, with added vitamin A and vitamin D (fat free or skim)",34,3.37,0.08,4.96,0
+170874,Maślanka,"Milk, buttermilk, fluid, cultured, lowfat",40,3.31,1.07,4.79,0
+170886,Jogurt naturalny niskotłuszczowy,"Yogurt, plain, low fat",63,5.25,1.55,7.04,0
+171284,Jogurt naturalny pełnotłusty,"Yogurt, plain, whole milk",61,3.47,3.25,4.66,0
+170894,"Jogurt grecki naturalny, bez tłuszczu","Yogurt, Greek, plain, nonfat (Includes foods for USDA's Food Distribution Program)",59,10.19,0.39,3.6,0
+173414,Ser cheddar,"Cheese, cheddar (Includes foods for USDA's Food Distribution Program)",403,22.87,33.31,3.37,0
+170845,Ser mozzarella,"Cheese, mozzarella, whole milk",299,22.17,22.14,2.4,0
+170848,Parmezan,"Cheese, parmesan, hard",392,35.75,25,3.22,0
+173420,Ser feta,"Cheese, feta",265,14.21,21.49,3.88,0
+172182,Serek wiejski 2%,"Cheese, cottage, lowfat, 2% milkfat",81,10.45,2.27,4.76,0
+173418,Serek śmietankowy,"Cheese, cream",350,6.15,34.44,5.52,0
+171257,Śmietana kwaśna,"Cream, sour, cultured",198,2.44,19.35,4.63,0
+170859,Śmietanka 36%,"Cream, fluid, heavy whipping",340,2.84,36.08,2.84,0
+173410,Masło solone,"Butter, salted",717,0.85,81.11,0.06,0
+171287,"Jajko kurze całe, surowe","Egg, whole, raw, fresh",143,12.56,9.51,0.72,0
+173424,Jajko kurze ugotowane na twardo,"Egg, whole, cooked, hard-boiled",155,12.58,10.61,1.12,0
+172183,"Białko jaja kurzego, surowe","Egg, white, raw, fresh",52,10.9,0.17,0.73,0
+172184,"Żółtko jaja kurzego, surowe","Egg, yolk, raw, fresh",322,15.86,26.54,3.59,0
+171077,"Pierś z kurczaka, surowa","Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw",120,22.5,2.62,0,0
+173627,"Udo z kurczaka, surowe","Chicken, broilers or fryers, dark meat, thigh, meat only, raw",121,19.66,4.12,0,0
+171477,"Pierś z kurczaka, pieczona","Chicken, broilers or fryers, breast, meat only, cooked, roasted",165,31.02,3.57,0,0
+171480,"Indyk, mięso, surowe","Turkey, whole, meat only, raw",115,22.64,1.93,0.14,0
+174030,"Mielona wołowina 90%, surowa","Beef, ground, 90% lean meat / 10% fat, raw",176,20,10,0,0
+171796,"Mielona wołowina 85%, surowa","Beef, ground, 85% lean meat / 15% fat, raw (Includes foods for USDA's Food Distribution Program)",215,18.59,15,0,0
+173111,"Mielona wołowina 97%, surowa","Beef, ground, 97% lean meat / 3% fat, raw",121,21.98,3,0,0
+168230,"Schab wieprzowy chudy, surowy","Pork, fresh, loin, whole, separable lean only, raw",143,21.43,5.66,0,0
+167902,"Mielona wieprzowina, surowa","Pork, fresh, ground, raw",263,16.88,21.19,0,0
+175167,"Łosoś atlantycki hodowlany, surowy","Fish, salmon, Atlantic, farmed, raw",208,20.42,13.42,0,0
+171955,"Dorsz atlantycki, surowy","Fish, cod, Atlantic, raw",82,17.81,0.67,0,0
+173709,"Tuńczyk w puszce w wodzie, odsączony","Fish, tuna, light, canned in water, drained solids (Includes foods for USDA's Food Distribution Program)",86,19.44,0.96,0,0
+173717,"Pstrąg tęczowy, surowy","Fish, trout, rainbow, farmed, raw",141,19.94,6.18,0,0
+175116,"Śledź atlantycki, surowy","Fish, herring, Atlantic, raw",158,17.96,9.04,0,0
+175119,"Makrela atlantycka, surowa","Fish, mackerel, Atlantic, raw",205,18.6,13.89,0,0
+174210,"Krewetki, surowe","Crustaceans, shrimp, mixed species, raw (may contain additives to retain moisture)",71,13.61,1.01,0.91,0
+170457,"Pomidor, surowy","Tomatoes, red, ripe, raw, year round average",18,0.88,0.2,3.89,1.2
+169998,"Kukurydza słodka, surowa","Corn, sweet, yellow, raw",86,3.27,1.35,18.7,2
+168409,"Ogórek ze skórką, surowy","Cucumber, with peel, raw",15,0.65,0.11,3.63,0.5
+170393,"Marchew, surowa","Carrots, raw",41,0.93,0.24,9.58,2.8
+170000,"Cebula, surowa","Onions, raw",40,1.1,0.1,9.34,1.7
+170026,"Ziemniaki, surowe","Potatoes, flesh and skin, raw",77,2.05,0.09,17.49,2.1
+168482,"Batat, surowy","Sweet potato, raw, unprepared (Includes foods for USDA's Food Distribution Program)",86,1.57,0.05,20.12,3
+170108,"Papryka czerwona, surowa","Peppers, sweet, red, raw",26,0.99,0.3,6.03,2.1
+170379,"Brokuł, surowy","Broccoli, raw",34,2.82,0.37,6.64,2.6
+169975,"Kapusta, surowa","Cabbage, raw",25,1.28,0.1,5.8,2.5
+169247,Sałata rzymska,"Lettuce, cos or romaine, raw",17,1.23,0.3,3.29,2.1
+168462,"Szpinak, surowy","Spinach, raw",23,2.86,0.39,3.63,2.2
+169230,"Czosnek, surowy","Garlic, raw",149,6.36,0.5,33.06,2.1
+169251,"Pieczarki, surowe","Mushrooms, white, raw",22,3.09,0.34,3.26,1
+169986,"Kalafior, surowy","Cauliflower, raw",25,1.92,0.28,4.97,2
+169291,"Cukinia, surowa","Squash, summer, zucchini, includes skin, raw",17,1.21,0.32,3.11,1
+169145,"Burak, surowy","Beets, raw",43,1.61,0.17,9.56,2.8
+168421,"Jarmuż, surowy","Kale, raw",35,2.92,1.49,4.42,4.1
+169961,"Fasolka szparagowa, surowa","Beans, snap, green, raw",31,1.83,0.22,6.97,2.7
+170419,"Groszek zielony, surowy","Peas, green, raw",81,5.42,0.4,14.45,5.7
+171705,"Awokado, surowe","Avocados, raw, all commercial varieties",160,2,14.66,8.53,6.7
+171688,"Jabłko ze skórką, surowe","Apples, raw, with skin (Includes foods for USDA's Food Distribution Program)",52,0.26,0.17,13.81,2.4
+173944,"Banan, surowy","Bananas, raw",89,1.09,0.33,22.84,2.6
+169097,"Pomarańcza, surowa","Oranges, raw, all commercial varieties",47,0.94,0.12,11.75,2.4
+174683,"Winogrona, surowe","Grapes, red or green (European type, such as Thompson seedless), raw",69,0.72,0.16,18.1,0.9
+167762,"Truskawki, surowe","Strawberries, raw",32,0.67,0.3,7.68,2
+169118,"Gruszka, surowa","Pears, raw",57,0.36,0.14,15.23,3.1
+169928,"Brzoskwinia, surowa","Peaches, yellow, raw",39,0.91,0.25,9.54,1.5
+167746,"Cytryna bez skórki, surowa","Lemons, raw, without peel",29,1.1,0.3,9.32,2.8
+167765,"Arbuz, surowy","Watermelon, raw",30,0.61,0.15,7.55,0.4
+168153,"Kiwi, surowe","Kiwifruit, green, raw",61,1.14,0.52,14.66,3
+169124,"Ananas, surowy","Pineapple, raw, all varieties",50,0.54,0.12,13.12,1.4
+169705,Płatki owsiane,Oats (Includes foods for USDA's Food Distribution Program),389,16.89,6.9,66.27,10.6
+168877,"Ryż biały długoziarnisty, surowy","Rice, white, long-grain, regular, raw, enriched",365,7.13,0.66,79.95,1.3
+169753,"Ryż biały długoziarnisty, ugotowany","Rice, white, long-grain, regular, cooked, enriched, with salt",130,2.69,0.28,28.17,0.4
+169703,"Ryż brązowy długoziarnisty, surowy","Rice, brown, long-grain, raw (Includes foods for USDA's Food Distribution Program)",367,7.54,3.2,76.25,3.6
+169704,"Ryż brązowy długoziarnisty, ugotowany","Rice, brown, long-grain, cooked (Includes foods for USDA's Food Distribution Program)",123,2.74,0.97,25.58,1.6
+170686,"Kasza gryczana prażona, ugotowana","Buckwheat groats, roasted, cooked",92,3.38,0.62,19.94,2.7
+169736,Makaron suchy,"Pasta, dry, enriched",371,13.04,1.51,74.67,3.2
+169737,Makaron ugotowany,"Pasta, cooked, enriched, without added salt",158,5.8,0.93,30.86,1.8
+169738,"Makaron pełnoziarnisty, suchy","Pasta, whole-wheat, dry (Includes foods for USDA's Food Distribution Program)",352,13.87,2.93,73.37,9.2
+168894,Mąka pszenna,"Wheat flour, white, all-purpose, enriched, bleached",364,10.33,0.98,76.31,2.7
+170284,"Kasza jęczmienna perłowa, surowa","Barley, pearled, raw",352,9.91,1.16,77.72,15.6
+170688,"Kasza bulgur, sucha","Bulgur, dry",342,12.29,1.33,75.87,12.5
+171413,Oliwa z oliwek,"Oil, olive, salad or cooking",884,0,100,0,0
+172336,Olej rzepakowy,"Oil, canola",884,0,100,0,0
+171017,Olej słonecznikowy,"Oil, sunflower, linoleic (less than 60%)",884,0,100,0,0
+171412,Olej kokosowy,"Oil, coconut",892,0,99.06,0,0
+171401,Smalec,Lard,902,0,100,0,0
+171018,Margaryna,"Margarine, regular, hard, soybean (hydrogenated)",719,0.9,80.5,0.9,0
+169655,Cukier biały,"Sugars, granulated",387,0,0,99.98,0
+168833,Cukier brązowy,"Sugars, brown",380,0.12,0,98.09,0
+169640,Miód,Honey,304,0.3,0,82.4,0.2
+169661,Syrop klonowy,"Syrups, maple",260,0.04,0.06,67.04,0
+170273,Czekolada gorzka 70-85%,"Chocolate, dark, 70-85% cacao solids",598,7.79,42.63,45.9,10.9
+173227,"Herbata czarna, napar","Beverages, tea, black, brewed, prepared with tap water",1,0,0,0.3,0
+171890,"Kawa czarna, napar","Beverages, coffee, brewed, prepared with tap water",1,0.12,0.02,0,0
+169098,Sok pomarańczowy,"Orange juice, raw (Includes foods for USDA's Food Distribution Program)",45,0.7,0.2,10.4,0.2
+174852,Cola,"Beverages, carbonated, cola, regular",42,0,0.25,10.36,0
+174832,Napój migdałowy niesłodzony,"Beverages, almond milk, unsweetened, shelf stable",15,0.4,0.96,1.31,0.2
+173647,Woda z kranu,"Beverages, water, tap, drinking",0,0,0,0,0
+172420,"Soczewica, surowa","Lentils, raw",352,24.63,1.06,63.35,10.7
+173757,"Ciecierzyca, ugotowana","Chickpeas (garbanzo beans, bengal gram), mature seeds, cooked, boiled, without salt",164,8.86,2.59,27.42,7.6
+170567,Migdały,"Nuts, almonds",579,21.15,49.93,21.55,12.5
+170187,Orzechy włoskie,"Nuts, walnuts, english",654,15.23,65.21,13.71,6.7
+172470,Masło orzechowe,"Peanut butter, smooth style, without salt",598,22.21,51.36,22.31,5
