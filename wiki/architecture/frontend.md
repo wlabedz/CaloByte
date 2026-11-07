@@ -24,4 +24,4 @@ Angular standalone, TS, `@angular-eslint`, Vitest. SPA budowane `ng build` i pub
 
 - Brak `withHashLocation()` i brak tras. Przy dodawaniu widoków odświeżanie podstron na Pages da 404.
 - SSR i hydracja są włączone, choć hosting to statyczne Pages. Nie wiadomo, czy SSR ma zostać.
-- Karteczka „UI” w Miro jest pusta. Nie ma makiet widoków. [Q-003](../questions.md#q-003--ui--otwarte)
+- Karteczka „UI” w Miro jest pusta. Nie ma makiet widoków. [Q-003](../questions.md#q-003)

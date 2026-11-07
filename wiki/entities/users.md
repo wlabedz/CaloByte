@@ -32,5 +32,5 @@ API: `GET /users`, `POST /users` (409 przy zajętym emailu), schematy `UserCreat
 
 ## Rozbieżności
 
-- Miro: cele dzienne (`daily_*_target`). Kod: dane antropometryczne, bez celów. [Q-001](../questions.md#q-001--model-danych--otwarte)
+- Miro: cele dzienne (`daily_*_target`). Kod: dane antropometryczne, bez celów. [Q-001](../questions.md#q-001)
 - Brak `username`. Jest `name` + `surname`.

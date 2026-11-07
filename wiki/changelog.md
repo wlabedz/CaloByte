@@ -4,7 +4,7 @@ Jeden wpis na każdy zmergowany PR, od najnowszych. Generowane przez `/wiki inge
 
 ## 2026-10-28 · #13 Add simple form to test db connection
 - Autor: wlabedz · Branch: feat/enable-form · Kamień milowy: ?
-- Co: Pierwsze endpointy na danych: `GET /users` i `POST /users` (409 przy powtórzonym emailu) oraz formularz w Angularze, który tworzy użytkownika i wyświetla listę. Sesja bazy przez `get_db()` i `NullPool`.
+- Co: Pierwsze endpointy na danych: `GET /users` i `POST /users` (409 przy powtórzonym emailu) oraz formularz w Angularze, który tworzy użytkownika i wyświetla listę. Doszła zależność sesji `get_db()` i cache silnika (`@cache`). `NullPool` był już od #10.
 - Pliki: backend/app.py, backend/db.py, backend/schemas.py, backend/requirements.txt, frontend/src/app/app.ts, frontend/src/app/app.html, frontend/src/app/users.service.ts, frontend/src/app/app.config.ts, frontend/src/app/app.spec.ts, frontend/src/environments/api-url.ts
 - Strony wiki: [architecture/backend](architecture/backend.md), [architecture/frontend](architecture/frontend.md), [architecture/database](architecture/database.md), [entities/users](entities/users.md)
 
@@ -22,7 +22,7 @@ Jeden wpis na każdy zmergowany PR, od najnowszych. Generowane przez `/wiki inge
 
 ## 2026-10-28 · #10 Add DB configuration and enable db management using alembic
 - Autor: wlabedz · Branch: feat/add-db-config · Kamień milowy: ?
-- Co: Podłączenie Postgresa (SQLAlchemy + psycopg 3, adres z `DATABASE_URL`), model `User` i Alembic z pierwszą migracją tworzącą tabelę `users`.
+- Co: Podłączenie Postgresa (SQLAlchemy + psycopg 3, adres z `DATABASE_URL`, `NullPool`), model `User` i Alembic z pierwszą migracją tworzącą tabelę `users`.
 - Pliki: backend/alembic.ini, backend/db.py, backend/migrations/*, backend/models.py, backend/requirements.txt, backend/requirements-dev.txt
 - Strony wiki: [architecture/database](architecture/database.md), [entities/users](entities/users.md)
 

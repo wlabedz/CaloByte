@@ -39,7 +39,7 @@ wiki/
   updated: 2026-11-07
   ---
   ```
-- Strony encji i architektury mają sekcje `## Plan (Miro)`, `## Stan w kodzie`, `## Rozbieżności`. Każda rozbieżność linkuje pytanie, np. [Q-001](questions.md#q-001--model-danych--otwarte), jeśli takie istnieje.
+- Strony encji i architektury mają sekcje `## Plan (Miro)`, `## Stan w kodzie`, `## Rozbieżności`. Każda rozbieżność linkuje pytanie, np. [Q-001](questions.md#q-001), jeśli takie istnieje.
 - Kod linkujemy (`backend/models.py:35`), a nie kopiujemy. Krótki fragment, do 10 linii, wolno wkleić tylko wtedy, gdy jest niezbędny.
 - Linki między stronami są względne, w formacie markdown.
 - Pytań (`Q-NNN`) nie traktujemy jako wymagań projektu. Na stronach pojawiają się tylko jako linki w „Rozbieżnościach” albo jako źródło zamkniętej odpowiedzi.
@@ -81,6 +81,7 @@ next_question_id: 6
 ### questions.md
 
 ```markdown
+<a id="q-001"></a>
 ## Q-001 · model danych · otwarte
 <pytanie w jednym–dwóch zdaniach>
 - Kontekst: <co się nie zgadza / czego brakuje>

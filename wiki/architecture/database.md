@@ -24,4 +24,4 @@ Neon Postgres w Vercel Storage (Free: 1 GB, auto-suspend 5 min), połączenie pr
 
 ## Rozbieżności
 
-_(uzupełnia `ingest code` / `lint`)_
+- Brak tabel `meals` i `meal_items` z planu, jest tylko `users`. Zob. [entities/meals](../entities/meals.md) i [entities/meal_items](../entities/meal_items.md).

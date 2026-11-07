@@ -6,7 +6,7 @@ updated: 2026-11-07
 
 # Kamienie milowe
 
-Oś z Miro: Spotkanie 1: Start → Spotkanie 2: CI & Baza → Spotkanie 3: CD & Integracja → Spotkanie 4: Twist & AI → Spotkanie 5: Obrona. **Dat spotkań nie ma w Miro**, więc wpisy w changelogu mają kamień milowy `?`. [Q-006](questions.md#q-006--harmonogram--otwarte)
+Oś z Miro: Spotkanie 1: Start → Spotkanie 2: CI & Baza → Spotkanie 3: CD & Integracja → Spotkanie 4: Twist & AI → Spotkanie 5: Obrona. **Dat spotkań nie ma w Miro**, więc wpisy w changelogu mają kamień milowy `?`. [Q-006](questions.md#q-006)
 
 ## Spotkanie 1: Start i szkielet
 - Plan: repo z ochroną `main` (PR + review), `/backend` z `GET /health`, `/frontend` z routingiem i base-href, „Hello World” na Pages i Vercelu.
@@ -14,7 +14,7 @@ Oś z Miro: Spotkanie 1: Start → Spotkanie 2: CI & Baza → Spotkanie 3: CD & 
 
 ## Spotkanie 2: CI i model danych
 - Plan: `ci.yml` (ruff, pytest, lint, testy frontu), baza Neon + `DATABASE_URL`, CRUD `meals` z walidacją (400/404/422), pierwsze testy backendu i min. 2 testy komponentów.
-- Stan: częściowo. CI w #6/#9 i baza + Alembic w #10–#12 są. **Brak tabeli i CRUD `meals`**. Jest tylko `users` (GET/POST). Backend ma 2 testy, front 1 plik spec.
+- Stan: częściowo. CI w #6/#9 i baza + Alembic w #10–#12 są. **Brak tabeli i CRUD `meals`**. Jest tylko `users` (GET/POST). Backend ma 2 testy, front 2 testy w 1 pliku spec (`app.spec.ts`).
 
 ## Spotkanie 3: CD i integracja
 - Plan: `deploy-frontend.yml` (base-href, deploy-pages), `deploy-backend.yml` (Vercel CLI + smoke `/health`); dalsze punkty w Miro są puste.

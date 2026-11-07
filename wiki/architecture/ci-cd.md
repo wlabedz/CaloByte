@@ -18,8 +18,8 @@ Są trzy workflow w `.github/workflows/`:
 | Workflow | Kiedy | Co robi |
 |---|---|---|
 | `ci.yml` | PR do `main` | **backend** (Python 3.13): `pip install -r requirements-dev.txt` → `ruff check .` → `pytest --cov=app` z raportem w Step Summary. **frontend** (Node 24): `npm ci` → `npm run lint` → `ng test --watch=false --coverage` z tabelą pokrycia. |
-| `deploy-backend.yml` | push do `main` w `backend/**` lub ręcznie | Python 3.12 + `uv` + Vercel CLI → `alembic upgrade head` (sekret `DATABASE_URL_UNPOOLED`) → `vercel pull/build/deploy --prod` → smoke test `curl $API_URL/health` (5 prób). |
-| `deploy-frontend.yml` | push do `main` w `frontend/**` lub ręcznie | `npm ci` → generuje `src/environments/api-url.ts` ze zmiennej repo `API_URL` (przerywa się, gdy brak) → `ng build --base-href /<repo>/` → GitHub Pages. |
+| `deploy-backend.yml` | push do `main` w `backend/**` lub w samym workflow, albo ręcznie | Python 3.12 + `uv` + Vercel CLI → `alembic upgrade head` (sekret `DATABASE_URL_UNPOOLED`) → `vercel pull/build/deploy --prod` → smoke test `curl $API_URL/health` (do 6 prób: 1 + 5 powtórek). |
+| `deploy-frontend.yml` | push do `main` w `frontend/**` lub w samym workflow, albo ręcznie | `npm ci` → generuje `src/environments/api-url.ts` ze zmiennej repo `API_URL` (przerywa się, gdy brak) → `ng build --base-href /<repo>/` → GitHub Pages. |
 
 Sekrety i zmienne: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, `DATABASE_URL_UNPOOLED` (sekrety), `API_URL` (zmienna repo). `backend/vercel.json` wyłącza auto-deploy Vercela z gita, więc wdraża tylko Action.
 

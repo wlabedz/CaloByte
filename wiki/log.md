@@ -32,6 +32,10 @@ Wpisy operacji `/wiki` od najstarszych. Blok `ingest-state` na końcu czyta skil
 ## [2026-11-07] lint (powtórka)
 - bez nowych pytań: każda rozbieżność ma już pytanie Q-001…Q-008; w Miro nadal 8 karteczek
 
+## [2026-11-07] poprawki po review
+- Skill: idempotentny ingest code, rekoncyliacja pytań i karteczek, ingest all przy niedostępnym Miro, dopasowanie ID po usunięciu HTML, porównanie zrzutów po (ID, treść), kotwice pytań bez statusu.
+- Strony: changelog #10/#13 (NullPool), ci-cd, database, milestones, decyzja 0001 (uzasadnienie oznaczone jako wniosek), zrzut Miro (sekcja ramki z 8 karteczkami).
+
 <!-- ingest-state
 last_pr: 13
 last_miro_snapshot: 2026-11-07
