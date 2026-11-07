@@ -29,6 +29,9 @@ Wpisy operacji `/wiki` od najstarszych. Blok `ingest-state` na końcu czyta skil
 - Do zespołu (nie do analityka): `deploy-backend.yml` na Pythonie 3.12 przy 3.13 w CI i w Miro; zdublowane kroki checkout/setup-node; brak review w 13 PR-ach; SSR i hydracja przy statycznym hostingu; brak `withHashLocation()`; brak `AI.md`.
 - Uwaga: kotwice linków `#q-nnn--tag--status` zawierają status, więc po zmianie statusu trzeba je zaktualizować.
 
+## [2026-11-07] lint (powtórka)
+- bez nowych pytań: każda rozbieżność ma już pytanie Q-001…Q-008; w Miro nadal 8 karteczek
+
 <!-- ingest-state
 last_pr: 13
 last_miro_snapshot: 2026-11-07
