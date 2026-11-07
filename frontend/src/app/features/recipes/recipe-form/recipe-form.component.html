@@ -1,0 +1,163 @@
+<p><a class="back-link" routerLink="/recipes">← Wszystkie przepisy</a></p>
+
+<header class="page-header">
+  <h1 class="page-title">{{ recipeId === null ? 'Nowy przepis' : 'Edycja przepisu' }}</h1>
+</header>
+
+@if (errorMessage(); as message) {
+  <p class="alert" role="alert">{{ message }}</p>
+}
+
+@if (loading()) {
+  <p class="status" role="status">Wczytywanie…</p>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <section class="card stack">
+      <label class="label">
+        Nazwa
+        <input class="field" type="text" formControlName="name" maxlength="200" />
+      </label>
+      @if (invalid('name')) {
+        <p class="error">Podaj nazwę przepisu (1–200 znaków).</p>
+      }
+
+      <div class="grid">
+        <label class="label">
+          Porcje
+          <input
+            class="field"
+            type="number"
+            formControlName="servings"
+            min="1"
+            max="100"
+            step="1"
+          />
+        </label>
+        <label class="label">
+          Kategoria
+          <input class="field" type="text" formControlName="category" />
+        </label>
+        <label class="label">
+          Przygotowanie (min)
+          <input class="field" type="number" formControlName="prep_min" min="0" max="10000" />
+        </label>
+        <label class="label">
+          Gotowanie (min)
+          <input class="field" type="number" formControlName="cook_min" min="0" max="10000" />
+        </label>
+      </div>
+      @if (invalid('servings')) {
+        <p class="error">Liczba porcji musi być z zakresu 1–100.</p>
+      }
+      @if (invalid('prep_min') || invalid('cook_min')) {
+        <p class="error">Czas musi być liczbą z zakresu 0–10000 minut.</p>
+      }
+    </section>
+
+    <section class="card stack" aria-labelledby="items-heading">
+      <h2 id="items-heading" class="section-title">Składniki</h2>
+
+      <div class="search">
+        <input
+          class="field"
+          type="search"
+          placeholder="Szukaj produktu…"
+          aria-label="Szukaj produktu"
+          (input)="onSearch($event)"
+          (keydown.enter)="$event.preventDefault()"
+        />
+        @if (searchResults().length > 0) {
+          <ul class="search-results">
+            @for (product of searchResults(); track product.id) {
+              <li>
+                <button type="button" (click)="pick(product)">
+                  {{ product.name }}
+                  <span class="muted">{{ product.kcal | number: '1.0-0' }} kcal / 100 g</span>
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      <div formArrayName="items" class="rows">
+        @for (group of items.controls; track group; let i = $index) {
+          <div class="item-row" [formGroupName]="i">
+            <span class="item-name">{{ group.controls.product.value.name }}</span>
+            <label class="weight">
+              <input
+                class="field"
+                type="number"
+                formControlName="weight_g"
+                min="0"
+                max="10000"
+                step="any"
+                [attr.aria-label]="'Waga: ' + group.controls.product.value.name + ' (g)'"
+              />
+              g
+            </label>
+            <button type="button" class="link-button" (click)="removeItem(i)">Usuń</button>
+            @if (weightInvalid(group)) {
+              <p class="error row-error">Waga musi być większa od 0 i nie większa niż 10000 g.</p>
+            }
+          </div>
+        }
+      </div>
+      @if (submitted() && items.length === 0) {
+        <p class="error">Dodaj co najmniej jeden składnik.</p>
+      }
+      @if (submitted() && items.length > 50) {
+        <p class="error">Przepis może mieć maksymalnie 50 składników.</p>
+      }
+
+      <button type="button" class="link-button" (click)="dialogOpen.set(true)">
+        Dodaj własny produkt
+      </button>
+    </section>
+
+    <section class="card preview" aria-labelledby="preview-heading">
+      <h2 id="preview-heading" class="section-title">Na porcję</h2>
+      <dl class="macros">
+        <div>
+          <dt>Kalorie</dt>
+          <dd class="kcal">{{ preview().kcal | number: '1.0-0' }} kcal</dd>
+        </div>
+        <div>
+          <dt>Białko</dt>
+          <dd>{{ preview().protein | number: '1.0-1' }} g</dd>
+        </div>
+        <div>
+          <dt>Tłuszcze</dt>
+          <dd>{{ preview().fat | number: '1.0-1' }} g</dd>
+        </div>
+        <div>
+          <dt>Węglowodany</dt>
+          <dd>{{ preview().carbs | number: '1.0-1' }} g</dd>
+        </div>
+        <div>
+          <dt>Błonnik</dt>
+          <dd>{{ preview().fiber | number: '1.0-1' }} g</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="card stack">
+      <label class="label">
+        Przygotowanie
+        <textarea class="field" rows="6" formControlName="directions" maxlength="10000"></textarea>
+      </label>
+      @if (invalid('directions')) {
+        <p class="error">Opis może mieć maksymalnie 10000 znaków.</p>
+      }
+    </section>
+
+    <div class="actions">
+      <a class="secondary" routerLink="/recipes">Anuluj</a>
+      <button type="submit" class="primary" [disabled]="saving()">Zapisz</button>
+    </div>
+  </form>
+}
+
+@if (dialogOpen()) {
+  <app-product-dialog (created)="onProductCreated($event)" (closed)="dialogOpen.set(false)" />
+}

@@ -1,0 +1,90 @@
+<p><a class="back-link" routerLink="/recipes">← Wszystkie przepisy</a></p>
+
+@if (errorMessage(); as message) {
+  <p class="alert" role="alert">{{ message }}</p>
+}
+
+@if (recipe(); as r) {
+  <header class="page-header header-row">
+    <div>
+      <p class="eyebrow">{{ r.category ?? 'Bez kategorii' }}</p>
+      <h1 class="page-title">{{ r.name }}</h1>
+      <p class="meta">
+        {{ servingsLabel(r.servings) }}
+        @if (r.total_min !== null) {
+          · {{ r.total_min }} min
+        }
+      </p>
+    </div>
+    @if (r.source === 'user') {
+      <div class="actions">
+        <a class="edit-link" [routerLink]="['/recipes', r.id, 'edit']">Edytuj</a>
+        <button
+          type="button"
+          class="delete-button"
+          [disabled]="deleting()"
+          [attr.aria-label]="'Usuń przepis ' + r.name"
+          (click)="deleteRecipe(r)"
+        >
+          Usuń
+        </button>
+      </div>
+    }
+  </header>
+
+  <section class="card" aria-labelledby="macros-heading">
+    <h2 id="macros-heading" class="section-title">Wartości odżywcze na porcję</h2>
+    <dl class="macros">
+      <div>
+        <dt>Kalorie</dt>
+        <dd>{{ r.kcal | number: '1.0-0' }} kcal</dd>
+      </div>
+      <div>
+        <dt>Białko</dt>
+        <dd>{{ r.protein | number: '1.0-1' }} g</dd>
+      </div>
+      <div>
+        <dt>Tłuszcze</dt>
+        <dd>{{ r.fat | number: '1.0-1' }} g</dd>
+      </div>
+      <div>
+        <dt>Węglowodany</dt>
+        <dd>{{ r.carbs | number: '1.0-1' }} g</dd>
+      </div>
+      <div>
+        <dt>Błonnik</dt>
+        <dd>{{ r.fiber | number: '1.0-1' }} g</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section aria-labelledby="ingredients-heading">
+    <h2 id="ingredients-heading" class="section-title">Składniki</h2>
+    @if (r.source === 'user' && r.items.length > 0) {
+      <ul class="list">
+        @for (item of r.items; track item.product_id) {
+          <li>{{ item.product_name }} — {{ item.weight_g | number: '1.0-0' }} g</li>
+        }
+      </ul>
+    } @else {
+      <ul class="list">
+        @for (line of r.ingredients_text; track $index) {
+          <li>{{ line }}</li>
+        }
+      </ul>
+    }
+  </section>
+
+  <section aria-labelledby="directions-heading">
+    <h2 id="directions-heading" class="section-title">Przygotowanie</h2>
+    <p class="directions">{{ r.directions }}</p>
+  </section>
+
+  @if (r.source === 'kaggle' && r.source_url) {
+    <p class="source">
+      <a [href]="r.source_url" target="_blank" rel="noopener noreferrer">Źródło: Allrecipes</a>
+    </p>
+  }
+} @else if (!errorMessage()) {
+  <p class="status" role="status">Wczytywanie…</p>
+}

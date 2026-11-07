@@ -1,7 +1,7 @@
 ---
 title: Encja users
 sources: [raw/miro/2026-11-07-board.md, backend/models.py, backend/schemas.py, backend/migrations/versions/, raw/github/prs/PR-0017.md, frontend/src/app/core/data/http-user-repository.ts, frontend/src/app/features/profile/profile.component.ts]
-code_sha: 04d0c3f
+code_sha: 3f3aa87
 updated: 2026-11-07
 ---
 
@@ -13,7 +13,7 @@ updated: 2026-11-07
 
 ## Stan w kodzie
 
-Model `User` (`backend/models.py:35`), tabela `users` z migracji `61ac7f2698e4` + `80b93a51e10e`:
+Model `User` (`backend/models.py:40`), tabela `users` z migracji `61ac7f2698e4` + `80b93a51e10e`:
 
 | Pole | Typ | Uwagi |
 |---|---|---|

@@ -24,6 +24,8 @@ Projekt zespołowy, 4 osoby ([team](team.md)), realizowany przez 5 spotkań kont
 
 [users](entities/users.md) 1→N [meals](entities/meals.md) 1→N [meal_items](entities/meal_items.md). Pełny CRUD jest wymagany dla `meals`.
 
+W kodzie doszedł osobny katalog, którego Miro nie przewiduje: [recipes](entities/recipes.md) 1→N [recipe_items](entities/recipe_items.md) N→1 [products](entities/products.md). Nie jest jeszcze powiązany z `meals`.
+
 ## Twist
 
 Wylosowany twist to **Statystyki z wykresem**: wykres w Angularze (chart.js / ng2-charts) zasilany z endpointu agregującego `GET /meals/stats`. W Miro jest też lista pozostałych możliwych twistów: CSV, audit log, Open-Meteo, filtry z paginacją.
@@ -32,6 +34,6 @@ Wylosowany twist to **Statystyki z wykresem**: wykres w Angularze (chart.js / ng
 
 - Tablica: https://miro.com/app/board/uXjVEWYP5RY=/
 - Repo główne: https://github.com/wlabedz/CaloByte ([Q-004](questions.md#q-004)). Karteczka „GitHub” w Miro nadal linkuje https://github.com/pwjtd/CaloByte, więc link na tablicy trzeba poprawić.
-- Dataset posiłków: https://www.kaggle.com/datasets/thedevastator/better-recipes-for-a-better-life
-- API z posiłkami: https://calorieapi.com
+- Dataset posiłków: https://www.kaggle.com/datasets/thedevastator/better-recipes-for-a-better-life. Jest już używany: z datasetu pochodzi 1090 przepisów w katalogu ([entities/recipes](entities/recipes.md)), a kalorie są liczone, bo dataset ich nie zawiera.
+- API z posiłkami: https://calorieapi.com. Nieużywane; produkty pochodzą z USDA FoodData Central (domena publiczna), 108 pozycji ([entities/products](entities/products.md)).
 - Wymagane pliki repo wg Miro: `AI.md` (jak korzystano z AI), `README.md` (architektura, setup, linki prod). `AI.md` jeszcze nie istnieje.

@@ -15,6 +15,38 @@ export const routes: Routes = [
       import('./features/history/history.component').then((m) => m.HistoryComponent),
   },
   {
+    path: 'recipes',
+    title: 'Przepisy · CaloByte',
+    loadComponent: () =>
+      import('./features/recipes/recipe-list/recipe-list.component').then(
+        (m) => m.RecipeListComponent,
+      ),
+  },
+  {
+    path: 'recipes/new',
+    title: 'Nowy przepis · CaloByte',
+    loadComponent: () =>
+      import('./features/recipes/recipe-form/recipe-form.component').then(
+        (m) => m.RecipeFormComponent,
+      ),
+  },
+  {
+    path: 'recipes/:id/edit',
+    title: 'Edycja przepisu · CaloByte',
+    loadComponent: () =>
+      import('./features/recipes/recipe-form/recipe-form.component').then(
+        (m) => m.RecipeFormComponent,
+      ),
+  },
+  {
+    path: 'recipes/:id',
+    title: 'Przepis · CaloByte',
+    loadComponent: () =>
+      import('./features/recipes/recipe-detail/recipe-detail.component').then(
+        (m) => m.RecipeDetailComponent,
+      ),
+  },
+  {
     path: 'profile',
     title: 'Profil · CaloByte',
     loadComponent: () =>

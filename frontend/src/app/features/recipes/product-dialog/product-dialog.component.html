@@ -1,0 +1,58 @@
+<section class="card dialog" role="dialog" aria-labelledby="product-dialog-title">
+  <h2 id="product-dialog-title" class="section-title">Własny produkt</h2>
+  <p class="hint">Wartości odżywcze podaj na 100 g produktu.</p>
+
+  @if (errorMessage(); as message) {
+    <p class="alert" role="alert">{{ message }}</p>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit(); $event.stopPropagation()" novalidate>
+    <label class="label">
+      Nazwa
+      <input class="field" type="text" formControlName="name" maxlength="200" />
+    </label>
+    @if (invalid('name')) {
+      <p class="error">Podaj nazwę produktu (1–200 znaków).</p>
+    }
+
+    <div class="grid">
+      <label class="label">
+        Kalorie (kcal)
+        <input class="field" type="number" formControlName="kcal" min="0" max="900" step="any" />
+      </label>
+      <label class="label">
+        Białko (g)
+        <input class="field" type="number" formControlName="protein" min="0" step="any" />
+      </label>
+      <label class="label">
+        Tłuszcze (g)
+        <input class="field" type="number" formControlName="fat" min="0" step="any" />
+      </label>
+      <label class="label">
+        Węglowodany (g)
+        <input class="field" type="number" formControlName="carbs" min="0" step="any" />
+      </label>
+      <label class="label">
+        Błonnik (g)
+        <input class="field" type="number" formControlName="fiber" min="0" max="100" step="any" />
+      </label>
+    </div>
+    @if (invalid('kcal')) {
+      <p class="error">Kalorie: od 0 do 900 kcal.</p>
+    }
+    @if (invalid('protein') || invalid('fat') || invalid('carbs')) {
+      <p class="error">Wartości odżywcze muszą być liczbami nie mniejszymi niż 0.</p>
+    }
+    @if (invalid('fiber')) {
+      <p class="error">Błonnik: od 0 do 100 g.</p>
+    }
+    @if (submitted() && form.hasError('macroSum')) {
+      <p class="error">Białko, tłuszcze i węglowodany nie mogą razem przekraczać 100 g.</p>
+    }
+
+    <div class="actions">
+      <button type="button" class="secondary" (click)="closed.emit()">Anuluj</button>
+      <button type="submit" class="primary" [disabled]="saving()">Zapisz produkt</button>
+    </div>
+  </form>
+</section>

@@ -36,7 +36,20 @@ Wymóg projektu: opis narzędzi AI, poleceń (promptów) i tego, co poprawialiś
 
 ## Backend
 
-_Do uzupełnienia (#33)._
+### Przepisy i produkty (Piotr)
+
+**Narzędzie:** Claude Code (model Claude Opus 5.5) w aplikacji desktopowej, z dostępem do terminala, repozytorium, przeglądarki i tablicy Miro. Projekt (spec i plan) powstał w rozmowie z AI. Implementację robili subagenci zadanie po zadaniu, a każde zadanie sprawdzał osobny subagent-reviewer. Na końcu był review całego brancha i test w przeglądarce. Decyzje, zgody na commity i push — autor.
+
+- Polecenia (skrót): „zrób backend na danych z Kaggle: seed, pierwsze endpointy, domena, integracja z frontem, podgląd i dodawanie przepisów, proste CRUD-y”; „przepisy z Kaggle domyślne do wyboru, użytkownik może dodać i skomponować własne”; „wartości składników weźmy z USDA”.
+- Wygenerowane:
+  - backend: tabele `products`, `recipes`, `recipe_items` z migracją, `nutrition.py` (liczenie makr na porcję), routery `/products` i `/recipes`, `catalog_service.py`, seed (`python -m seed`, `seed/prepare.py`) i krok seedu w CD;
+  - testy backendu na prawdziwym Postgresie (`conftest.py` z blokadą baz spoza hosta lokalnego) i usługa Postgres w CI;
+  - frontend: widoki Przepisy (lista, podgląd, formularz z wyborem produktów i podglądem makr, okienko „Dodaj własny produkt”), repozytoria HTTP i testy.
+- Dane: `recipes.csv` z Kaggle (licencja CC0, treść z Allrecipes; obrazków nie zapisujemy ani nie pokazujemy) oraz 108 produktów z USDA FoodData Central (domena publiczna). Polskie nazwy produktów wybrało i przetłumaczyło AI; warto je przejrzeć.
+- Decyzje autora: przepisy z Kaggle tylko do odczytu, własne przepisy komponowane z produktów z gramaturami, wartości składników z USDA do czasu odpowiedzi na pytanie do analityka, lokalne commity subagentów bez pushowania do czasu review.
+- Poprawki po review (AI-reviewer): nazwa „Mleko 3,25%” ucięta przez przecinek w CSV, formularz produktu zapisujący też przepis (zagnieżdżone formularze), brak limitu 50 składników, Enter w wyszukiwarce produktów zapisujący przepis, odmiana „2 porcje”, limity błonnika i czasów, wartości liczbowe w API wysyłane jako liczby zamiast napisów.
+- Dostosowanie do #24: usuwanie przepisu bez `confirm()`, z powiadomieniem i „Cofnij” (przywraca przepis z tych samych danych).
+- Sprawdzone w przeglądarce na lokalnej bazie testowej: tworzenie, edycja i usuwanie przepisu, zgodność podglądu makr z backendem, przepisy z Kaggle bez akcji edycji.
 
 ## Baza i CI/CD
 

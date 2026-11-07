@@ -82,3 +82,104 @@ export interface Meal {
   raw_prompt: string | null;
   items: MealItem[];
 }
+
+export type RecipeSource = 'kaggle' | 'user';
+export type ProductSource = 'usda' | 'user';
+
+export interface Page<T> {
+  items: T[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface RecipeQuery {
+  q?: string;
+  category?: string;
+  source?: RecipeSource;
+  page: number;
+  limit: number;
+}
+
+export interface CategoryCount {
+  category: string;
+  count: number;
+}
+
+/** Makroskładniki na 1 porcję. */
+export interface RecipeSummary {
+  id: string;
+  name: string;
+  source: RecipeSource;
+  category: string | null;
+  servings: number;
+  total_min: number | null;
+  kcal: number;
+  protein: number;
+  fat: number;
+  carbs: number;
+  fiber: number;
+}
+
+/** Składnik przepisu; makra dotyczą podanej wagi, nie 100 g. */
+export interface RecipeItem {
+  product_id: string;
+  product_name: string;
+  weight_g: number;
+  kcal: number;
+  protein: number;
+  fat: number;
+  carbs: number;
+  fiber: number;
+}
+
+export interface RecipeDetail extends RecipeSummary {
+  category_path: string | null;
+  prep_min: number | null;
+  cook_min: number | null;
+  ingredients_text: string[];
+  directions: string;
+  rating: number | null;
+  source_url: string | null;
+  items: RecipeItem[];
+  /** Znaczniki czasu ISO 8601. */
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RecipeItemInput {
+  product_id: string;
+  weight_g: number;
+}
+
+export interface RecipeInput {
+  name: string;
+  servings: number;
+  category?: string | null;
+  prep_min?: number | null;
+  cook_min?: number | null;
+  directions: string;
+  items: RecipeItemInput[];
+}
+
+/** Wartości odżywcze na 100 g. */
+export interface Product {
+  id: string;
+  name: string;
+  name_en: string | null;
+  source: ProductSource;
+  kcal: number;
+  protein: number;
+  fat: number;
+  carbs: number;
+  fiber: number;
+}
+
+export interface ProductInput {
+  name: string;
+  kcal: number;
+  protein: number;
+  fat: number;
+  carbs: number;
+  fiber: number;
+}
