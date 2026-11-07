@@ -1,7 +1,7 @@
 ---
 title: Encja meals
-sources: [raw/miro/2026-11-07-board.md, backend/models.py]
-code_sha: 933b1a7
+sources: [raw/miro/2026-11-07-board.md, backend/models.py, frontend/src/app/core/models.ts]
+code_sha: aa41ac7
 updated: 2026-11-07
 ---
 
@@ -15,9 +15,11 @@ Endpointy z planu: `GET /meals` (z filtrami i paginacją w wariancie twistu: `?p
 
 ## Stan w kodzie
 
-**Tabeli jeszcze nie ma.** Nie ma też modelu, migracji ani endpointów. Według planu miał powstać na Spotkaniu 2 ([milestones](../milestones.md)).
+**Backend:** tabeli jeszcze nie ma. Nie ma też modelu, migracji ani endpointów. Według planu miały powstać na Spotkaniu 2 ([milestones](../milestones.md)).
+
+**Frontend** (od #17): interfejs `Meal` w `frontend/src/app/core/models.ts` ma wszystkie pola z planu w snake_case oraz `items: MealItem[]`. `meal_type` jest po angielsku (`breakfast | lunch | dinner`), z polskimi etykietami w `MEAL_TYPE_LABELS`. Dane są przykładowe (`InMemoryMealRepository`), a usuwanie działa tylko w pamięci.
 
 ## Rozbieżności
 
 - `meal_type` ma w Miro trzy wartości (śniadanie/obiad/kolacja), bez przekąsek. Nie wiadomo, czy to celowe. [Q-007](../questions.md#q-007)
-- Źródło prawdy dla sum `total_*`. [Q-008](../questions.md#q-008)
+- Źródło prawdy dla sum `total_*`: front (#17) sumuje dzień z pól `total_*` posiłków, a nie z `items`. [Q-008](../questions.md#q-008)

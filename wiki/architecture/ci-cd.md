@@ -31,4 +31,4 @@ Historia: [#1](../changelog.md) `pages.yml` → [#4](../changelog.md) `deploy-fr
 
 - `deploy-backend.yml` używa Pythona **3.12**, a `ci.yml` i plan w Miro **3.13**.
 - `deploy-backend.yml` ma zdublowane kroki `actions/checkout` i `setup-node`, a `uv` jest instalowany, ale nieużywany w krokach workflow (prawdopodobnie potrzebuje go `vercel build`).
-- Żaden z 13 PR-ów nie ma zapisanego review, choć Miro zakłada obowiązkowy PR + review i min. 1 review na osobę na spotkanie.
+- PR-y #1–#13 nie mają zapisanego review, choć Miro zakłada obowiązkowy PR + review i min. 1 review na osobę na spotkanie. Od #17 review są (approve od `wlabedz`).

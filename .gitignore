@@ -1,2 +1,5 @@
 .vercel
 .env*
+
+# Specs i plany ze skilli superpowers (lokalne)
+docs/superpowers/
