@@ -14,7 +14,7 @@ Czy użytkownik ma mieć cele dzienne (kcal, białko, tłuszcze, węglowodany) j
 <a id="q-002"></a>
 ## Q-002 · AI · otwarte
 Którego LLM używamy: Gemini czy OpenAI? Jest budżet albo limit zapytań, i czy klucz jest już w sekretach Vercela?
-- Kontekst: Miro wymienia oba („Gemini API / OpenAI API”), wymaga wywołań tylko z backendu i odpowiedzi w JSON. Czat z przepisami (`POST /chat`, branch `feat/recipe-chat`) używa Gemini na darmowym planie, z kluczem `GEMINI_API_KEY` w sekretach Vercela, ale według autora PR (2026-11-07) nie rozstrzyga to wyboru dla parsowania posiłków (AddMeal).
+- Kontekst: Miro wymienia oba („Gemini API / OpenAI API”), wymaga wywołań tylko z backendu i odpowiedzi w JSON. Czat z przepisami (`POST /chat`, #35; od `feat/chat-db-recipes` przeszukuje przepisy z bazy) używa Gemini na darmowym planie, z kluczem `GEMINI_API_KEY` w sekretach Vercela, ale według autora PR (2026-11-07) nie rozstrzyga to wyboru dla parsowania posiłków (AddMeal).
 - Źródła: raw/miro/2026-11-07-board.md, backend/requirements.txt
 - Dotyczy: [architecture/backend](architecture/backend.md)
 - Miro: 3458764689732163743

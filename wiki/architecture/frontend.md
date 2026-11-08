@@ -1,8 +1,8 @@
 ---
 title: Frontend (Angular)
 sources: [raw/miro/2026-11-07-board.md, raw/github/prs/PR-0017.md, frontend/src/app/, frontend/src/environments/, frontend/src/testing/, frontend/src/styles.css, frontend/angular.json, frontend/package.json]
-code_sha: 3f3aa87
-updated: 2026-11-07
+code_sha: 5bdfc03
+updated: 2026-11-08
 ---
 
 # Frontend (Angular)
@@ -31,8 +31,8 @@ Od [#17](../changelog.md) (2026-11-07), z widokiem Profil z #20 oraz motywami (#
 - **Logika** (`core/nutrition.ts`): `recipePerServing` jest lustrem `recipe_per_serving` z backendu (zaokrąglenie half-up: kcal do całości, makra do 2 miejsc), używanym tylko do podglądu w formularzu; wartość zapisaną liczy backend. `sumMacros` sumuje pola `total_*` posiłków. `toDayKey` liczy dzień w lokalnej strefie czasowej, celowo bez `toISOString()`, które działa w UTC. `summarizeByDay` grupuje dni od najnowszego. `percentOf` liczy procent realizacji celu.
 - **Pulpit**: dzisiejsze posiłki i sumy względem celu. „Usuń” od razu ukrywa posiłek i pokazuje powiadomienie z „Cofnij”; `deleteMeal` leci dopiero, gdy powiadomienie zniknie bez cofnięcia, a przy błędzie posiłek wraca z komunikatem. Komunikaty są po polsku.
 - **Historia**: dni z kaloriami względem celu, makro, rozwijane posiłki i średnia kcal z zakończonych dni.
-- **Czat** (`features/chat/`, `core/chat.service.ts`): rozmowa z asystentem dietetycznym przez `POST /chat` ([backend](backend.md)). Na start trzy przykładowe pytania; odpowiedź to tekst i karty przepisów (zdjęcie, posiłek, tytuł po polsku i oryginalny, kcal i makro na porcję, czas, link), a przy kilku przepisach suma kalorii i białka. Front pamięta tylko `interaction_id` i odsyła go z kolejną wiadomością; „Nowa rozmowa” go czyści. Błąd odpowiedzi daje komunikat w `.alert`. Pod polem wiadomości informacja, że porady nie zastępują lekarza ani dietetyka. Czat nie korzysta z aktywnego profilu.
-- Testy: Vitest; przepisy mają specyfikacje dla listy, szczegółów, formularza, dialogu produktu, repozytoriów HTTP i `polish-plural`, czat ma 7 testów.
+- **Czat** (`features/chat/`, `core/chat.service.ts`): rozmowa z asystentem dietetycznym przez `POST /chat` ([backend](backend.md)). Na start trzy przykładowe pytania; odpowiedź to tekst i karty przepisów z bazy (posiłek, tytuł po polsku i oryginalny, kcal i makro na porcję, czas, link „Szczegóły” do `/#/recipes/:id` i „Źródło” do oryginału, jeśli jest), a przy kilku przepisach suma kalorii i białka. Front pamięta tylko `interaction_id` i odsyła go z kolejną wiadomością; „Nowa rozmowa” go czyści. Błąd odpowiedzi daje komunikat w `.alert`. Pod polem wiadomości informacja, że porady nie zastępują lekarza ani dietetyka. Czat nie korzysta z aktywnego profilu.
+- Testy: Vitest; przepisy mają specyfikacje dla listy, szczegółów, formularza, dialogu produktu, repozytoriów HTTP i `polish-plural`, czat ma 8 testów.
 
 ## Rozbieżności
 

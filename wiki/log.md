@@ -76,6 +76,11 @@ Wpisy operacji `/wiki` od najstarszych. Blok `ingest-state` na końcu czyta skil
 - Przepisy: usuwanie z „Cofnij” w powiadomieniu, jak na Pulpicie (#24).
 - Uwagi: tryb PR, `last_code_sha` i `last_pr` bez zmian, bez nowych pytań.
 
+## [2026-11-08] ingest code (PR) | feat/chat-db-recipes
+- Zmienione: architecture/backend.md (czat szuka w tabeli `recipes` przez `recipe_search.py` zamiast Spoonaculara; reguły wyszukiwania, `RecipeOut` z UUID, 16 testów czatu, `httpx` tylko w dev; `sources`: `spoonacular.py` → `recipe_search.py`), architecture/frontend.md (karty bez zdjęć, linki do `/#/recipes/:id`, 8 testów czatu), entities/recipes.md (tabela jest źródłem przepisów czatu; `sources` + `recipe_search.py`), entities/users.md (tylko `code_sha`: w `schemas.py` zmienił się `RecipeOut`), architecture/ci-cd.md (`wiki_check.py` nie wymaga strony dla plików usuniętych na branchu)
+- Pytania: Q-002 bez zmiany statusu, kontekst zaktualizowany
+- Uwagi: autor PR (2026-11-08): przepisy tylko z bazy, bez Spoonaculara. Wykonane ręcznie według SKILL.md (skill `/wiki` niedostępny w tej sesji), bez dostępu do Miro. `last_code_sha` i `last_pr` bez zmian.
+
 <!-- ingest-state
 last_pr: 19
 last_miro_snapshot: 2026-11-07
