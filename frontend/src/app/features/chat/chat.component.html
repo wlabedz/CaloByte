@@ -7,8 +7,8 @@
   <section class="card intro" aria-labelledby="intro-heading">
     <h2 id="intro-heading" class="section-title">Opisz, czego szukasz</h2>
     <p class="status">
-      Podaj kalorie, preferencje albo produkty, których unikasz. Asystent znajdzie prawdziwe
-      przepisy z wartościami odżywczymi.
+      Podaj kalorie, preferencje albo produkty, których unikasz. Asystent dobierze przepisy
+      z bazy CaloByte i pokaże ich wartości odżywcze.
     </p>
     <ul class="suggestions">
       @for (suggestion of suggestions; track suggestion) {
@@ -33,9 +33,6 @@
             <ul class="recipes" aria-label="Polecane przepisy">
               @for (recipe of entry.recipes; track recipe.id) {
                 <li class="card recipe">
-                  @if (recipe.image) {
-                    <img class="recipe-image" [src]="recipe.image" alt="" loading="lazy" />
-                  }
                   <div class="recipe-body">
                     <span class="badge">{{ recipe.meal }}</span>
                     <h3 class="recipe-title">{{ recipe.title }}</h3>
@@ -47,14 +44,21 @@
                       <abbr title="Węglowodany">W</abbr> {{ recipe.carbs_g ?? '–' }} g
                     </p>
                     <p class="recipe-meta">
-                      @if (recipe.ready_in_minutes) {
-                        <span>{{ recipe.ready_in_minutes }} min</span>
-                      }
-                      @if (recipe.url) {
-                        <a [href]="recipe.url" target="_blank" rel="noopener noreferrer">
-                          Przepis <span class="sr-only">{{ recipe.title }}</span> ↗
+                      <span>
+                        @if (recipe.ready_in_minutes) {
+                          {{ recipe.ready_in_minutes }} min
+                        }
+                      </span>
+                      <span class="recipe-links">
+                        <a [routerLink]="['/recipes', recipe.id]">
+                          Szczegóły <span class="sr-only">{{ recipe.title }}</span>
                         </a>
-                      }
+                        @if (recipe.url) {
+                          <a [href]="recipe.url" target="_blank" rel="noopener noreferrer">
+                            Źródło <span class="sr-only">{{ recipe.title }}</span> ↗
+                          </a>
+                        }
+                      </span>
                     </p>
                   </div>
                 </li>

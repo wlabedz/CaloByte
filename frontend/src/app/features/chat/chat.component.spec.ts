@@ -1,15 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { ChatRecipe, ChatReply, ChatService } from '../../core/chat.service';
 import { ChatComponent } from './chat.component';
 
 const recipe = (overrides: Partial<ChatRecipe> = {}): ChatRecipe => ({
-  id: 1,
+  id: 'r-1',
   meal: 'Śniadanie',
   title: 'Owsianka proteinowa',
   original_title: 'Protein Oatmeal',
-  image: 'https://img.spoonacular.com/1.jpg',
+  category: 'Breakfast and Brunch',
   url: 'https://example.com/oatmeal',
   ready_in_minutes: 10,
   servings: 1,
@@ -22,7 +23,10 @@ const recipe = (overrides: Partial<ChatRecipe> = {}): ChatRecipe => ({
 
 const reply = (overrides: Partial<ChatReply> = {}): ChatReply => ({
   message: 'Oto propozycje.',
-  recipes: [recipe(), recipe({ id: 2, meal: 'Obiad', title: 'Kurczak z ryżem', calories: 650 })],
+  recipes: [
+    recipe(),
+    recipe({ id: 'r-2', meal: 'Obiad', title: 'Kurczak z ryżem', calories: 650, url: null }),
+  ],
   interaction_id: 'i-1',
   ...overrides,
 });
@@ -47,7 +51,7 @@ describe('ChatComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [ChatComponent],
-      providers: [{ provide: ChatService, useValue: { send } }],
+      providers: [provideRouter([]), { provide: ChatService, useValue: { send } }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ChatComponent);
@@ -71,6 +75,17 @@ describe('ChatComponent', () => {
     ]);
     // Separator tysięcy zależy od LOCALE_ID, którego test nie ustawia.
     expect(textOf('.totals')).toMatch(/1\D?070 kcal, białko 60 g/);
+  });
+
+  it('links each recipe to its page in the app and to the source when known', async () => {
+    await typeAndSend('Jadłospis');
+
+    const links = (index: number) =>
+      Array.from(element.querySelectorAll('.recipe')[index].querySelectorAll('a'), (a) =>
+        a.getAttribute('href'),
+      );
+    expect(links(0)).toEqual(['/recipes/r-1', 'https://example.com/oatmeal']);
+    expect(links(1)).toEqual(['/recipes/r-2']);
   });
 
   it('continues the conversation with the interaction id from the previous reply', async () => {

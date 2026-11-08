@@ -2,11 +2,12 @@ import json
 import logging
 from functools import cache
 
-import httpx
 from google import genai
 from pydantic import BaseModel, ValidationError
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
 
-import spoonacular
+import recipe_search
 
 logger = logging.getLogger(__name__)
 
@@ -22,19 +23,27 @@ FALLBACK_MESSAGE = "Przepraszam, nie udało mi się przygotować odpowiedzi. Spr
 SYSTEM_PROMPT = """Jesteś asystentem dietetycznym w aplikacji CaloByte. Odpowiadasz po polsku.
 
 Pomagasz dobierać posiłki i układać jadłospisy dopasowane do kalorii i preferencji
-użytkownika. Przepisy wyszukujesz narzędziem search_recipes, które przyjmuje wartości po
-angielsku. Polecasz wyłącznie przepisy zwrócone przez narzędzie. Gdy układasz jadłospis
-na dzień, rozdziel kalorie między posiłki i wyszukaj wszystkie posiłki naraz, w jednym
-kroku. Używaj ogólnych zapytań; gdy wyszukiwanie nic nie zwróci, poluzuj filtry. Suma
-kalorii jadłospisu ma być bliska celowi użytkownika; jeśli wyraźnie brakuje, dodaj
-przekąskę.
+użytkownika. Przepisy wyszukujesz narzędziem search_recipes w bazie aplikacji: około
+tysiąca przepisów po angielsku, z wartościami odżywczymi na porcję. Polecasz wyłącznie
+przepisy zwrócone przez narzędzie. Parametry narzędzia podajesz po angielsku.
+
+Zasady wyszukiwania:
+- Używaj krótkich zapytań (jedno, dwa słowa, np. "chicken", "oatmeal") albo samej
+  kategorii; gdy wyszukiwanie nic nie zwróci, poluzuj filtry lub zmień zapytanie.
+- Baza nie ma tagów diet. Diety i alergie obsługuj przez exclude_ingredients, np. dla
+  diety wegetariańskiej: chicken, beef, pork, bacon, ham, turkey, sausage, fish, salmon,
+  tuna, shrimp; bez laktozy: milk, cheese, butter, cream, yogurt.
+- Gdy układasz jadłospis na dzień, rozdziel kalorie między posiłki i wyszukaj wszystkie
+  posiłki naraz, w jednym kroku. Suma kalorii ma być bliska celowi użytkownika; jeśli
+  wyraźnie brakuje, dodaj przekąskę albo dodatek.
+- Jeśli w bazie nie ma nic pasującego, powiedz to wprost zamiast polecać coś na siłę.
 
 Odpowiedź zwracasz jako JSON:
 - message: krótka odpowiedź dla użytkownika, zwykły tekst bez markdown. Nie wypisuj w niej
   kalorii ani makroskładników poszczególnych przepisów, aplikacja pokazuje je sama.
 - recipes: polecane przepisy w kolejności posiłków. id to identyfikator z wyników
-  narzędzia, meal to nazwa posiłku (np. Śniadanie, Obiad), title to tytuł po polsku.
-  Gdy nic nie polecasz, zostaw pustą listę.
+  narzędzia, meal to nazwa posiłku (np. Śniadanie, Obiad), title to tytuł przetłumaczony
+  na polski. Gdy nic nie polecasz, zostaw pustą listę.
 
 Nie proponuj diet poniżej 1200 kcal dziennie. Jeśli użytkownik wspomina o chorobach,
 ciąży lub zaburzeniach odżywiania, zasugeruj konsultację z lekarzem lub dietetykiem.
@@ -43,38 +52,43 @@ Nie udzielasz porad medycznych."""
 SEARCH_RECIPES_TOOL = {
     "type": "function",
     "name": "search_recipes",
-    "description": "Search real recipes with nutrition data. Calories and macros are per serving.",
+    "description": (
+        "Search the app's recipe database (English recipes). Calories and macros are per "
+        "serving. Desserts and drinks are left out unless you ask for that category."
+    ),
     "parameters": {
         "type": "object",
         "properties": {
             "query": {
                 "type": "string",
-                "description": 'Free-text search in English, e.g. "chicken salad".',
+                "description": (
+                    "Words that must all appear in the recipe name or ingredients, "
+                    'e.g. "chicken" or "chicken rice". Empty to search by filters only.'
+                ),
             },
-            "meal_type": {
+            "category": {
                 "type": "string",
-                "description": "One of: breakfast, main course, side dish, salad, soup, snack, dessert.",
+                "description": (
+                    "Recipe category, e.g. Breakfast and Brunch, Main Dishes, Meat and Poultry, "
+                    "Seafood, Salad, Soups, Side Dish, Appetizers and Snacks, Bread, Desserts."
+                ),
             },
             "max_calories": {"type": "integer", "description": "Maximum calories per serving."},
             "min_protein": {
                 "type": "integer",
                 "description": "Minimum protein in grams per serving.",
             },
-            "diet": {
-                "type": "string",
-                "description": "e.g. vegetarian, vegan, ketogenic, gluten free.",
+            "exclude_ingredients": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": 'Ingredients that must not appear, e.g. ["chicken", "milk"].',
             },
-            "intolerances": {
-                "type": "string",
-                "description": 'Comma-separated, e.g. "dairy,gluten".',
-            },
-            "cuisine": {"type": "string", "description": "e.g. italian, asian, mexican."},
         },
     },
 }
 
-# The model only picks recipes by id; nutrition, photos and links are filled in from
-# Spoonacular here, so the numbers shown to the user can't be made up by the model.
+# The model only picks recipes by id; nutrition and links are filled in from the database
+# here, so the numbers shown to the user can't be made up by the model.
 ANSWER_FORMAT = {
     "type": "text",
     "mime_type": "application/json",
@@ -87,7 +101,7 @@ ANSWER_FORMAT = {
                 "items": {
                     "type": "object",
                     "properties": {
-                        "id": {"type": "integer"},
+                        "id": {"type": "string"},
                         "meal": {"type": "string"},
                         "title": {"type": "string"},
                     },
@@ -105,7 +119,7 @@ class AIServiceError(Exception):
 
 
 class _PickedRecipe(BaseModel):
-    id: int
+    id: str
     meal: str
     title: str
 
@@ -152,27 +166,31 @@ def _tool_result(call, text: str, is_error: bool = False) -> dict:
     }
 
 
-def _run_tool(call, found: dict[int, dict]) -> dict:
+def _run_tool(db: Session, call, found: dict[str, dict]) -> dict:
     if call.name != "search_recipes":
         return _tool_result(call, f"Unknown tool: {call.name}", is_error=True)
     try:
-        recipes = spoonacular.search_recipes(**call.arguments)
-    except (httpx.HTTPError, TypeError) as e:
-        # Errors go back to the model, so it can tell the user instead of failing the request.
-        return _tool_result(call, f"Recipe search failed: {e}", is_error=True)
+        recipes = recipe_search.search_recipes(db, **(call.arguments or {}))
+    except TypeError as e:
+        # Unknown or malformed arguments go back to the model, so it can retry.
+        return _tool_result(call, f"Invalid search arguments: {e}", is_error=True)
+    except SQLAlchemyError as e:
+        db.rollback()
+        logger.exception("Recipe search failed")
+        return _tool_result(call, f"Recipe search failed: {type(e).__name__}", is_error=True)
     found.update({recipe["id"]: recipe for recipe in recipes})
     return _tool_result(call, json.dumps(recipes, ensure_ascii=False))
 
 
-def run_chat(message: str, interaction_id: str | None) -> tuple[str, list[dict], str]:
-    found: dict[int, dict] = {}
+def run_chat(db: Session, message: str, interaction_id: str | None) -> tuple[str, list[dict], str]:
+    found: dict[str, dict] = {}
     interaction = _create(message, interaction_id)
 
     for _ in range(MAX_TOOL_ROUNDS):
         calls = [step for step in interaction.steps or [] if step.type == "function_call"]
         if not calls:
             break
-        interaction = _create([_run_tool(call, found) for call in calls], interaction.id)
+        interaction = _create([_run_tool(db, call, found) for call in calls], interaction.id)
 
     try:
         answer = _Answer.model_validate_json(interaction.output_text or "")
@@ -182,10 +200,7 @@ def run_chat(message: str, interaction_id: str | None) -> tuple[str, list[dict],
     # Recipes picked from an earlier turn of the conversation weren't searched now.
     missing = [picked.id for picked in answer.recipes if picked.id not in found]
     if missing:
-        try:
-            found.update({recipe["id"]: recipe for recipe in spoonacular.get_recipes(missing)})
-        except httpx.HTTPError:
-            pass
+        found.update({recipe["id"]: recipe for recipe in recipe_search.get_recipes(db, missing)})
 
     recipes = [
         {

@@ -32,11 +32,12 @@ class ChatRequest(BaseModel):
 
 
 class RecipeOut(BaseModel):
-    id: int
+    # A recipe from the `recipes` table; id links to /recipes/{id}, macros are per serving.
+    id: UUID
     meal: str
     title: str
     original_title: str
-    image: str | None
+    category: str | None
     url: str | None
     ready_in_minutes: int | None
     servings: int | None
