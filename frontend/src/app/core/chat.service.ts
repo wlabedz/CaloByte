@@ -4,13 +4,16 @@ import { Observable } from 'rxjs';
 
 import { API_URL } from '../../environments/api-url';
 
-/** Przepis polecony przez czat. Wartości odżywcze są na porcję i pochodzą ze Spoonacular. */
+/**
+ * Przepis polecony przez czat, z tabeli `recipes` (id prowadzi do `/recipes/:id`).
+ * Wartości odżywcze są na porcję.
+ */
 export interface ChatRecipe {
-  id: number;
+  id: string;
   meal: string;
   title: string;
   original_title: string;
-  image: string | null;
+  category: string | null;
   url: string | null;
   ready_in_minutes: number | null;
   servings: number | null;

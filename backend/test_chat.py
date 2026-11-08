@@ -1,36 +1,44 @@
 import json
+import uuid
+from decimal import Decimal
 from types import SimpleNamespace
 
-import httpx
 import pytest
-from fastapi.testclient import TestClient
+from sqlalchemy.exc import OperationalError
 
 import app as app_module
 import chat
-import spoonacular
+import recipe_search
+from models import Recipe, RecipeSource
 
-client = TestClient(app_module.app)
 
-OATMEAL = {
-    "id": 1,
-    "title": "Protein Oatmeal",
-    "image": "https://img.spoonacular.com/1.jpg",
-    "url": "https://example.com/oatmeal",
-    "ready_in_minutes": 10,
-    "servings": 1,
-    "calories": 420,
-    "protein_g": 30,
-    "carbs_g": 50,
-    "fat_g": 10,
-}
+def make_recipe(db, name, category="Main Dishes", ingredients=("salt",), **kw):
+    vals = {"kcal": Decimal(400), "protein": Decimal(20), "fat": Decimal(10),
+            "carbs": Decimal(50), "fiber": Decimal(3)}
+    vals.update(kw)
+    r = Recipe(name=name, source=RecipeSource.kaggle, external_id="k-" + name, category=category,
+               servings=2, ingredients_text=list(ingredients), directions="d", **vals)
+    db.add(r)
+    db.commit()
+    return r
+
+
+def card(recipe, meal, title):
+    return {**recipe_search.summary(recipe), "meal": meal, "title": title, "original_title": recipe.name}
 
 
 def interaction(id, steps=(), output_text=None):
     return SimpleNamespace(id=id, steps=list(steps), output_text=output_text)
 
 
-def function_call(arguments):
-    return SimpleNamespace(type="function_call", name="search_recipes", id="call-1", arguments=arguments)
+def function_call(arguments, name="search_recipes"):
+    return SimpleNamespace(type="function_call", name=name, id="call-1", arguments=arguments)
+
+
+def answer(*picked, message="Proszę!"):
+    return json.dumps({"message": message, "recipes": [
+        {"id": str(id), "meal": meal, "title": title} for id, meal, title in picked
+    ]})
 
 
 class FakeInteractions:
@@ -53,9 +61,10 @@ def fake_gemini(monkeypatch):
     return install
 
 
-def test_chat_returns_reply(monkeypatch):
-    recipe = {**OATMEAL, "meal": "Śniadanie", "title": "Owsianka", "original_title": "Protein Oatmeal"}
-    monkeypatch.setattr(app_module, "run_chat", lambda message, interaction_id: ("Proszę!", [recipe], "i-1"))
+def test_chat_returns_reply(client, db_session, monkeypatch):
+    oatmeal = make_recipe(db_session, "Protein Oatmeal", category="Breakfast and Brunch")
+    recipe = card(oatmeal, "Śniadanie", "Owsianka")
+    monkeypatch.setattr(app_module, "run_chat", lambda db, message, interaction_id: ("Proszę!", [recipe], "i-1"))
 
     r = client.post("/chat", json={"message": "Coś na śniadanie"})
 
@@ -63,13 +72,13 @@ def test_chat_returns_reply(monkeypatch):
     assert r.json() == {"message": "Proszę!", "recipes": [recipe], "interaction_id": "i-1"}
 
 
-def test_chat_rejects_empty_message():
+def test_chat_rejects_empty_message(client):
     r = client.post("/chat", json={"message": ""})
     assert r.status_code == 422
 
 
-def test_chat_returns_502_when_gemini_fails(monkeypatch):
-    def fail(message, interaction_id):
+def test_chat_returns_502_when_gemini_fails(client, monkeypatch):
+    def fail(db, message, interaction_id):
         raise chat.AIServiceError("quota")
 
     monkeypatch.setattr(app_module, "run_chat", fail)
@@ -79,107 +88,160 @@ def test_chat_returns_502_when_gemini_fails(monkeypatch):
     assert r.status_code == 502
 
 
-def test_run_chat_fills_recipes_from_tool_results(monkeypatch, fake_gemini):
-    monkeypatch.setattr(spoonacular, "search_recipes", lambda **kwargs: [OATMEAL])
-    answer = {"message": "Proszę!", "recipes": [{"id": 1, "meal": "Śniadanie", "title": "Owsianka"}]}
+def test_run_chat_fills_recipes_from_the_database(db_session, fake_gemini):
+    oatmeal = make_recipe(db_session, "Protein Oatmeal", category="Breakfast and Brunch",
+                          ingredients=["1 cup oats", "1 scoop protein powder"], kcal=Decimal("419.6"))
+    make_recipe(db_session, "Pancakes", category="Breakfast and Brunch", kcal=Decimal(700))
     interactions = fake_gemini(
-        interaction("i-1", [function_call({"meal_type": "breakfast", "max_calories": 500})]),
-        interaction("i-2", output_text=json.dumps(answer)),
+        interaction("i-1", [function_call({"category": "breakfast", "max_calories": 500})]),
+        interaction("i-2", output_text=answer((oatmeal.id, "Śniadanie", "Owsianka"))),
     )
 
-    message, recipes, interaction_id = chat.run_chat("Śniadanie na 500 kcal", None)
+    message, recipes, interaction_id = chat.run_chat(db_session, "Śniadanie na 500 kcal", None)
 
     assert message == "Proszę!"
-    assert recipes == [{**OATMEAL, "meal": "Śniadanie", "title": "Owsianka", "original_title": "Protein Oatmeal"}]
+    assert recipes == [card(oatmeal, "Śniadanie", "Owsianka")]
+    assert recipes[0]["calories"] == 420
     assert interaction_id == "i-2"
     assert "previous_interaction_id" not in interactions.calls[0]
     assert interactions.calls[1]["previous_interaction_id"] == "i-1"
-    assert interactions.calls[1]["input"][0]["call_id"] == "call-1"
+    tool_result = interactions.calls[1]["input"][0]
+    assert tool_result["call_id"] == "call-1"
+    assert [r["title"] for r in json.loads(tool_result["result"][0]["text"])] == ["Protein Oatmeal"]
 
 
-def test_run_chat_continues_conversation_and_fetches_earlier_recipes(monkeypatch, fake_gemini):
-    requested = []
+def test_run_chat_continues_conversation_and_fetches_earlier_recipes(db_session, fake_gemini):
+    oatmeal = make_recipe(db_session, "Protein Oatmeal")
+    interactions = fake_gemini(interaction("i-3", output_text=answer(
+        (oatmeal.id, "Śniadanie", "Owsianka"),
+        (uuid.uuid4(), "Obiad", "?"),  # unknown id
+        ("not-a-uuid", "Kolacja", "?"),  # made-up id
+        message="To samo co wcześniej.",
+    )))
 
-    def fake_get_recipes(ids):
-        requested.extend(ids)
-        return [OATMEAL]  # Spoonacular knows recipe 1 but not 99
-
-    monkeypatch.setattr(spoonacular, "get_recipes", fake_get_recipes)
-    answer = {
-        "message": "To samo co wcześniej.",
-        "recipes": [{"id": 1, "meal": "Śniadanie", "title": "Owsianka"}, {"id": 99, "meal": "Obiad", "title": "?"}],
-    }
-    interactions = fake_gemini(interaction("i-3", output_text=json.dumps(answer)))
-
-    _, recipes, _ = chat.run_chat("Przypomnij śniadanie", "i-2")
+    _, recipes, _ = chat.run_chat(db_session, "Przypomnij śniadanie", "i-2")
 
     assert interactions.calls[0]["previous_interaction_id"] == "i-2"
-    assert requested == [1, 99]
-    assert [recipe["id"] for recipe in recipes] == [1]
+    assert [recipe["id"] for recipe in recipes] == [str(oatmeal.id)]
 
 
-def test_run_chat_reports_search_errors_to_the_model(monkeypatch, fake_gemini):
-    def fail(**kwargs):
-        raise httpx.HTTPError("quota exceeded")
-
-    monkeypatch.setattr(spoonacular, "search_recipes", fail)
+@pytest.mark.parametrize("call", [
+    function_call({"cuisine": "italian"}),  # argument the tool doesn't have
+    function_call({}, name="get_weather"),
+])
+def test_run_chat_reports_bad_tool_calls_to_the_model(db_session, fake_gemini, call):
     interactions = fake_gemini(
-        interaction("i-1", [function_call({"query": "soup"})]),
-        interaction("i-2", output_text=json.dumps({"message": "Wyszukiwarka nie działa.", "recipes": []})),
+        interaction("i-1", [call]),
+        interaction("i-2", output_text=answer(message="Nie umiem.")),
     )
 
-    message, recipes, _ = chat.run_chat("Zupa", None)
+    message, recipes, _ = chat.run_chat(db_session, "Zupa", None)
 
     assert interactions.calls[1]["input"][0]["is_error"] is True
-    assert (message, recipes) == ("Wyszukiwarka nie działa.", [])
+    assert (message, recipes) == ("Nie umiem.", [])
 
 
-def test_run_chat_wraps_gemini_errors(monkeypatch):
+def test_run_chat_reports_database_errors_to_the_model(db_session, fake_gemini, monkeypatch):
+    def fail(db, **kwargs):
+        raise OperationalError("select", {}, Exception("connection lost"))
+
+    monkeypatch.setattr(recipe_search, "search_recipes", fail)
+    interactions = fake_gemini(
+        interaction("i-1", [function_call({"query": "soup"})]),
+        interaction("i-2", output_text=answer(message="Baza nie działa.")),
+    )
+
+    message, _, _ = chat.run_chat(db_session, "Zupa", None)
+
+    assert interactions.calls[1]["input"][0]["is_error"] is True
+    assert message == "Baza nie działa."
+
+
+def test_run_chat_wraps_gemini_errors(db_session, monkeypatch):
     def fail(**params):
         raise ValueError("No API key was provided.")
 
     monkeypatch.setattr(chat, "get_client", lambda: SimpleNamespace(interactions=SimpleNamespace(create=fail)))
 
     with pytest.raises(chat.AIServiceError):
-        chat.run_chat("Hej", None)
+        chat.run_chat(db_session, "Hej", None)
 
 
-def test_run_chat_falls_back_on_invalid_json(fake_gemini):
+def test_run_chat_falls_back_on_invalid_json(db_session, fake_gemini):
     fake_gemini(interaction("i-1", output_text="not json"))
 
-    message, recipes, interaction_id = chat.run_chat("Hej", None)
+    message, recipes, interaction_id = chat.run_chat(db_session, "Hej", None)
 
     assert (message, recipes, interaction_id) == (chat.FALLBACK_MESSAGE, [], "i-1")
 
 
-def test_search_recipes_maps_spoonacular_response(monkeypatch):
-    seen = {}
+def names(results):
+    return [r["title"] for r in results]
 
-    def fake_get(path, params):
-        seen.update(path=path, params=params)
-        return {
-            "results": [
-                {
-                    "id": 1,
-                    "title": "Protein Oatmeal",
-                    "image": "https://img.spoonacular.com/1.jpg",
-                    "sourceUrl": "https://example.com/oatmeal",
-                    "readyInMinutes": 10,
-                    "servings": 1,
-                    "nutrition": {
-                        "nutrients": [
-                            {"name": "Calories", "amount": 419.6},
-                            {"name": "Protein", "amount": 30.2},
-                            {"name": "Carbohydrates", "amount": 50},
-                            {"name": "Fat", "amount": 9.8},
-                        ]
-                    },
-                }
-            ]
-        }
 
-    monkeypatch.setattr(spoonacular, "_get", fake_get)
+def test_search_matches_all_words_in_name_or_ingredients(db_session):
+    make_recipe(db_session, "Chicken Fried Rice", ingredients=["2 cups rice", "1 chicken breast"])
+    make_recipe(db_session, "Lemon Chicken", ingredients=["1 chicken", "1 lemon"])
+    make_recipe(db_session, "Rice Salad", category="Salad", ingredients=["1 cup RICE"])
 
-    assert spoonacular.search_recipes(meal_type="breakfast", max_calories=500) == [OATMEAL]
-    assert seen["path"] == "/recipes/complexSearch"
-    assert seen["params"] == {"type": "breakfast", "maxCalories": 500, "number": 5, "addRecipeNutrition": True}
+    assert names(recipe_search.search_recipes(db_session, query="Chicken rice")) == ["Chicken Fried Rice"]
+    assert names(recipe_search.search_recipes(db_session, query="rice")) == ["Chicken Fried Rice", "Rice Salad"]
+    assert names(recipe_search.search_recipes(db_session, query="100%")) == []
+
+
+def test_search_filters_macros_category_and_excluded_ingredients(db_session):
+    make_recipe(db_session, "Steak", category="Meat and Poultry", ingredients=["1 beef steak"],
+                protein=Decimal(40), kcal=Decimal(600))
+    make_recipe(db_session, "Tofu Bowl", ingredients=["200 g tofu", "rice"], protein=Decimal(25), kcal=Decimal(450))
+    make_recipe(db_session, "Bacon Salad", category="Salad", ingredients=["bacon"], protein=Decimal(30),
+                kcal=Decimal(300))
+
+    def search(**kw):
+        return names(recipe_search.search_recipes(db_session, **kw))
+
+    assert search(min_protein=30) == ["Bacon Salad", "Steak"]
+    assert search(max_calories=500) == ["Bacon Salad", "Tofu Bowl"]
+    assert search(category="meat") == ["Steak"]
+    assert search(exclude_ingredients=["Beef", "bacon", " "]) == ["Tofu Bowl"]
+
+
+def test_search_skips_desserts_and_drinks_unless_asked(db_session):
+    make_recipe(db_session, "Brownies", category="Desserts")
+    make_recipe(db_session, "Smoothie", category="Drinks Recipes")
+    make_recipe(db_session, "Soup", category=None)
+    make_recipe(db_session, "Broken", kcal=Decimal(0))
+
+    make_recipe(db_session, "Mimosa", category="Breakfast and Brunch", category_path="Breakfast and Brunch/Drinks")
+    make_recipe(db_session, "Omelette", category="Breakfast and Brunch", category_path="Breakfast and Brunch/Eggs")
+
+    assert names(recipe_search.search_recipes(db_session)) == ["Omelette", "Soup"]
+    assert names(recipe_search.search_recipes(db_session, category="breakfast")) == ["Omelette"]
+    assert names(recipe_search.search_recipes(db_session, category="eggs")) == ["Omelette"]
+    assert names(recipe_search.search_recipes(db_session, category="Desserts")) == ["Brownies"]
+    assert names(recipe_search.search_recipes(db_session, category="drinks")) == ["Mimosa", "Smoothie"]
+
+
+def test_search_ranks_name_matches_first(db_session):
+    make_recipe(db_session, "Lamb Stew", ingredients=["2 cups chicken broth"], rating=Decimal(5))
+    make_recipe(db_session, "Chicken Curry", ingredients=["chicken"], rating=Decimal(4))
+
+    assert names(recipe_search.search_recipes(db_session, query="chicken")) == ["Chicken Curry", "Lamb Stew"]
+
+
+def test_search_orders_by_rating_and_limits_results(db_session):
+    make_recipe(db_session, "B", rating=Decimal("4.9"))
+    make_recipe(db_session, "A")
+    make_recipe(db_session, "C", rating=Decimal("3.0"))
+
+    assert names(recipe_search.search_recipes(db_session)) == ["B", "C", "A"]
+    assert names(recipe_search.search_recipes(db_session, limit=1)) == ["B"]
+
+
+def test_search_returns_each_name_once(db_session):
+    make_recipe(db_session, "Mango Bread")
+    r = Recipe(name="Mango Bread", source=RecipeSource.kaggle, external_id="dup", servings=1,
+               ingredients_text=[], directions="d", kcal=1, protein=1, fat=1, carbs=1, fiber=1)
+    db_session.add(r)
+    db_session.commit()
+
+    assert names(recipe_search.search_recipes(db_session)) == ["Mango Bread"]

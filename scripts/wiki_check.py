@@ -62,6 +62,8 @@ def check(root: Path, base: str | None) -> tuple[list[str], list[str]]:
     code = [p for p in changed if p.startswith(CODE_PREFIXES)]
     if not code:
         return [], []
+    # Usunięty plik nie potrzebuje strony, ale nadal unieważnia strony, które go opisywały.
+    deleted = set(git(root, "diff", "--name-only", "--diff-filter=D", f"{start}..HEAD").stdout.split())
 
     pages = []
     for page in sorted((root / "wiki").rglob("*.md")):
@@ -73,7 +75,9 @@ def check(root: Path, base: str | None) -> tuple[list[str], list[str]]:
     uncovered = [
         path
         for path in code
-        if not IGNORED.search(path) and not any(covers(s, path) for _, srcs, _ in pages for s in srcs)
+        if path not in deleted
+        and not IGNORED.search(path)
+        and not any(covers(s, path) for _, srcs, _ in pages for s in srcs)
     ]
     stale = []
     for name, code_sources, sha in pages:

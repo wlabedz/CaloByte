@@ -2,7 +2,7 @@
 title: CI/CD (GitHub Actions)
 sources: [raw/miro/2026-11-07-board.md, .github/workflows/ci.yml, .github/workflows/deploy-backend.yml, .github/workflows/deploy-frontend.yml, raw/github/prs/PR-0004.md, raw/github/prs/PR-0006.md, raw/github/prs/PR-0011.md, scripts/wiki_check.py, .claude/hooks/wiki-before-pr.py]
 code_sha: 3f3aa87
-updated: 2026-11-07
+updated: 2026-11-08
 ---
 
 # CI/CD (GitHub Actions)
@@ -25,7 +25,7 @@ Sekrety i zmienne: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, `DATABA
 
 Migracje i seed odpalają się **przed** deployem nowego kodu. Jeśli deploy się nie uda, baza ma już nowy schemat i dane. Seed jest idempotentny (upsert), więc kolejne deploye nie duplikują wierszy ([backend](backend.md)).
 
-**Check `wiki`**: `scripts/wiki_check.py` porównuje kod zmieniony na branchu (`backend/`, `frontend/src/`, `.github/workflows/`, od merge-base z `main`) z frontmatterem stron wiki. Kończy się kodem 1, gdy strona obejmująca zmieniony plik ma nieaktualny `code_sha` albo zmieniony plik nie jest w `sources` żadnej strony (pomija `*.spec.ts`, style, szablony i migracje), a kodem 2, gdy nie da się sprawdzić. Ten sam skrypt woła lokalny hook `.claude/hooks/wiki-before-pr.py` przed `gh pr create` (tam błąd skryptu przepuszcza, w CI daje czerwony check). Naprawa: `/wiki ingest code` w trybie PR.
+**Check `wiki`**: `scripts/wiki_check.py` porównuje kod zmieniony na branchu (`backend/`, `frontend/src/`, `.github/workflows/`, od merge-base z `main`) z frontmatterem stron wiki. Kończy się kodem 1, gdy strona obejmująca zmieniony plik ma nieaktualny `code_sha` albo zmieniony plik nie jest w `sources` żadnej strony (pomija `*.spec.ts`, style, szablony, migracje i pliki usunięte na branchu; usunięty plik nadal unieważnia strony, które miały go w `sources`), a kodem 2, gdy nie da się sprawdzić. Ten sam skrypt woła lokalny hook `.claude/hooks/wiki-before-pr.py` przed `gh pr create` (tam błąd skryptu przepuszcza, w CI daje czerwony check). Naprawa: `/wiki ingest code` w trybie PR.
 
 Historia: [#1](../changelog.md) `pages.yml` → [#4](../changelog.md) `deploy-frontend.yml` → [#5](../changelog.md) kontrola `API_URL` → [#6](../changelog.md) CI + deploy backendu → [#7, #8](../changelog.md) poprawki → [#9](../changelog.md) pokrycie → [#11](../changelog.md) migracje w CD → `feat/recipe-chat` (przed merge'em): job `wiki`, pokrycie całego backendu, porządki w `deploy-backend.yml`.
 

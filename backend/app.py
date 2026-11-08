@@ -63,9 +63,9 @@ def create_user(data: UserCreate, db: DbSession):
 
 
 @app.post("/chat", response_model=ChatResponse)
-def chat(data: ChatRequest):
+def chat(data: ChatRequest, db: DbSession):
     try:
-        message, recipes, interaction_id = run_chat(data.message, data.interaction_id)
+        message, recipes, interaction_id = run_chat(db, data.message, data.interaction_id)
     except AIServiceError:
         # Includes free-tier rate limits (429) and expired conversations.
         raise HTTPException(502, "AI service is unavailable") from None

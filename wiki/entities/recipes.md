@@ -1,8 +1,8 @@
 ---
 title: Encja recipes
-sources: [raw/miro/2026-11-07-board.md, backend/models.py, backend/schemas_catalog.py, backend/routers/recipes.py, backend/catalog_service.py, backend/nutrition.py, backend/migrations/versions/, backend/seed/, frontend/src/app/core/models.ts, frontend/src/app/core/data/, frontend/src/app/features/recipes/]
-code_sha: 3f3aa87
-updated: 2026-11-07
+sources: [raw/miro/2026-11-07-board.md, backend/models.py, backend/schemas_catalog.py, backend/routers/recipes.py, backend/catalog_service.py, backend/nutrition.py, backend/recipe_search.py, backend/migrations/versions/, backend/seed/, frontend/src/app/core/models.ts, frontend/src/app/core/data/, frontend/src/app/features/recipes/]
+code_sha: 5bdfc03
+updated: 2026-11-08
 ---
 
 # Encja recipes
@@ -28,6 +28,8 @@ Miro nie ma encji przepisu. W modelu danych są tylko `users`, `meals` i `meal_i
 - `POST /recipes` (201), `PUT /recipes/{id}`, `DELETE /recipes/{id}` (204). Zapis zawsze ustawia `source = user`. Dla przepisu z katalogu `PUT` i `DELETE` zwracają 403, dla nieznanego `id` jest 404, dla nieznanego `product_id` w pozycji 422.
 - Makra przepisu użytkownika liczy backend, nie klient: suma `makro produktu na 100 g × waga / 100` ze składników, dzielona przez `servings` i zaokrąglona half-up (`backend/nutrition.py`, `backend/catalog_service.py`). `total_min` to `prep_min + cook_min`, a `ingredients_text` jest generowany ze składników. Zmiana produktu przelicza przepisy użytkownika, które go używają (`recalculate_recipes_for_product`).
 - Walidacja wejścia (`RecipeIn`): `name` 1–200 znaków, `servings` 1–100, `prep_min`/`cook_min` 0–10000, `directions` do 10000 znaków, od 1 do 50 składników, `weight_g` > 0 i do 10000.
+
+**Czat:** asystent z `POST /chat` wyszukuje przepisy w tej tabeli (`backend/recipe_search.py`) i poleca je po `id`, zob. [backend](../architecture/backend.md). Desery i napoje pomija, chyba że użytkownik o nie prosi.
 
 **Seed:** `backend/seed/recipes.csv` (1090 wierszy), ładowany przez `python -m seed` (upsert po `(source, external_id)`, `RecipeSource.kaggle`). CSV powstaje jednorazowo ze skryptu `backend/seed/prepare.py` z pliku Kaggle. Działanie seeda: [backend](../architecture/backend.md).
 
