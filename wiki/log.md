@@ -91,6 +91,12 @@ Wpisy operacji `/wiki` od najstarszych. Blok `ingest-state` na końcu czyta skil
 - Pytania: bez zmian
 - Uwagi: autor PR (2026-11-11): powodem było pytanie „Ile kcal powinien mieć obiad?”, które kończyło się samym szukaniem przepisów. `last_code_sha` i `last_pr` bez zmian.
 
+## [2026-11-11] ingest code (PR) | feat/chat-prompt (okienko czatu)
+- Zmienione: architecture/frontend.md (`ChatStore` jako wspólny stan rozmowy, `chat-thread` używany przez `/#/chat` i pływające okienko `shared/chat-widget/` widoczne po zalogowaniu poza `/#/chat`; nowe podpowiedzi; `code_sha` c7e0981 → 88b2cc6), architecture/backend.md (small talk bez wyszukiwania, `MAX_TOOL_ROUNDS` 6 → 3; `code_sha` b07d318 → 88b2cc6). Opis stron autor zacommitował razem z kodem; ta operacja potwierdziła go z kodem i podbiła `code_sha`.
+- Pytania: bez zmian
+- Ostrzeżenia: architecture/ci-cd.md ma nieaktualny `code_sha` (3f3aa87, zmiana w 752fccb sprzed tego brancha); poza zakresem trybu PR, do zwykłego `ingest code`.
+- Uwagi: `last_code_sha` i `last_pr` bez zmian.
+
 <!-- ingest-state
 last_pr: 19
 last_miro_snapshot: 2026-11-07

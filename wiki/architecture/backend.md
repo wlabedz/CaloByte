@@ -1,7 +1,7 @@
 ---
 title: Backend (FastAPI)
 sources: [raw/miro/2026-11-07-board.md, backend/app.py, backend/auth.py, backend/db.py, backend/schemas.py, backend/schemas_catalog.py, backend/catalog_service.py, backend/nutrition.py, backend/routers/, backend/seed/, backend/conftest.py, backend/test_app.py, backend/test_db.py, backend/test_models.py, backend/test_nutrition.py, backend/test_parsing.py, backend/test_prepare.py, backend/test_products_api.py, backend/test_recipes_api.py, backend/test_seed.py, backend/requirements.txt, backend/vercel.json, backend/chat.py, backend/recipe_search.py, backend/test_chat.py, backend/test_auth.py]
-code_sha: b07d318
+code_sha: 88b2cc6
 updated: 2026-11-11
 ---
 

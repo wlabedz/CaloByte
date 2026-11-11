@@ -1,7 +1,7 @@
 ---
 title: Frontend (Angular)
 sources: [raw/miro/2026-11-07-board.md, raw/github/prs/PR-0017.md, frontend/src/app/, frontend/src/environments/, frontend/src/testing/, frontend/src/styles.css, frontend/angular.json, frontend/package.json]
-code_sha: c7e0981
+code_sha: 88b2cc6
 updated: 2026-11-11
 ---
 
