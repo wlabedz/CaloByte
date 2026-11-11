@@ -2,11 +2,12 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { ThemeService } from './core/theme.service';
+import { ChatWidgetComponent } from './shared/chat-widget/chat-widget.component';
 import { ToastHostComponent } from './shared/toast/toast-host.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, ToastHostComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ToastHostComponent, ChatWidgetComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
