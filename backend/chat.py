@@ -17,7 +17,9 @@ MODEL = "gemini-3.5-flash-lite"
 # Fail with a clear error instead of an endless spinner; two rounds fit in Vercel's 60 s limit.
 REQUEST_TIMEOUT_S = 25
 # Each round is one more Gemini request, so this also guards the free-tier quota.
-MAX_TOOL_ROUNDS = 6
+# Two rounds may search; the third goes without tools and must answer (see run_chat).
+# The prompt asks for at most two searches, but flash-lite does not always keep to it.
+MAX_TOOL_ROUNDS = 3
 FALLBACK_MESSAGE = "Przepraszam, nie udało mi się przygotować odpowiedzi. Spróbuj zapytać inaczej."
 
 SYSTEM_PROMPT = """Jesteś asystentem dietetycznym w aplikacji CaloByte. Odpowiadasz po polsku.
@@ -31,7 +33,9 @@ krótko i życzliwie. Gdy temat nie ma nic wspólnego z jedzeniem ani zdrowiem, 
 jednym zdaniem, że w tym nie pomożesz, i zaproponuj rozmowę o diecie.
 
 Przepisy wyszukujesz narzędziem search_recipes tylko wtedy, gdy użytkownik prosi o przepis,
-pomysł na posiłek albo jadłospis. Baza aplikacji to około tysiąca przepisów po angielsku,
+pomysł na posiłek albo jadłospis. Przy powitaniach, podziękowaniach, small talku, pytaniach
+ogólnych i tematach spoza diety nie wywołujesz narzędzia, tylko od razu zwracasz odpowiedź
+z pustą listą recipes. Baza aplikacji to około tysiąca przepisów po angielsku,
 z wartościami odżywczymi na porcję. Polecasz wyłącznie przepisy zwrócone przez narzędzie.
 Parametry narzędzia podajesz po angielsku.
 

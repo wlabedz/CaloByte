@@ -39,7 +39,7 @@ describe('ChatComponent', () => {
   const textOf = (selector: string) =>
     element.querySelector(selector)?.textContent?.replace(/\s+/g, ' ').trim();
   const typeAndSend = async (text: string) => {
-    const input = element.querySelector<HTMLInputElement>('#chat-input')!;
+    const input = element.querySelector<HTMLInputElement>('.composer-input')!;
     input.value = text;
     input.dispatchEvent(new Event('input'));
     element.querySelector('form')!.dispatchEvent(new Event('submit'));
