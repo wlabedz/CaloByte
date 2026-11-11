@@ -86,6 +86,11 @@ Wpisy operacji `/wiki` od najstarszych. Blok `ingest-state` na końcu czyta skil
 - Pytania: Q-009 bez zmiany statusu, kontekst uzupełniony o logowanie samym e-mailem (czy potrzebne jest prawdziwe uwierzytelnianie, rozstrzyga analityk)
 - Uwagi: autor PR (2026-11-11): logowanie bez hasła jako tymczasowa decyzja zespołu. Bez dostępu do Miro, więc karteczka Q-009 nie została zaktualizowana. `last_code_sha` i `last_pr` bez zmian.
 
+## [2026-11-11] ingest code (PR) | feat/chat-prompt
+- Zmienione: architecture/backend.md (prompt czatu: ogólne pytania o dietę bez szukania przepisów, najwyżej dwa wyszukiwania na pytanie, tematy spoza diety zbywane jednym zdaniem; ostatnia runda pętli bez narzędzi; 17 testów czatu; `code_sha` b07d318)
+- Pytania: bez zmian
+- Uwagi: autor PR (2026-11-11): powodem było pytanie „Ile kcal powinien mieć obiad?”, które kończyło się samym szukaniem przepisów. `last_code_sha` i `last_pr` bez zmian.
+
 <!-- ingest-state
 last_pr: 19
 last_miro_snapshot: 2026-11-07
