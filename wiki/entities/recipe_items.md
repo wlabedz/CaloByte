@@ -1,8 +1,8 @@
 ---
 title: Encja recipe_items
 sources: [raw/miro/2026-11-07-board.md, backend/models.py, backend/schemas_catalog.py, backend/routers/recipes.py, backend/catalog_service.py, backend/nutrition.py, backend/migrations/versions/, frontend/src/app/core/models.ts, frontend/src/app/features/recipes/recipe-form/]
-code_sha: 81d47cf
-updated: 2026-11-07
+code_sha: c7e0981
+updated: 2026-11-11
 ---
 
 # Encja recipe_items

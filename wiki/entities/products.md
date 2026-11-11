@@ -1,8 +1,8 @@
 ---
 title: Encja products
-sources: [raw/miro/2026-11-07-board.md, backend/models.py, backend/schemas_catalog.py, backend/routers/products.py, backend/catalog_service.py, backend/migrations/versions/, backend/seed/, frontend/src/app/core/models.ts, frontend/src/app/core/data/, frontend/src/app/features/recipes/product-dialog/]
-code_sha: 81d47cf
-updated: 2026-11-07
+sources: [raw/miro/2026-11-07-board.md, backend/models.py, backend/schemas_catalog.py, backend/routers/products.py, backend/catalog_service.py, backend/migrations/versions/, backend/seed/, frontend/src/app/core/models.ts, frontend/src/app/core/data/, frontend/src/app/features/recipes/product-dialog/, backend/auth.py]
+code_sha: c7e0981
+updated: 2026-11-11
 ---
 
 # Encja products
@@ -23,7 +23,7 @@ Miro nie ma encji produktu. Jedyne wskazówki to karteczka z API posiłków calo
 **API** (`backend/routers/products.py`):
 
 - `GET /products?q=&source=&limit=`: szukanie po `name` i `name_en` (podciąg, bez rozróżniania wielkości liter), `limit` 1–50, domyślnie 20. `GET /products/{id}`.
-- `POST /products` (201) tworzy produkt z `source = user`. `PUT /products/{id}` zmienia produkt i przelicza przepisy użytkownika, które go używają. `DELETE /products/{id}` (204).
+- `POST /products` (201) tworzy produkt z `source = user` i `user_id` zalogowanego (nagłówek `X-User-Id`; bez niego `NULL`). `PUT /products/{id}` zmienia produkt i przelicza przepisy użytkownika, które go używają. `DELETE /products/{id}` (204).
 - Produkt z USDA: `PUT`/`DELETE` dają 403. Usunięcie produktu użytego w przepisie daje 409 (klucz obcy `recipe_items.product_id` ma `RESTRICT`).
 - Walidacja (`ProductIn`): `name` 1–200 znaków, `kcal` 0–900, `fiber` 0–100, suma białka, tłuszczu i węglowodanów nie większa niż 100 g.
 
@@ -36,4 +36,4 @@ Miro nie ma encji produktu. Jedyne wskazówki to karteczka z API posiłków calo
 - Miro nie ma encji produktu; w kodzie jest tabela z CRUD-em dla produktów użytkownika. Zakres nie wynika z Miro.
 - Źródłem jest USDA FoodData Central (domena publiczna), a nie calorieapi.com z karteczki Miro.
 - Frontend nie ma jeszcze edycji ani usuwania produktów (`ProductRepository` ma tylko `search` i `create`), choć API je ma.
-- `user_id` jest zawsze `NULL` (brak właściciela produktu). [Q-009](../questions.md#q-009)
+- `user_id` jest zapisywany, ale niczego nie ogranicza: każdy może zmienić i usunąć każdy produkt użytkownika. Produkty sprzed `feat/email-login` mają `user_id = NULL`. [Q-009](../questions.md#q-009)

@@ -81,6 +81,11 @@ Wpisy operacji `/wiki` od najstarszych. Blok `ingest-state` na końcu czyta skil
 - Pytania: Q-002 bez zmiany statusu, kontekst zaktualizowany
 - Uwagi: autor PR (2026-11-08): przepisy tylko z bazy, bez Spoonaculara. Wykonane ręcznie według SKILL.md (skill `/wiki` niedostępny w tej sesji), bez dostępu do Miro. `last_code_sha` i `last_pr` bez zmian.
 
+## [2026-11-11] ingest code (PR) | feat/email-login
+- Zmienione: architecture/backend.md (logowanie bez hasła: `auth.py`, `POST /auth/login`, `GET /auth/me`, nagłówek `X-User-Id`, fikstury `make_user`/`auth`; `sources` + `auth.py`, `test_auth.py`), architecture/frontend.md (`userIdInterceptor`, `authGuard`, Profil jako logowanie i opis konta zamiast listy profili, „Moje” = `mine=true`, akcje przepisu tylko dla autora), entities/users.md (logowanie e-mailem; `sources` + `app.py`, `auth.py`, `active-user.service.ts`), entities/recipes.md (właściciel przepisu, 401/403, `mine`, `user_id` w odpowiedziach), entities/products.md (`user_id` przy tworzeniu produktu); tylko `code_sha` na recipe_items, meals i meal_items (zmienił się `core/models.ts`, bez wpływu na ich treść). `code_sha` c7e0981.
+- Pytania: Q-009 bez zmiany statusu, kontekst uzupełniony o logowanie samym e-mailem (czy potrzebne jest prawdziwe uwierzytelnianie, rozstrzyga analityk)
+- Uwagi: autor PR (2026-11-11): logowanie bez hasła jako tymczasowa decyzja zespołu. Bez dostępu do Miro, więc karteczka Q-009 nie została zaktualizowana. `last_code_sha` i `last_pr` bez zmian.
+
 <!-- ingest-state
 last_pr: 19
 last_miro_snapshot: 2026-11-07
