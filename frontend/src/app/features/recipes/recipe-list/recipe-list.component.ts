@@ -56,7 +56,8 @@ export class RecipeListComponent {
     return {
       ...(q && { q }),
       ...(category && { category }),
-      ...(source && { source }),
+      // „Moje” to przepisy zalogowanego użytkownika, a nie wszystkie przepisy użytkowników.
+      ...(source === 'user' && { mine: true }),
       page,
       limit: PAGE_SIZE,
     };

@@ -80,9 +80,9 @@ def test_detail_kaggle_and_404(client, db_session):
     assert r.json()["detail"] == "Nie znaleziono przepisu."
 
 
-def test_create_recipe(client, db_session):
+def test_create_recipe(client, db_session, auth):
     bread, butter, items = two_items(db_session)
-    r = client.post("/recipes", json=body(items, prep_min=5, cook_min=10))
+    r = client.post("/recipes", headers=auth, json=body(items, prep_min=5, cook_min=10))
     assert r.status_code == 201
     d = r.json()
     expected = recipe_per_serving(
@@ -94,26 +94,27 @@ def test_create_recipe(client, db_session):
     assert d["fat"] == float(expected.fat)
     assert d["ingredients_text"] == ["150 g chleb", "10 g masło"]
     assert d["source"] == "user"
+    assert d["user_id"] == auth["X-User-Id"]
     assert d["total_min"] == 15
     assert [i["product_name"] for i in d["items"]] == ["chleb", "masło"]
     assert d["items"][0]["kcal"] == 375
 
 
-def test_create_validation(client, db_session):
+def test_create_validation(client, db_session, auth):
     _, _, items = two_items(db_session)
-    assert client.post("/recipes", json=body([])).status_code == 422
+    assert client.post("/recipes", headers=auth, json=body([])).status_code == 422
     bad = [{**items[0], "weight_g": 0}]
-    assert client.post("/recipes", json=body(bad)).status_code == 422
+    assert client.post("/recipes", headers=auth, json=body(bad)).status_code == 422
     unknown = [items[0], {"product_id": str(uuid.uuid4()), "weight_g": 5}]
-    r = client.post("/recipes", json=body(unknown))
+    r = client.post("/recipes", headers=auth, json=body(unknown))
     assert r.status_code == 422
     assert "2" in r.json()["detail"]
 
 
-def test_update_replaces_items(client, db_session):
+def test_update_replaces_items(client, db_session, auth):
     _, _, items = two_items(db_session)
-    rid = client.post("/recipes", json=body(items)).json()["id"]
-    r = client.put(f"/recipes/{rid}", json=body([items[0]], servings=1, name="Chleb"))
+    rid = client.post("/recipes", headers=auth, json=body(items)).json()["id"]
+    r = client.put(f"/recipes/{rid}", headers=auth, json=body([items[0]], servings=1, name="Chleb"))
     assert r.status_code == 200
     d = r.json()
     assert len(d["items"]) == 1
@@ -124,20 +125,54 @@ def test_update_replaces_items(client, db_session):
     assert db_session.query(RecipeItem).count() == 1
 
 
-def test_seed_recipe_read_only(client, db_session):
+def test_seed_recipe_read_only(client, db_session, auth):
     rec = make_seed_recipe(db_session, "Sernik")
     _, _, items = two_items(db_session)
-    r = client.put(f"/recipes/{rec.id}", json=body(items))
+    r = client.put(f"/recipes/{rec.id}", headers=auth, json=body(items))
     assert r.status_code == 403
     assert r.json()["detail"] == "Przepisów z katalogu nie można zmieniać."
-    assert client.delete(f"/recipes/{rec.id}").status_code == 403
-    assert client.put(f"/recipes/{uuid.uuid4()}", json=body(items)).status_code == 404
+    assert client.delete(f"/recipes/{rec.id}", headers=auth).status_code == 403
+    assert client.put(f"/recipes/{uuid.uuid4()}", headers=auth, json=body(items)).status_code == 404
 
 
-def test_delete_recipe(client, db_session):
+def test_delete_recipe(client, db_session, auth):
     _, _, items = two_items(db_session)
-    rid = client.post("/recipes", json=body(items)).json()["id"]
-    assert client.delete(f"/recipes/{rid}").status_code == 204
+    rid = client.post("/recipes", headers=auth, json=body(items)).json()["id"]
+    assert client.delete(f"/recipes/{rid}", headers=auth).status_code == 204
     db_session.expire_all()
     assert db_session.query(RecipeItem).count() == 0
     assert client.get(f"/recipes/{rid}").status_code == 404
+
+
+def test_recipe_requires_login(client, db_session):
+    _, _, items = two_items(db_session)
+    r = client.post("/recipes", json=body(items))
+    assert r.status_code == 401
+    bad = client.post("/recipes", json=body(items), headers={"X-User-Id": "nie-uuid"})
+    assert bad.status_code == 401
+    unknown = client.post("/recipes", json=body(items), headers={"X-User-Id": str(uuid.uuid4())})
+    assert unknown.status_code == 401
+
+
+def test_only_owner_can_change_recipe(client, db_session, auth, make_user):
+    _, _, items = two_items(db_session)
+    rid = client.post("/recipes", headers=auth, json=body(items)).json()["id"]
+    other = {"X-User-Id": str(make_user("jan@example.com", "Jan").id)}
+    r = client.put(f"/recipes/{rid}", headers=other, json=body(items))
+    assert r.status_code == 403
+    assert r.json()["detail"] == "Możesz zmieniać tylko własne przepisy."
+    assert client.delete(f"/recipes/{rid}", headers=other).status_code == 403
+    # Cudze przepisy można oglądać.
+    assert client.get(f"/recipes/{rid}", headers=other).status_code == 200
+
+
+def test_list_mine(client, db_session, auth, make_user):
+    make_seed_recipe(db_session, "Sernik")
+    _, _, items = two_items(db_session)
+    client.post("/recipes", headers=auth, json=body(items, name="Moja"))
+    other = {"X-User-Id": str(make_user("jan@example.com", "Jan").id)}
+    client.post("/recipes", headers=other, json=body(items, name="Jana"))
+    mine = client.get("/recipes", headers=auth, params={"mine": True}).json()
+    assert [x["name"] for x in mine["items"]] == ["Moja"]
+    assert client.get("/recipes", params={"mine": True}).status_code == 401
+    assert client.get("/recipes").json()["total"] == 3

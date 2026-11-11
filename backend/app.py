@@ -2,15 +2,16 @@ from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from auth import CurrentUser
 from chat import AIServiceError, run_chat
 from db import get_db
 from models import User
 from routers import products, recipes
-from schemas import ChatRequest, ChatResponse, UserCreate, UserOut
+from schemas import ChatRequest, ChatResponse, LoginRequest, UserCreate, UserOut
 
 DbSession = Annotated[Session, Depends(get_db)]
 
@@ -59,6 +60,19 @@ def create_user(data: UserCreate, db: DbSession):
         db.rollback()
         raise HTTPException(409, "User with this email already exists") from None
     db.refresh(user)
+    return user
+
+
+@app.post("/auth/login", response_model=UserOut)
+def login(data: LoginRequest, db: DbSession):
+    user = db.scalar(select(User).where(func.lower(User.email) == data.email.lower()))
+    if user is None:
+        raise HTTPException(404, "Nie ma konta z tym adresem e-mail.")
+    return user
+
+
+@app.get("/auth/me", response_model=UserOut)
+def me(user: CurrentUser):
     return user
 
 

@@ -7,8 +7,9 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 import catalog_service
+from auth import CurrentUser, OptionalUser
 from db import get_db
-from models import Product, Recipe, RecipeItem, RecipeSource
+from models import Product, Recipe, RecipeItem, RecipeSource, User
 from nutrition import Macros, item_macros
 from schemas_catalog import (
     CategoryCount,
@@ -31,10 +32,12 @@ def _get_or_404(db: Session, recipe_id: uuid.UUID) -> Recipe:
     return recipe
 
 
-def _get_editable(db: Session, recipe_id: uuid.UUID) -> Recipe:
+def _get_editable(db: Session, recipe_id: uuid.UUID, user: User) -> Recipe:
     recipe = _get_or_404(db, recipe_id)
     if recipe.source != RecipeSource.user:
         raise HTTPException(403, "Przepisów z katalogu nie można zmieniać.")
+    if recipe.user_id != user.id:
+        raise HTTPException(403, "Możesz zmieniać tylko własne przepisy.")
     return recipe
 
 
@@ -96,9 +99,11 @@ def _apply(db: Session, recipe: Recipe, data: RecipeIn) -> None:
 @router.get("", response_model=RecipePage)
 def list_recipes(
     db: DbSession,
+    user: OptionalUser,
     q: str | None = None,
     category: str | None = None,
     source: RecipeSource | None = None,
+    mine: bool = False,
     page: Annotated[int, Query(ge=1)] = 1,
     limit: Annotated[int, Query(ge=1, le=100)] = 20,
 ):
@@ -109,6 +114,10 @@ def list_recipes(
         conditions.append(Recipe.category == category)
     if source:
         conditions.append(Recipe.source == source)
+    if mine:
+        if user is None:
+            raise HTTPException(401, "Zaloguj się, aby zobaczyć swoje przepisy.")
+        conditions.append(Recipe.user_id == user.id)
     total = db.scalar(select(func.count()).select_from(Recipe).where(*conditions)) or 0
     rows = db.scalars(
         select(Recipe)
@@ -143,8 +152,8 @@ def get_recipe(recipe_id: uuid.UUID, db: DbSession):
 
 
 @router.post("", response_model=RecipeDetail, status_code=201)
-def create_recipe(data: RecipeIn, db: DbSession):
-    recipe = Recipe(source=RecipeSource.user, ingredients_text=[],
+def create_recipe(data: RecipeIn, db: DbSession, user: CurrentUser):
+    recipe = Recipe(source=RecipeSource.user, user_id=user.id, ingredients_text=[],
                     kcal=0, protein=0, fat=0, carbs=0, fiber=0)
     _apply(db, recipe, data)
     db.add(recipe)
@@ -154,8 +163,8 @@ def create_recipe(data: RecipeIn, db: DbSession):
 
 
 @router.put("/{recipe_id}", response_model=RecipeDetail)
-def update_recipe(recipe_id: uuid.UUID, data: RecipeIn, db: DbSession):
-    recipe = _get_editable(db, recipe_id)
+def update_recipe(recipe_id: uuid.UUID, data: RecipeIn, db: DbSession, user: CurrentUser):
+    recipe = _get_editable(db, recipe_id, user)
     _apply(db, recipe, data)
     db.commit()
     db.refresh(recipe)
@@ -163,8 +172,8 @@ def update_recipe(recipe_id: uuid.UUID, data: RecipeIn, db: DbSession):
 
 
 @router.delete("/{recipe_id}", status_code=204)
-def delete_recipe(recipe_id: uuid.UUID, db: DbSession):
-    recipe = _get_editable(db, recipe_id)
+def delete_recipe(recipe_id: uuid.UUID, db: DbSession, user: CurrentUser):
+    recipe = _get_editable(db, recipe_id, user)
     db.delete(recipe)
     db.commit()
     return Response(status_code=204)

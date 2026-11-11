@@ -77,8 +77,8 @@ Czy sumy `total_*` w `meals` liczymy z `meal_items` (w bazie lub w API), czy zap
 <a id="q-009"></a>
 ## Q-009 · użytkownik · otwarte
 Czyje posiłki pokazuje aplikacja, skoro nie ma logowania? Czy uwierzytelnianie jest w zakresie projektu, czy wystarczy jeden użytkownik demo albo wybór użytkownika?
-- Kontekst: Miro wymaga danych „powiązanych z konkretnym użytkownikiem” (`meals.user_id`), ale nie wspomina o logowaniu. #17 zgłasza to w sekcji „Do ustalenia”. Backend ma tylko `GET/POST /users` bez auth.
-- Źródła: raw/miro/2026-11-07-board.md, raw/github/prs/PR-0017.md, backend/app.py
+- Kontekst: Miro wymaga danych „powiązanych z konkretnym użytkownikiem” (`meals.user_id`), ale nie wspomina o logowaniu. #17 zgłasza to w sekcji „Do ustalenia”. Backend ma tylko `GET/POST /users` bez auth. Od `feat/email-login` (2026-11-11) zespół tymczasowo wprowadził logowanie samym e-mailem, bez hasła (`POST /auth/login`, nagłówek `X-User-Id`); przepisy i produkty mają właściciela. Otwarte zostaje, czy wymagane jest prawdziwe uwierzytelnianie.
+- Źródła: raw/miro/2026-11-07-board.md, raw/github/prs/PR-0017.md, backend/app.py, backend/auth.py
 - Dotyczy: [entities/users](entities/users.md), [architecture/frontend](architecture/frontend.md)
 - Miro: 3458764689734052356
 - Odpowiedź: —

@@ -38,4 +38,18 @@ describe('HttpUserRepository', () => {
     expect(request.request.body).toEqual(NEW_USER);
     request.flush(buildUser({ id: 'u1' }));
   });
+
+  it('logs in with POST /auth/login', () => {
+    repository.login('anna@example.com').subscribe();
+
+    const request = http.expectOne({ method: 'POST', url: `${API_URL}/auth/login` });
+    expect(request.request.body).toEqual({ email: 'anna@example.com' });
+    request.flush(buildUser({ id: 'u1' }));
+  });
+
+  it('loads the logged-in profile from GET /auth/me', () => {
+    repository.me().subscribe();
+
+    http.expectOne({ method: 'GET', url: `${API_URL}/auth/me` }).flush(buildUser({ id: 'u1' }));
+  });
 });

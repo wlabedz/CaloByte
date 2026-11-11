@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { buildUser } from '../../../testing/user-fixtures';
@@ -10,16 +11,12 @@ import { ProfileComponent } from './profile.component';
 
 describe('ProfileComponent', () => {
   const anna = buildUser({ id: 'u1', name: 'Anna', surname: 'Nowak' });
-  const jan = buildUser({ id: 'u2', name: 'Jan', surname: 'Kowalski', email: 'jan@example.com' });
   const createUser = vi.fn();
-  const getUsers = vi.fn();
+  const login = vi.fn();
+  const me = vi.fn();
   let fixture: ComponentFixture<ProfileComponent>;
   let element: HTMLElement;
-
-  const profileButton = (name: string) =>
-    Array.from(element.querySelectorAll<HTMLButtonElement>('.profile')).find((button) =>
-      button.textContent?.includes(name),
-    );
+  let navigate: ReturnType<typeof vi.spyOn>;
 
   function fill(id: string, value: string): void {
     const control = element.querySelector<HTMLInputElement | HTMLSelectElement>(`#${id}`);
@@ -40,55 +37,93 @@ describe('ProfileComponent', () => {
     fill('sex', 'female');
   }
 
-  async function submit(): Promise<void> {
-    element.querySelector<HTMLButtonElement>('button[type="submit"]')?.click();
+  async function submit(form: 'login-form' | 'profile-form'): Promise<void> {
+    element.querySelector<HTMLButtonElement>(`.${form} button[type="submit"]`)?.click();
     await fixture.whenStable();
   }
 
   beforeEach(async () => {
     localStorage.clear();
     createUser.mockReset();
-    getUsers.mockReset();
-    getUsers.mockReturnValue(of([anna, jan]));
+    login.mockReset();
+    me.mockReset();
+    me.mockReturnValue(of(anna));
 
     await TestBed.configureTestingModule({
       imports: [ProfileComponent],
-      providers: [{ provide: UserRepository, useValue: { getUsers, createUser } }],
+      providers: [
+        provideRouter([]),
+        { provide: UserRepository, useValue: { createUser, login, me } },
+      ],
     }).compileComponents();
+    navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
 
-    await render();
-  });
-
-  async function render(): Promise<void> {
     fixture = TestBed.createComponent(ProfileComponent);
     element = fixture.nativeElement;
     await fixture.whenStable();
-  }
+  });
 
-  afterEach(() => localStorage.clear());
+  afterEach(() => {
+    localStorage.clear();
+    vi.restoreAllMocks();
+  });
 
-  it('lists profiles and makes the clicked one active', async () => {
-    profileButton('Jan Kowalski')?.click();
+  it('logs in with just an e-mail and goes to the dashboard', async () => {
+    login.mockReturnValue(of(anna));
+
+    fill('login-email', ' anna@example.com ');
+    await submit('login-form');
+
+    expect(login).toHaveBeenCalledWith('anna@example.com');
+    expect(TestBed.inject(ActiveUserService).user()?.id).toBe('u1');
+    expect(navigate).toHaveBeenCalledWith(['/dashboard']);
+    expect(element.querySelector('h1')?.textContent).toContain('Anna Nowak');
+  });
+
+  it('explains when there is no account with that e-mail', async () => {
+    login.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 404 })));
+
+    fill('login-email', 'nikt@example.com');
+    await submit('login-form');
+
+    expect(element.querySelector('[role="alert"]')?.textContent).toContain('Nie ma konta');
+    expect(TestBed.inject(ActiveUserService).user()).toBeNull();
+  });
+
+  it('does not log in with an invalid e-mail', async () => {
+    fill('login-email', 'a@b');
+    await submit('login-form');
+
+    expect(login).not.toHaveBeenCalled();
+    expect(element.querySelector('#login-email-error')).not.toBeNull();
+  });
+
+  it('logs out', async () => {
+    TestBed.inject(ActiveUserService).select(anna);
     await fixture.whenStable();
 
-    expect(profileButton('Jan Kowalski')?.getAttribute('aria-pressed')).toBe('true');
-    expect(profileButton('Anna Nowak')?.getAttribute('aria-pressed')).toBe('false');
-    expect(TestBed.inject(ActiveUserService).user()).toEqual({ id: 'u2', name: 'Jan Kowalski' });
+    Array.from(element.querySelectorAll('button'))
+      .find((button) => button.textContent?.includes('Wyloguj'))
+      ?.click();
+    await fixture.whenStable();
+
+    expect(TestBed.inject(ActiveUserService).user()).toBeNull();
+    expect(element.querySelector('h1')?.textContent).toContain('Zaloguj się');
   });
 
   it('does not send an incomplete form', async () => {
-    await submit();
+    await submit('profile-form');
 
     expect(createUser).not.toHaveBeenCalled();
     expect(element.querySelector('#name-error')?.textContent).toContain('Podaj imię');
     expect(element.querySelector('#sex-error')?.textContent).toContain('Wybierz płeć');
   });
 
-  it('creates a profile and selects it', async () => {
+  it('creates an account and logs in', async () => {
     createUser.mockReturnValue(of(buildUser({ id: 'u3', name: 'Ola', surname: 'Wiśniewska' })));
 
     fillValidForm();
-    await submit();
+    await submit('profile-form');
 
     expect(createUser).toHaveBeenCalledWith({
       name: 'Ola',
@@ -100,9 +135,10 @@ describe('ProfileComponent', () => {
       activity: 'moderate',
       sex: 'female',
     });
-    expect(profileButton('Ola Wiśniewska')?.getAttribute('aria-pressed')).toBe('true');
+    expect(TestBed.inject(ActiveUserService).user()?.id).toBe('u3');
+    expect(navigate).toHaveBeenCalledWith(['/dashboard']);
     expect(TestBed.inject(ToastService).toasts()[0]?.message).toContain(
-      'Zapisano profil Ola Wiśniewska',
+      'Założono konto Ola Wiśniewska',
     );
   });
 
@@ -110,7 +146,7 @@ describe('ProfileComponent', () => {
     createUser.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 409 })));
 
     fillValidForm();
-    await submit();
+    await submit('profile-form');
 
     expect(element.querySelector('[role="alert"]')?.textContent).toContain(
       'e-mail jest już zajęty',
@@ -120,7 +156,7 @@ describe('ProfileComponent', () => {
   it('rejects an e-mail without a dot in the domain, like the backend does', async () => {
     fillValidForm();
     fill('email', 'a@b');
-    await submit();
+    await submit('profile-form');
 
     expect(createUser).not.toHaveBeenCalled();
     expect(element.querySelector('#email-error')?.textContent).toContain('Podaj poprawny adres');
@@ -138,7 +174,7 @@ describe('ProfileComponent', () => {
     );
 
     fillValidForm();
-    await submit();
+    await submit('profile-form');
 
     expect(element.querySelector('#email-error')?.textContent).toContain(
       'Serwer nie przyjął tego adresu',
@@ -146,20 +182,25 @@ describe('ProfileComponent', () => {
     expect(element.querySelector('[role="alert"]')).toBeNull();
   });
 
-  it('loads the list again after saving when it failed to load before', async () => {
-    const ola = buildUser({ id: 'u3', name: 'Ola', surname: 'Wiśniewska' });
-    getUsers
-      .mockReturnValueOnce(throwError(() => new HttpErrorResponse({ status: 500 })))
-      .mockReturnValueOnce(of([anna, jan, ola]));
-    createUser.mockReturnValue(of(ola));
-    await render();
-    expect(element.querySelector('[role="alert"]')?.textContent).toContain('Nie udało się wczytać');
+  it('describes the logged-in profile instead of listing other users', async () => {
+    TestBed.inject(ActiveUserService).select(anna);
+    await fixture.whenStable();
 
-    fillValidForm();
-    await submit();
+    const details = element.querySelector('.details')?.textContent ?? '';
+    expect(me).toHaveBeenCalled();
+    expect(details).toContain('62 kg');
+    expect(details).toContain('168 cm');
+    expect(details).toMatch(/BMI\s*22[.,]0/);
+    expect(element.querySelector('.profile-form')).toBeNull();
+  });
 
-    expect(element.querySelector('[role="alert"]')).toBeNull();
-    expect(profileButton('Ola Wiśniewska')?.getAttribute('aria-pressed')).toBe('true');
-    expect(profileButton('Anna Nowak')).toBeDefined();
+  it('says so when the profile fails to load', async () => {
+    me.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+    TestBed.inject(ActiveUserService).select(anna);
+    await fixture.whenStable();
+
+    expect(element.querySelector('[role="alert"]')?.textContent).toContain(
+      'Nie udało się wczytać profilu',
+    );
   });
 });

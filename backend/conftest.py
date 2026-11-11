@@ -58,3 +58,25 @@ def client(db_session):
     app.dependency_overrides[get_db] = lambda: db_session
     yield TestClient(app)
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def make_user(db_session):
+    from datetime import date
+
+    from models import Sex, User
+
+    def make(email="anna@example.com", name="Anna"):
+        user = User(name=name, surname="Nowak", email=email, birth_date=date(2000, 1, 1),
+                    weight_kg=60, height_cm=170, sex=Sex.female)
+        db_session.add(user)
+        db_session.commit()
+        return user
+
+    return make
+
+
+@pytest.fixture
+def auth(make_user):
+    """Nagłówek zalogowanego użytkownika (logowanie e-mailem, bez hasła)."""
+    return {"X-User-Id": str(make_user().id)}

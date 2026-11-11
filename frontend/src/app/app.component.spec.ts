@@ -44,8 +44,15 @@ describe('AppComponent', () => {
   });
 
   it('redirects unknown paths to the dashboard', async () => {
+    localStorage.setItem('calobyte.activeUser', JSON.stringify({ id: 'u1', name: 'Anna Nowak' }));
     await RouterTestingHarness.create('/nie-ma-takiej-strony');
 
     expect(TestBed.inject(Router).url).toBe('/dashboard');
+  });
+
+  it('sends a logged-out user to the login page', async () => {
+    await RouterTestingHarness.create('/recipes');
+
+    expect(TestBed.inject(Router).url).toBe('/profile');
   });
 });

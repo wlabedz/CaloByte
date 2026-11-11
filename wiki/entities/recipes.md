@@ -1,8 +1,8 @@
 ---
 title: Encja recipes
-sources: [raw/miro/2026-11-07-board.md, backend/models.py, backend/schemas_catalog.py, backend/routers/recipes.py, backend/catalog_service.py, backend/nutrition.py, backend/recipe_search.py, backend/migrations/versions/, backend/seed/, frontend/src/app/core/models.ts, frontend/src/app/core/data/, frontend/src/app/features/recipes/]
-code_sha: 5bdfc03
-updated: 2026-11-08
+sources: [raw/miro/2026-11-07-board.md, backend/models.py, backend/schemas_catalog.py, backend/routers/recipes.py, backend/catalog_service.py, backend/nutrition.py, backend/recipe_search.py, backend/migrations/versions/, backend/seed/, frontend/src/app/core/models.ts, frontend/src/app/core/data/, frontend/src/app/features/recipes/, backend/auth.py]
+code_sha: c7e0981
+updated: 2026-11-11
 ---
 
 # Encja recipes
@@ -23,9 +23,9 @@ Miro nie ma encji przepisu. W modelu danych są tylko `users`, `meals` i `meal_i
 
 **API** (`backend/routers/recipes.py`, schematy w `backend/schemas_catalog.py`):
 
-- `GET /recipes?q=&category=&source=&page=&limit=`: lista stronicowana (`limit` 1–100, domyślnie 20), sortowana po `name`; `q` to dopasowanie podciągu bez rozróżniania wielkości liter.
+- `GET /recipes?q=&category=&source=&mine=&page=&limit=`: lista stronicowana (`limit` 1–100, domyślnie 20), sortowana po `name`; `q` to dopasowanie podciągu bez rozróżniania wielkości liter. `mine=true` zwraca tylko przepisy zalogowanego (bez logowania 401). Odpowiedzi (`RecipeSummary`, `RecipeDetail`) mają pole `user_id`.
 - `GET /recipes/categories`: kategorie z liczbą przepisów. `GET /recipes/{id}`: szczegóły; `items` wypełnione tylko dla przepisów `user`.
-- `POST /recipes` (201), `PUT /recipes/{id}`, `DELETE /recipes/{id}` (204). Zapis zawsze ustawia `source = user`. Dla przepisu z katalogu `PUT` i `DELETE` zwracają 403, dla nieznanego `id` jest 404, dla nieznanego `product_id` w pozycji 422.
+- `POST /recipes` (201), `PUT /recipes/{id}`, `DELETE /recipes/{id}` (204) wymagają zalogowania (nagłówek `X-User-Id`, inaczej 401, zob. [users](users.md)). Zapis zawsze ustawia `source = user`, a `POST` także `user_id` zalogowanego. Dla przepisu z katalogu `PUT` i `DELETE` zwracają 403, dla cudzego przepisu też 403 („Możesz zmieniać tylko własne przepisy.”), dla nieznanego `id` jest 404, dla nieznanego `product_id` w pozycji 422. Cudze przepisy można oglądać.
 - Makra przepisu użytkownika liczy backend, nie klient: suma `makro produktu na 100 g × waga / 100` ze składników, dzielona przez `servings` i zaokrąglona half-up (`backend/nutrition.py`, `backend/catalog_service.py`). `total_min` to `prep_min + cook_min`, a `ingredients_text` jest generowany ze składników. Zmiana produktu przelicza przepisy użytkownika, które go używają (`recalculate_recipes_for_product`).
 - Walidacja wejścia (`RecipeIn`): `name` 1–200 znaków, `servings` 1–100, `prep_min`/`cook_min` 0–10000, `directions` do 10000 znaków, od 1 do 50 składników, `weight_g` > 0 i do 10000.
 
@@ -33,7 +33,7 @@ Miro nie ma encji przepisu. W modelu danych są tylko `users`, `meals` i `meal_i
 
 **Seed:** `backend/seed/recipes.csv` (1090 wierszy), ładowany przez `python -m seed` (upsert po `(source, external_id)`, `RecipeSource.kaggle`). CSV powstaje jednorazowo ze skryptu `backend/seed/prepare.py` z pliku Kaggle. Działanie seeda: [backend](../architecture/backend.md).
 
-**Frontend:** typy `RecipeSummary`, `RecipeDetail`, `RecipeInput` w `frontend/src/app/core/models.ts`; `RecipeRepository` → `HttpRecipeRepository` w `core/data/`; widoki lista, szczegóły i formularz w `features/recipes/`, zob. [frontend](../architecture/frontend.md). Formularz liczy podgląd makr lustrzaną funkcją `recipePerServing` (`core/nutrition.ts`), a zapisuje tylko `product_id` i wagę. Edycja przepisu z katalogu przekierowuje na szczegóły.
+**Frontend:** typy `RecipeSummary`, `RecipeDetail`, `RecipeInput` w `frontend/src/app/core/models.ts`; `RecipeRepository` → `HttpRecipeRepository` w `core/data/`; widoki lista, szczegóły i formularz w `features/recipes/`, zob. [frontend](../architecture/frontend.md). Formularz liczy podgląd makr lustrzaną funkcją `recipePerServing` (`core/nutrition.ts`), a zapisuje tylko `product_id` i wagę. Edycja przepisu z katalogu albo cudzego przekierowuje na szczegóły, a „Edytuj” i „Usuń” widzi tylko autor. Filtr „Moje” na liście wysyła `mine=true`.
 
 ## Rozbieżności
 
@@ -41,5 +41,6 @@ Miro nie ma encji przepisu. W modelu danych są tylko `users`, `meals` i `meal_i
 - Dataset Kaggle nie zawiera kalorii. `kcal` przepisów z katalogu jest liczone przy przygotowaniu seeda ze wzoru 4·białko + 4·węglowodany + 9·tłuszcz (`kcal_from_macros`, użyte w `backend/seed/prepare.py`), a białko, tłuszcz, węglowodany i błonnik są wyciągane z tekstu kolumny `nutrition`.
 - Przepisy z Kaggle nie są powiązane z produktami: nie mają `recipe_items`, tylko tekst składników w `ingredients_text`, więc ich makr nie da się przeliczyć.
 - Przepisy z seeda są tylko do odczytu (403 przy `PUT`/`DELETE`).
-- `user_id` jest zawsze `NULL`: endpointy nie przypisują właściciela, bo nie ma logowania ani wyboru użytkownika po stronie API. Miro wymaga danych powiązanych z użytkownikiem, a front ma tylko lokalny „aktywny profil”. [Q-009](../questions.md#q-009)
+- Właściciel przepisu opiera się na logowaniu bez hasła (`X-User-Id`), więc nie chroni przed podszyciem się pod autora. [Q-009](../questions.md#q-009)
+- Przepisy użytkownika dodane przed `feat/email-login` mają `user_id = NULL`, więc nikt nie może ich zmienić ani usunąć.
 - Przepisy nie są powiązane z `meals`: nie ma jeszcze sposobu dodania przepisu do posiłku ([meals](meals.md)).

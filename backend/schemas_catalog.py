@@ -72,6 +72,8 @@ class RecipeSummary(BaseModel):
     id: uuid.UUID
     name: str
     source: RecipeSource
+    # Autor przepisu użytkownika; None dla katalogu i przepisów sprzed logowania.
+    user_id: uuid.UUID | None
     category: str | None
     servings: int
     total_min: int | None

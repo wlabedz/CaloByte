@@ -75,6 +75,7 @@ describe('RecipeFormComponent', () => {
   };
 
   beforeEach(() => {
+    localStorage.setItem('calobyte.activeUser', JSON.stringify({ id: 'me', name: 'Ja Testowy' }));
     for (const fn of [get, create, update, search, createProduct]) {
       fn.mockReset();
     }
@@ -86,6 +87,7 @@ describe('RecipeFormComponent', () => {
   afterEach(() => {
     vi.useRealTimers();
     vi.restoreAllMocks();
+    localStorage.clear();
   });
 
   it('is empty for /recipes/new', async () => {
@@ -102,6 +104,7 @@ describe('RecipeFormComponent', () => {
         buildRecipeDetail({
           id: 'r1',
           source: 'user',
+          user_id: 'me',
           name: 'Omlet',
           servings: 2,
           category: 'Śniadania',
@@ -226,6 +229,7 @@ describe('RecipeFormComponent', () => {
         buildRecipeDetail({
           id: 'r1',
           source: 'user',
+          user_id: 'me',
           items: [
             {
               product_id: 'p1',

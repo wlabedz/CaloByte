@@ -14,11 +14,24 @@ describe('ActiveUserService', () => {
 
     TestBed.resetTestingModule();
 
-    expect(TestBed.inject(ActiveUserService).user()).toEqual({ id: 'u1', name: 'Anna Nowak' });
+    expect(TestBed.inject(ActiveUserService).user()).toEqual({
+      id: 'u1',
+      name: 'Anna Nowak',
+      email: buildUser({ id: 'u1' }).email,
+    });
   });
 
   it('starts without a user when the stored value is corrupted', () => {
     localStorage.setItem('calobyte.activeUser', '{"id": 5');
+
+    expect(TestBed.inject(ActiveUserService).user()).toBeNull();
+  });
+
+  it('forgets the user on logout', () => {
+    TestBed.inject(ActiveUserService).select(buildUser({ id: 'u1' }));
+    TestBed.inject(ActiveUserService).logout();
+
+    TestBed.resetTestingModule();
 
     expect(TestBed.inject(ActiveUserService).user()).toBeNull();
   });

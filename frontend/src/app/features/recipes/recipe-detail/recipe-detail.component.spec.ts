@@ -49,6 +49,8 @@ describe('RecipeDetailComponent', () => {
     Array.from(element.querySelectorAll('button, a'), (e) => e.textContent?.trim());
 
   beforeEach(() => {
+    // Zalogowany autor przepisów `user_id: 'me'`.
+    localStorage.setItem('calobyte.activeUser', JSON.stringify({ id: 'me', name: 'Ja Testowy' }));
     get.mockReset();
     remove.mockReset();
     remove.mockReturnValue(of(undefined));
@@ -56,7 +58,17 @@ describe('RecipeDetailComponent', () => {
     show.mockReset();
   });
 
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    vi.restoreAllMocks();
+    localStorage.clear();
+  });
+
+  it("hides edit and delete on someone else's recipe", async () => {
+    await setup(buildRecipeDetail({ id: 'r1', source: 'user', user_id: 'someone-else' }));
+
+    expect(buttons()).not.toContain('Edytuj');
+    expect(element.querySelector('button.delete-button')).toBeNull();
+  });
 
   it('shows a kaggle recipe read-only with source link', async () => {
     await setup(
@@ -86,7 +98,7 @@ describe('RecipeDetailComponent', () => {
   });
 
   it('deletes a user recipe without a confirm dialog and offers undo in a toast', async () => {
-    await setup(buildRecipeDetail({ id: 'r1', name: 'Jajecznica', source: 'user' }));
+    await setup(buildRecipeDetail({ id: 'r1', name: 'Jajecznica', source: 'user', user_id: 'me' }));
     const confirmSpy = vi.spyOn(window, 'confirm');
 
     expect(buttons()).toContain('Edytuj');
@@ -109,6 +121,7 @@ describe('RecipeDetailComponent', () => {
       id: 'r1',
       name: 'Jajecznica',
       source: 'user',
+      user_id: 'me',
       servings: 2,
       category: 'Śniadanie',
       prep_min: 5,
@@ -128,7 +141,7 @@ describe('RecipeDetailComponent', () => {
       ],
     });
     await setup(recipe);
-    create.mockReturnValue(of(buildRecipeDetail({ id: 'r2', source: 'user' })));
+    create.mockReturnValue(of(buildRecipeDetail({ id: 'r2', source: 'user', user_id: 'me' })));
     clickDelete();
     await fixture.whenStable();
 
@@ -147,7 +160,7 @@ describe('RecipeDetailComponent', () => {
   });
 
   it('shows an error and stays on the page when delete fails', async () => {
-    await setup(buildRecipeDetail({ id: 'r1', name: 'Jajecznica', source: 'user' }));
+    await setup(buildRecipeDetail({ id: 'r1', name: 'Jajecznica', source: 'user', user_id: 'me' }));
     remove.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
     clickDelete();
     await fixture.whenStable();
@@ -160,7 +173,7 @@ describe('RecipeDetailComponent', () => {
   });
 
   it('does not send a second delete while the first is in flight', async () => {
-    await setup(buildRecipeDetail({ id: 'r1', source: 'user' }));
+    await setup(buildRecipeDetail({ id: 'r1', source: 'user', user_id: 'me' }));
     remove.mockReturnValue(NEVER);
 
     clickDelete();

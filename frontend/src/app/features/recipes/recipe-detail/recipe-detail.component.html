@@ -16,7 +16,7 @@
         }
       </p>
     </div>
-    @if (r.source === 'user') {
+    @if (isOwner(r)) {
       <div class="actions">
         <a class="edit-link" [routerLink]="['/recipes', r.id, 'edit']">Edytuj</a>
         <button

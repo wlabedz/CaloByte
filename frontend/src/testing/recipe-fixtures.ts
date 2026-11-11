@@ -6,6 +6,7 @@ export function buildRecipeSummary(
   return {
     name: `Przepis ${overrides.id}`,
     source: 'kaggle',
+    user_id: null,
     category: 'Zupy',
     servings: 4,
     total_min: 45,
