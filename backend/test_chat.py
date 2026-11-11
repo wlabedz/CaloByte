@@ -245,3 +245,17 @@ def test_search_returns_each_name_once(db_session):
     db_session.commit()
 
     assert names(recipe_search.search_recipes(db_session)) == ["Mango Bread"]
+
+
+def test_run_chat_answers_without_tools_after_the_last_search_round(fake_gemini, monkeypatch):
+    # A model that keeps searching must still get to answer instead of FALLBACK_MESSAGE.
+    monkeypatch.setattr(recipe_search, "search_recipes", lambda db, **kw: [])
+    search = interaction("i", [function_call({"query": "oatmeal"})])
+    gemini = fake_gemini(*[search] * chat.MAX_TOOL_ROUNDS, interaction("last", output_text=answer()))
+
+    message, recipes, interaction_id = chat.run_chat(None, "Śniadanie?", None)
+
+    assert (message, recipes, interaction_id) == ("Proszę!", [], "last")
+    assert len(gemini.calls) == chat.MAX_TOOL_ROUNDS + 1
+    assert all("tools" in call for call in gemini.calls[:-1])
+    assert "tools" not in gemini.calls[-1]

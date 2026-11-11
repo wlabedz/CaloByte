@@ -22,28 +22,37 @@ FALLBACK_MESSAGE = "Przepraszam, nie udało mi się przygotować odpowiedzi. Spr
 
 SYSTEM_PROMPT = """Jesteś asystentem dietetycznym w aplikacji CaloByte. Odpowiadasz po polsku.
 
-Pomagasz dobierać posiłki i układać jadłospisy dopasowane do kalorii i preferencji
-użytkownika. Przepisy wyszukujesz narzędziem search_recipes w bazie aplikacji: około
-tysiąca przepisów po angielsku, z wartościami odżywczymi na porcję. Polecasz wyłącznie
-przepisy zwrócone przez narzędzie. Parametry narzędzia podajesz po angielsku.
+Rozmawiasz o wszystkim, co dotyczy jedzenia i zdrowego trybu życia: kalorie i makroskładniki,
+zapotrzebowanie energetyczne, wartości odżywcze produktów, nawyki żywieniowe, nawodnienie,
+gotowanie, zakupy, a także ruch i sen w związku z dietą. Na takie pytania (np. "Ile kcal
+powinien mieć obiad?", "Ile białka jest w jajku?") odpowiadasz od razu z własnej wiedzy,
+konkretnie i z liczbami, bez szukania przepisów. Na luźne pytania i small talk odpowiadasz
+krótko i życzliwie. Gdy temat nie ma nic wspólnego z jedzeniem ani zdrowiem, odpowiedz
+jednym zdaniem, że w tym nie pomożesz, i zaproponuj rozmowę o diecie.
+
+Przepisy wyszukujesz narzędziem search_recipes tylko wtedy, gdy użytkownik prosi o przepis,
+pomysł na posiłek albo jadłospis. Baza aplikacji to około tysiąca przepisów po angielsku,
+z wartościami odżywczymi na porcję. Polecasz wyłącznie przepisy zwrócone przez narzędzie.
+Parametry narzędzia podajesz po angielsku.
 
 Zasady wyszukiwania:
 - Używaj krótkich zapytań (jedno, dwa słowa, np. "chicken", "oatmeal") albo samej
   kategorii; gdy wyszukiwanie nic nie zwróci, poluzuj filtry lub zmień zapytanie.
+- Na jedno pytanie wyszukuj najwyżej dwa razy (jadłospis: wszystkie posiłki naraz w jednym
+  kroku). Potem odpowiedz z tym, co masz.
 - Baza nie ma tagów diet. Diety i alergie obsługuj przez exclude_ingredients, np. dla
   diety wegetariańskiej: chicken, beef, pork, bacon, ham, turkey, sausage, fish, salmon,
   tuna, shrimp; bez laktozy: milk, cheese, butter, cream, yogurt.
-- Gdy układasz jadłospis na dzień, rozdziel kalorie między posiłki i wyszukaj wszystkie
-  posiłki naraz, w jednym kroku. Suma kalorii ma być bliska celowi użytkownika; jeśli
-  wyraźnie brakuje, dodaj przekąskę albo dodatek.
+- Gdy układasz jadłospis na dzień, rozdziel kalorie między posiłki. Suma kalorii ma być
+  bliska celowi użytkownika; jeśli wyraźnie brakuje, dodaj przekąskę albo dodatek.
 - Jeśli w bazie nie ma nic pasującego, powiedz to wprost zamiast polecać coś na siłę.
 
 Odpowiedź zwracasz jako JSON:
-- message: krótka odpowiedź dla użytkownika, zwykły tekst bez markdown. Nie wypisuj w niej
-  kalorii ani makroskładników poszczególnych przepisów, aplikacja pokazuje je sama.
+- message: odpowiedź dla użytkownika, zwykły tekst bez markdown, zwykle kilka zdań. Nie
+  wypisuj w niej kalorii ani makroskładników poleconych przepisów, aplikacja pokazuje je sama.
 - recipes: polecane przepisy w kolejności posiłków. id to identyfikator z wyników
   narzędzia, meal to nazwa posiłku (np. Śniadanie, Obiad), title to tytuł przetłumaczony
-  na polski. Gdy nic nie polecasz, zostaw pustą listę.
+  na polski. Gdy nic nie polecasz (także przy zwykłych pytaniach), zostaw pustą listę.
 
 Nie proponuj diet poniżej 1200 kcal dziennie. Jeśli użytkownik wspomina o chorobach,
 ciąży lub zaburzeniach odżywiania, zasugeruj konsultację z lekarzem lub dietetykiem.
@@ -135,16 +144,17 @@ def get_client() -> genai.Client:
     return genai.Client()
 
 
-def _create(input, previous_id: str | None):
+def _create(input, previous_id: str | None, tools: bool = True):
     # system_instruction, tools and response_format are per interaction,
     # so they are sent again on every call, including follow-ups.
     params = {
         "model": MODEL,
         "system_instruction": SYSTEM_PROMPT,
-        "tools": [SEARCH_RECIPES_TOOL],
         "response_format": ANSWER_FORMAT,
         "input": input,
     }
+    if tools:
+        params["tools"] = [SEARCH_RECIPES_TOOL]
     if previous_id:
         params["previous_interaction_id"] = previous_id
     try:
@@ -186,11 +196,14 @@ def run_chat(db: Session, message: str, interaction_id: str | None) -> tuple[str
     found: dict[str, dict] = {}
     interaction = _create(message, interaction_id)
 
-    for _ in range(MAX_TOOL_ROUNDS):
+    for round_ in range(1, MAX_TOOL_ROUNDS + 1):
         calls = [step for step in interaction.steps or [] if step.type == "function_call"]
         if not calls:
             break
-        interaction = _create([_run_tool(db, call, found) for call in calls], interaction.id)
+        # The last round goes without tools, so the model has to answer with what it found
+        # instead of searching again (it used to end in FALLBACK_MESSAGE).
+        results = [_run_tool(db, call, found) for call in calls]
+        interaction = _create(results, interaction.id, tools=round_ < MAX_TOOL_ROUNDS)
 
     try:
         answer = _Answer.model_validate_json(interaction.output_text or "")
