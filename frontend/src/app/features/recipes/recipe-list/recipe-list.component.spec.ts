@@ -98,7 +98,7 @@ describe('RecipeListComponent', () => {
     button('Moje').click();
     await fixture.whenStable();
     expect(list).toHaveBeenLastCalledWith(
-      expect.objectContaining({ category: 'Zupy', source: 'user', page: 1 }),
+      expect.objectContaining({ category: 'Zupy', mine: true, page: 1 }),
     );
   });
 

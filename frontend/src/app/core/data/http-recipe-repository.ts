@@ -23,6 +23,7 @@ export class HttpRecipeRepository extends RecipeRepository {
     if (query.q) params = params.set('q', query.q);
     if (query.category) params = params.set('category', query.category);
     if (query.source) params = params.set('source', query.source);
+    if (query.mine) params = params.set('mine', true);
     params = params.set('page', query.page).set('limit', query.limit);
     return this.http.get<Page<RecipeSummary>>(`${API_URL}/recipes`, { params });
   }

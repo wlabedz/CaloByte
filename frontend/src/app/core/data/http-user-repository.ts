@@ -17,4 +17,12 @@ export class HttpUserRepository extends UserRepository {
   override createUser(user: NewUser): Observable<User> {
     return this.http.post<User>(`${API_URL}/users`, user);
   }
+
+  override me(): Observable<User> {
+    return this.http.get<User>(`${API_URL}/auth/me`);
+  }
+
+  override login(email: string): Observable<User> {
+    return this.http.post<User>(`${API_URL}/auth/login`, { email });
+  }
 }

@@ -97,6 +97,8 @@ export interface RecipeQuery {
   q?: string;
   category?: string;
   source?: RecipeSource;
+  /** Tylko przepisy zalogowanego użytkownika. */
+  mine?: boolean;
   page: number;
   limit: number;
 }
@@ -111,6 +113,8 @@ export interface RecipeSummary {
   id: string;
   name: string;
   source: RecipeSource;
+  /** Autor przepisu użytkownika; `null` dla katalogu. */
+  user_id: string | null;
   category: string | null;
   servings: number;
   total_min: number | null;

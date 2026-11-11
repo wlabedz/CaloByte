@@ -7,11 +7,13 @@ const STORAGE_KEY = 'calobyte.activeUser';
 export interface ActiveUser {
   id: string;
   name: string;
+  email?: string;
 }
 
 /**
- * Wybrany profil. Do czasu logowania to on określa, czyje dane pokazuje aplikacja;
- * zapamiętujemy go w przeglądarce, żeby przetrwał odświeżenie strony.
+ * Zalogowany użytkownik. Logowanie jest bez hasła (wystarczy e-mail), a jego id trafia do
+ * backendu w nagłówku `X-User-Id` (zob. `userIdInterceptor`). Zapamiętujemy go w przeglądarce,
+ * żeby przetrwał odświeżenie strony.
  */
 @Injectable({ providedIn: 'root' })
 export class ActiveUserService {
@@ -19,12 +21,25 @@ export class ActiveUserService {
   readonly user = this.current.asReadonly();
 
   select(user: User): void {
-    const active: ActiveUser = { id: user.id, name: `${user.name} ${user.surname}` };
+    const active: ActiveUser = {
+      id: user.id,
+      name: `${user.name} ${user.surname}`,
+      email: user.email,
+    };
     this.current.set(active);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(active));
     } catch {
-      // Zablokowany storage (np. tryb prywatny): wybór działa do odświeżenia strony.
+      // Zablokowany storage (np. tryb prywatny): logowanie działa do odświeżenia strony.
+    }
+  }
+
+  logout(): void {
+    this.current.set(null);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // Jak wyżej: nie ma czego czyścić.
     }
   }
 }

@@ -1,7 +1,7 @@
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   NonNullableFormBuilder,
@@ -9,6 +9,8 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
+import { EMPTY, catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 
 import { ActiveUserService } from '../../core/active-user.service';
 import { UserRepository } from '../../core/data/user-repository';
@@ -21,7 +23,7 @@ const EMAIL_WITH_DOMAIN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 @Component({
   selector: 'app-profile',
-  imports: [DecimalPipe, ReactiveFormsModule],
+  imports: [DatePipe, DecimalPipe, ReactiveFormsModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,7 +31,7 @@ const EMAIL_WITH_DOMAIN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export class ProfileComponent {
   private readonly users = inject(UserRepository);
   private readonly toasts = inject(ToastService);
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
   protected readonly activeUser = inject(ActiveUserService);
 
   protected readonly today = toDayKey(new Date());
@@ -38,10 +40,19 @@ export class ProfileComponent {
   protected readonly sexLabels = SEX_LABELS;
   protected readonly sexOptions = Object.keys(SEX_LABELS) as Sex[];
 
-  protected readonly profiles = signal<User[] | undefined>(undefined);
-  protected readonly loadFailed = signal(false);
+  /** Pełne dane zalogowanego użytkownika; `undefined` w trakcie wczytywania. */
+  protected readonly profile = signal<User | undefined>(undefined);
+  protected readonly profileFailed = signal(false);
+
+  protected readonly loggingIn = signal(false);
+  protected readonly loginError = signal<string | null>(null);
   protected readonly saving = signal(false);
   protected readonly saveError = signal<string | null>(null);
+
+  /** Logowanie bez hasła: wystarczy e-mail istniejącego konta. */
+  protected readonly loginForm = inject(NonNullableFormBuilder).group({
+    email: ['', [Validators.required, Validators.email, Validators.pattern(EMAIL_WITH_DOMAIN)]],
+  });
 
   // Ograniczenia jak w UserCreate (backend/schemas.py), żeby błędy wyłapać przed wysłaniem.
   protected readonly form = inject(NonNullableFormBuilder).group({
@@ -70,12 +81,67 @@ export class ProfileComponent {
   });
 
   constructor() {
-    this.loadProfiles();
+    // Po zalogowaniu (także po odświeżeniu strony) dociągamy pełny profil z backendu.
+    toObservable(this.activeUser.user)
+      .pipe(
+        map((user) => user?.id),
+        distinctUntilChanged(),
+        switchMap((id) => {
+          this.profile.set(undefined);
+          this.profileFailed.set(false);
+          return id
+            ? this.users.me().pipe(
+                catchError(() => {
+                  this.profileFailed.set(true);
+                  return EMPTY;
+                }),
+              )
+            : of(undefined);
+        }),
+        takeUntilDestroyed(),
+      )
+      .subscribe((user) => this.profile.set(user));
   }
 
   protected isInvalid(field: string): boolean {
     const control = this.form.get(field);
     return !!control && control.invalid && control.touched;
+  }
+
+  protected isLoginInvalid(): boolean {
+    const control = this.loginForm.controls.email;
+    return control.invalid && control.touched;
+  }
+
+  protected login(): void {
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+    this.loggingIn.set(true);
+    this.loginError.set(null);
+    this.users.login(this.loginForm.getRawValue().email.trim()).subscribe({
+      next: (user) => {
+        this.activeUser.select(user);
+        this.loginForm.reset();
+        this.loggingIn.set(false);
+        this.toasts.show({ message: `Witaj, ${user.name}!` });
+        void this.router.navigate(['/dashboard']);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.loggingIn.set(false);
+        this.loginError.set(
+          error.status === 404
+            ? 'Nie ma konta z tym adresem e-mail. Załóż je poniżej.'
+            : 'Nie udało się zalogować. Spróbuj ponownie.',
+        );
+      },
+    });
+  }
+
+  protected logout(): void {
+    this.activeUser.logout();
+    this.toasts.show({ message: 'Wylogowano.' });
   }
 
   protected submit(): void {
@@ -91,15 +157,10 @@ export class ProfileComponent {
         this.activeUser.select(user);
         this.form.reset();
         this.saving.set(false);
-        // Gdy lista wcześniej się nie wczytała, pobieramy ją od nowa — już z nowym profilem.
-        if (this.loadFailed()) {
-          this.loadProfiles();
-        } else {
-          this.profiles.update((profiles) => [...(profiles ?? []), user]);
-        }
         this.toasts.show({
-          message: `Zapisano profil ${user.name} ${user.surname} — jest teraz aktywny.`,
+          message: `Założono konto ${user.name} ${user.surname} — jesteś zalogowany.`,
         });
+        void this.router.navigate(['/dashboard']);
       },
       error: (error: HttpErrorResponse) => {
         this.saving.set(false);
@@ -110,22 +171,11 @@ export class ProfileComponent {
         }
         this.saveError.set(
           error.status === 409
-            ? 'Ten adres e-mail jest już zajęty.'
+            ? 'Ten adres e-mail jest już zajęty. Zaloguj się nim powyżej.'
             : 'Nie udało się zapisać profilu. Spróbuj ponownie.',
         );
       },
     });
-  }
-
-  private loadProfiles(): void {
-    this.loadFailed.set(false);
-    this.users
-      .getUsers()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (users) => this.profiles.set(users),
-        error: () => this.loadFailed.set(true),
-      });
   }
 }
 

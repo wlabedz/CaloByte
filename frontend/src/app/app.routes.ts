@@ -1,22 +1,27 @@
 import { Routes } from '@angular/router';
 
+import { authGuard } from './core/auth.guard';
+
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
   {
     path: 'dashboard',
     title: 'Pulpit · CaloByte',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
   },
   {
     path: 'history',
     title: 'Historia · CaloByte',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/history/history.component').then((m) => m.HistoryComponent),
   },
   {
     path: 'recipes',
     title: 'Przepisy · CaloByte',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/recipes/recipe-list/recipe-list.component').then(
         (m) => m.RecipeListComponent,
@@ -25,6 +30,7 @@ export const routes: Routes = [
   {
     path: 'recipes/new',
     title: 'Nowy przepis · CaloByte',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/recipes/recipe-form/recipe-form.component').then(
         (m) => m.RecipeFormComponent,
@@ -33,6 +39,7 @@ export const routes: Routes = [
   {
     path: 'recipes/:id/edit',
     title: 'Edycja przepisu · CaloByte',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/recipes/recipe-form/recipe-form.component').then(
         (m) => m.RecipeFormComponent,
@@ -41,6 +48,7 @@ export const routes: Routes = [
   {
     path: 'recipes/:id',
     title: 'Przepis · CaloByte',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/recipes/recipe-detail/recipe-detail.component').then(
         (m) => m.RecipeDetailComponent,
@@ -48,13 +56,14 @@ export const routes: Routes = [
   },
   {
     path: 'profile',
-    title: 'Profil · CaloByte',
+    title: 'Profil i logowanie · CaloByte',
     loadComponent: () =>
       import('./features/profile/profile.component').then((m) => m.ProfileComponent),
   },
   {
     path: 'chat',
     title: 'Czat · CaloByte',
+    canActivate: [authGuard],
     loadComponent: () => import('./features/chat/chat.component').then((m) => m.ChatComponent),
   },
   { path: '**', redirectTo: 'dashboard' },

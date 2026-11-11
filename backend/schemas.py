@@ -25,6 +25,10 @@ class UserOut(UserCreate):
     created_at: datetime
 
 
+class LoginRequest(BaseModel):
+    email: EmailStr
+
+
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=4000)
     # Id of the previous Gemini interaction; None starts a new conversation.

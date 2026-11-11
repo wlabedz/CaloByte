@@ -6,6 +6,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 import catalog_service
+from auth import OptionalUser
 from db import get_db
 from models import Product, ProductSource, RecipeItem
 from schemas_catalog import ProductIn, ProductOut
@@ -56,8 +57,10 @@ def get_product(product_id: uuid.UUID, db: DbSession):
 
 
 @router.post("", response_model=ProductOut, status_code=201)
-def create_product(data: ProductIn, db: DbSession):
-    product = Product(**data.model_dump(), source=ProductSource.user)
+def create_product(data: ProductIn, db: DbSession, user: OptionalUser):
+    product = Product(
+        **data.model_dump(), source=ProductSource.user, user_id=user.id if user else None
+    )
     db.add(product)
     db.commit()
     db.refresh(product)

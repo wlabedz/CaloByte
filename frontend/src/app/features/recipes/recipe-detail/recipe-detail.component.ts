@@ -4,6 +4,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
+import { ActiveUserService } from '../../../core/active-user.service';
 import { RecipeRepository } from '../../../core/data/recipe-repository';
 import { RecipeDetail, RecipeInput } from '../../../core/models';
 import { servingsLabel } from '../../../core/polish-plural';
@@ -20,6 +21,7 @@ export class RecipeDetailComponent {
   private readonly repository = inject(RecipeRepository);
   private readonly router = inject(Router);
   private readonly toasts = inject(ToastService);
+  private readonly activeUser = inject(ActiveUserService);
 
   protected readonly servingsLabel = servingsLabel;
   protected readonly recipe = signal<RecipeDetail | undefined>(undefined);
@@ -41,6 +43,11 @@ export class RecipeDetailComponent {
           }
         },
       });
+  }
+
+  /** Zmieniać i usuwać można tylko własne przepisy; backend sprawdza to samo (403). */
+  protected isOwner(recipe: RecipeDetail): boolean {
+    return recipe.source === 'user' && recipe.user_id === this.activeUser.user()?.id;
   }
 
   /**

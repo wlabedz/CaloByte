@@ -24,6 +24,7 @@ import {
   switchMap,
 } from 'rxjs';
 
+import { ActiveUserService } from '../../../core/active-user.service';
 import { ProductRepository } from '../../../core/data/product-repository';
 import { RecipeRepository } from '../../../core/data/recipe-repository';
 import { Product, RecipeDetail, RecipeInput } from '../../../core/models';
@@ -65,6 +66,7 @@ export class RecipeFormComponent {
   private readonly recipes = inject(RecipeRepository);
   private readonly products = inject(ProductRepository);
   private readonly router = inject(Router);
+  private readonly activeUser = inject(ActiveUserService);
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly search$ = new Subject<string>();
 
@@ -141,7 +143,8 @@ export class RecipeFormComponent {
   }
 
   private load(recipe: RecipeDetail): void {
-    if (recipe.source !== 'user') {
+    // Katalogu ani cudzych przepisów nie edytujemy (backend i tak zwróciłby 403).
+    if (recipe.source !== 'user' || recipe.user_id !== this.activeUser.user()?.id) {
       void this.router.navigate(['/recipes', recipe.id]);
       return;
     }
